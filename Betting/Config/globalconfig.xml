@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <league>Championship</league>
+  <year>2017</year>
+  <matchday>1</matchday><!---1 means current-->
+  <competitions>https://api.football-data.org/v1/competitions?season={0}</competitions>
+  <teams>https://api.football-data.org/v1/competitions/{0}/teams</teams>
+  <nextfixturesforteam>https://api.football-data.org/v1/teams/{0}/fixtures?timeFrame=p{1}</nextfixturesforteam>
+  <fixturesforleague>https://api.football-data.org/v1/competitions/{0}/fixtures?matchday={1}</fixturesforleague>
+  <leaguetable>https://api.football-data.org/v1/competitions/{0}/leagueTable/</leaguetable>
+  <leagueinfo>https://api.football-data.org/v1/competitions/{0}</leagueinfo>
+
+  <drawmargin>5</drawmargin><!--45 to 55-->
+  <drawmixedmargin>10</drawmixedmargin><!--40 to 60-->
+  
+  <metrics>
+    <LastGamesMetric>
+      <depth>10</depth>
+      <weight>7</weight><!--1 to 10-->
+    </LastGamesMetric>
+    <LastGamesMetric>
+      <depth>5</depth>
+      <weight>7</weight><!--1 to 10-->
+    </LastGamesMetric>
+    <LastGamesMetric>
+      <depth>3</depth>
+      <weight>7</weight><!--1 to 10-->
+    </LastGamesMetric>
+    <LastHomeAwayGamesMetric>
+      <depth>5</depth>
+      <weight>5</weight><!--1 to 10-->
+    </LastHomeAwayGamesMetric>
+  </metrics>
+</config>
