@@ -2,7 +2,7 @@
 <config>
   <league>Championship</league>
   <year>2017</year>
-  <matchday>1</matchday><!---1 means current-->
+  <matchday>1</matchday><!-- -1 means current-->
   <competitions>https://api.football-data.org/v1/competitions?season={0}</competitions>
   <teams>https://api.football-data.org/v1/competitions/{0}/teams</teams>
   <nextfixturesforteam>https://api.football-data.org/v1/teams/{0}/fixtures?timeFrame=p{1}</nextfixturesforteam>
