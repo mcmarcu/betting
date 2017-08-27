@@ -14,7 +14,7 @@ namespace Betting.Stats
 {
     class FixtureRetriever
     {
-
+       
         private static void AddDataToDB(string url,string data)
         {
             var insertSQL = "INSERT INTO sitedata (url, data) VALUES (@URL, @DATA)";
@@ -62,7 +62,7 @@ namespace Betting.Stats
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 data = "";
                 return false;
@@ -71,10 +71,11 @@ namespace Betting.Stats
 
         private static string GetHtmlData(string url, bool useCache = true)
         {
-            
             string html = string.Empty;
             if (useCache && GetDataFromDB(url, out html))
+            {
                 return html;
+            }
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.AutomaticDecompression = DecompressionMethods.GZip;
@@ -86,8 +87,10 @@ namespace Betting.Stats
                 html = reader.ReadToEnd();
             }
 
-            if(useCache)
+            if (useCache)
+            {
                 AddDataToDB(url, html);
+            }
 
             return html;
         }
@@ -122,6 +125,10 @@ namespace Betting.Stats
 
         public static List<Fixture> GetRound(int year, int matchDay)
         {
+            if (fixturesCache != null && fixturesCache.ContainsKey(new Tuple<int, int>(year, matchDay)))
+            {
+                return fixturesCache[new Tuple<int, int>(year, matchDay)];
+            }
             List<Fixture> result = new List<Fixture>();
             string templateUrl = ConfigManager.Instance.GetFixturesForLeagueUrl();
             string fixturesUrl = String.Format(templateUrl, GetLeagueId(year), matchDay);
@@ -151,6 +158,9 @@ namespace Betting.Stats
 
                 result.Add(newFixture);
             }
+            if (fixturesCache == null)
+                fixturesCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
+            fixturesCache.Add(new Tuple<int, int>(year, matchDay), result);
             return result;
         }
 
@@ -178,5 +188,7 @@ namespace Betting.Stats
             dynamic info = serializer.DeserializeObject(response);
             return info["currentMatchday"];
         }
+
+        public static Dictionary<Tuple<int,int>, List<Fixture>> fixturesCache;
     }
 }

@@ -12,20 +12,20 @@ namespace Betting.Metrics
     class LastGamesMetric : MetricInterface
     {
 
-        public LastGamesMetric(MetricConfig config) : base(config)
+        public LastGamesMetric(MetricConfig config, int matchDay, int year) : base(config, matchDay, year)
         {
         }
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2)
         {
-            int year = ConfigManager.Instance.GetYear();
-            int day = ConfigManager.Instance.GetMatchDay();
+            int thisYear = year;
+            int thisMatchDay = matchDay;
             int pctTeam1 = 0;
             int pctTeam2 = 0;
             for (int i = 0; i < config.depth; ++i)
             {
-                FixtureRetriever.GetPrevRound(out year, out day, year, day);
-                List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, day);
+                FixtureRetriever.GetPrevRound(out thisYear, out thisMatchDay, thisYear, thisMatchDay);
+                List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(thisYear, thisMatchDay);
                 pctTeam1 += GetPoints(FindFixture(thisRoundFixtures, teamName1,FixtureMode.All), teamName1);
                 pctTeam2 += GetPoints(FindFixture(thisRoundFixtures, teamName2,FixtureMode.All), teamName2);
             }

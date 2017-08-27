@@ -65,6 +65,7 @@
     <Compile Include="Metrics\LastGamesMetric.cs" />
     <Compile Include="Metrics\MetricFactory.cs" />
     <Compile Include="Metrics\MetricInterface.cs" />
+    <Compile Include="Metrics\ResultChecker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stats\FixtureRetriever.cs" />

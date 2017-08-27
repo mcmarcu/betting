@@ -10,16 +10,16 @@ namespace Betting.Metrics
 {
     class MetricFactory
     {
-        static public List<MetricInterface> GetMetrics()
+        static public List<MetricInterface> GetMetrics(int matchDay, int year)
         {
             List<MetricInterface> result = new List<MetricInterface>();
             List<MetricConfig> configs = ConfigManager.Instance.GetMetricConfigs();
             foreach(MetricConfig config in configs)
             {
                 if (config.name == "LastGamesMetric")
-                    result.Add(new LastGamesMetric(config));
+                    result.Add(new LastGamesMetric(config, matchDay, year));
                 if (config.name == "LastHomeAwayGamesMetric")
-                    result.Add(new LastHomeAwayGamesMetric(config));
+                    result.Add(new LastHomeAwayGamesMetric(config, matchDay, year));
             }
             return result;
         }

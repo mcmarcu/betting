@@ -11,22 +11,22 @@ namespace Betting.Metrics
 {
     class LastHomeAwayGamesMetric : MetricInterface
     {
-        public LastHomeAwayGamesMetric(MetricConfig config) : base(config)
+        public LastHomeAwayGamesMetric(MetricConfig config, int matchDay, int year) : base(config, matchDay, year)
         {
         }
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2)
         {
-            int year = ConfigManager.Instance.GetYear();
-            int day = ConfigManager.Instance.GetMatchDay();
+            int thisYear = year;
+            int thisMatchDay = matchDay;
             int pctTeam1 = 0;
             int pctTeam2 = 0;
             int nFound1 = 0;
             int nFound2 = 0;
             for (int i = 0; i < config.depth*3; ++i)
             {
-                FixtureRetriever.GetPrevRound(out year, out day, year, day);
-                List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, day);
+                FixtureRetriever.GetPrevRound(out thisYear, out thisMatchDay, thisYear, thisMatchDay);
+                List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(thisYear, thisMatchDay);
                 
                 try
                 {
