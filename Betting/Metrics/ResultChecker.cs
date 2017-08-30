@@ -14,11 +14,22 @@ namespace Betting.Metrics
         {
             this.metric = metric;
             this.fixture = fixture;
-            metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName);
+            this.dataAvailable = true;
+            try
+            {
+                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName);
+            }
+            catch(Exception)
+            {
+                this.dataAvailable = false;
+            }
         }
 
-        private string GetActualResult()
+        public string GetActualResult()
         {
+            if (!fixture.finished)
+                return "";
+
             if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
                 return "X";
             else if (fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
@@ -27,7 +38,7 @@ namespace Betting.Metrics
                 return "2";
         }
 
-        private string GetExpectedResult()
+        public string GetExpectedResult()
         {
             int drawMargin = ConfigManager.Instance.GetDrawMargin();
             int drawMixedMargin = ConfigManager.Instance.GetDrawMixedMargin();
@@ -78,7 +89,7 @@ namespace Betting.Metrics
 
         public InterpretResultStatus InterpretResult()
         {
-            if (!fixture.finished)
+            if (!fixture.finished || !dataAvailable)
                 return InterpretResultStatus.NODATA;
             
             try
@@ -101,5 +112,6 @@ namespace Betting.Metrics
         private Fixture fixture;
         private int pct1;
         private int pct2;
+        public bool dataAvailable;
     }
 }

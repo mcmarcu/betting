@@ -1,0 +1,39 @@
+year	day	matches	metrics stats
+2016	-1	37	8,7,6	61.26
+2016	-1	37	9,8,7	60.81
+2016	-1	37	7,6,5	59.21
+2016	-1	37	9,7,5	61.71
+
+
+
+
+https://www.indatabet.com/free.html
+
+Bristol City - Aston Villa FC,                         correctMetrics 3 result 1X(X) 0.35
+Burton Albion FC - Sheffield Wednesday,                correctMetrics 3 result X2(X) 0.26
+Brentford FC - Wolverhampton Wanderers FC,             correctMetrics 1
+Birmingham City - Reading,                             correctMetrics 1
+Fixture : {0} - {1}, no data     -------
+Cardiff City FC - Queens Park Rangers,                 correctMetrics 3 result 1X(1) 0.17
+Fixture : {0} - {1}, no data     -------
+Ipswich Town - Fulham FC,                              correctMetrics 0
+Fixture : {0} - {1}, no data     -------
+Fixture : {0} - {1}, no data     -------
+Fixture : {0} - {1}, no data     -------
+Nottingham Forest - Leeds United,                      correctMetrics 0
+Matchday : 5 - year 2017, correct 3      total 7
+
+
+Sheffield Wednesday - Queens Park Rangers,             correctMetrics 1
+Brentford FC - Nottingham Forest,                      correctMetrics 3 result X2(2) 0.75
+Cardiff City FC - Aston Villa FC,                      correctMetrics 3 result 1X(1) 0.37
+Derby County - Wolverhampton Wanderers FC,             correctMetrics 3 result X2(2) 0.52
+Fixture : {0} - {1}, no data     -------
+Leeds United - Preston North End,                      correctMetrics 3 result 1X(X) 0.25
+Fixture : {0} - {1}, no data     -------
+Barnsley FC - Ipswich Town,                            correctMetrics 3 result X2(2) 0.5
+Reading - Fulham FC,                                   correctMetrics 3 result X2(X) 0.3
+Birmingham City - Bristol City,                        correctMetrics 0
+Fixture : {0} - {1}, no data     -------
+Fixture : {0} - {1}, no data     -------
+Matchday : 2 - year 2017, correct 6      total 8
