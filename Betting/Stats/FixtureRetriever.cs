@@ -9,6 +9,7 @@ using System.IO;
 using Betting.Config;
 using System.Web.Script.Serialization;
 using System.Data.SqlClient;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Betting.Stats
 {
@@ -123,6 +124,34 @@ namespace Betting.Stats
             return info["numberOfMatchdays"];
         }
 
+        private static Dictionary<string,float> GetOdds(Fixture baseFixture, int leagueId)
+        {
+            Dictionary<string,float> result = new Dictionary<string, float>();
+            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\"+leagueId+".csv"))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                while (!parser.EndOfData)
+                {
+                    //Process row
+                    string[] fields = parser.ReadFields();
+                    if( baseFixture.homeTeamName.Contains(fields[2]) && baseFixture.awayTeamName.Contains(fields[3]))
+                    {
+                        result.Add("1", float.Parse(fields[23]));
+                        result.Add("X", float.Parse(fields[24]));
+                        result.Add("2", float.Parse(fields[25]));
+                        result.Add("1X", (result["1"] * result["X"]) / (result["1"] + result["X"]));
+                        result.Add("X2", (result["X"] * result["2"]) / (result["X"] + result["2"]));
+                        result.Add("12", (result["1"] * result["2"]) / (result["1"] + result["2"]));
+                        result.Add("1X2", 0);
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public static List<Fixture> GetRound(int year, int matchDay)
         {
             if (fixturesCache != null && fixturesCache.ContainsKey(new Tuple<int, int>(year, matchDay)))
@@ -155,6 +184,8 @@ namespace Betting.Stats
                 }
                 catch(Exception)
                 {}
+
+                newFixture.odds = GetOdds(newFixture, GetLeagueId(year));
 
                 result.Add(newFixture);
             }

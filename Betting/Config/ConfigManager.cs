@@ -105,6 +105,11 @@ namespace Betting.Config
             return matchDay;
         }
 
+        public int GetReverseDays()
+        {
+            return Int32.Parse(GetData("reverse"));
+        }
+
         private ConfigManager()
         {
             configDocument_ = new XmlDocument();

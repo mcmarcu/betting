@@ -21,5 +21,6 @@ namespace Betting.DataModel
         public bool finished;
         public Score finalScore;
         public Score halfScore;
+        public Dictionary<string, float> odds; 
     }
 }

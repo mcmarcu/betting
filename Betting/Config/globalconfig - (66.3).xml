@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <!-- https://betting.betfair.com/football/football-betting-systems-what-works-and-what-doesnt.html -->
+  <league>Championship</league>
+  <year>2016</year>
+  <matchday>-1</matchday><!-- -1 means current-->
+  <competitions>https://api.football-data.org/v1/competitions?season={0}</competitions>
+  <teams>https://api.football-data.org/v1/competitions/{0}/teams</teams>
+  <nextfixturesforteam>https://api.football-data.org/v1/teams/{0}/fixtures?timeFrame=p{1}</nextfixturesforteam>
+  <fixturesforleague>https://api.football-data.org/v1/competitions/{0}/fixtures?matchday={1}</fixturesforleague>
+  <leaguetable>https://api.football-data.org/v1/competitions/{0}/leagueTable/</leaguetable>
+  <leagueinfo>https://api.football-data.org/v1/competitions/{0}</leagueinfo>
+
+  <drawmargin>2</drawmargin><!--45 to 55-->
+  <drawmixedmargin>20</drawmixedmargin><!--40 to 60-->
+  
+  <metrics>
+   <LastGamesMetric>
+      <depth>9</depth>
+      <weight>7</weight>
+    </LastGamesMetric>
+    <LastGamesMetric>
+      <depth>4</depth>
+      <weight>7</weight>
+    </LastGamesMetric>
+    <!--<LastGamesMetric>
+      <depth>5</depth>
+      <weight>7</weight>
+    </LastGamesMetric>-->
+    <!--<GoalsConcededMetric>
+      <depth>9</depth>
+      <weight>7</weight>
+    </GoalsConcededMetric>
+    <GoalsConcededMetric>
+      <depth>7</depth>
+      <weight>7</weight>
+    </GoalsConcededMetric>
+    <GoalsConcededMetric>
+      <depth>5</depth>
+      <weight>7</weight>
+    </GoalsConcededMetric>-->
+    <GoalsScoredMetric>
+      <depth>9</depth>
+      <weight>7</weight>
+    </GoalsScoredMetric>
+    <GoalsScoredMetric>
+      <depth>4</depth>
+      <weight>7</weight>
+    </GoalsScoredMetric>
+    <!--<GoalsScoredMetric>
+      <depth>5</depth>
+      <weight>7</weight>
+    </GoalsScoredMetric>-->
+    <!--<LastHomeAwayGamesMetric>
+      <depth>5</depth>
+      <weight>5</weight>
+    </LastHomeAwayGamesMetric>-->
+  </metrics>
+</config>

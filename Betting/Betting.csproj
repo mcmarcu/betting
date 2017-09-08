@@ -49,6 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -72,6 +73,8 @@
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="DataModel\MetricConfig.cs" />
     <Compile Include="DataModel\Fixture.cs" />
+    <Compile Include="Metrics\GoalsConcededMetric.cs" />
+    <Compile Include="Metrics\GoalsScoredMetric.cs" />
     <Compile Include="Metrics\LastHomeAwayGamesMetric.cs" />
     <Compile Include="Metrics\LastGamesMetric.cs" />
     <Compile Include="Metrics\MetricFactory.cs" />
@@ -87,6 +90,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\globalconfig - %2865.8%29.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Config\globalconfig - %2866.3%29.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Config\globalconfig - %2866.5%29.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Config\globalconfig - %2867.5%29.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="DB\cachedata.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
