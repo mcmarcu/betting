@@ -11,6 +11,13 @@ namespace Betting.Config
 {
     class ConfigManager
     {
+        public enum LogLevel
+        {
+            LOG_ALL,
+            LOG_EXTRA,
+            LOG_RESULT
+        }
+
         public static ConfigManager Instance
         {
             get
@@ -45,6 +52,23 @@ namespace Betting.Config
             return result;
         }
 
+        public void SetMetricConfigs(List<MetricConfig> metrics)
+        {
+            XmlNodeList elemList = configDocument_.GetElementsByTagName("metrics");
+            elemList[0].RemoveAll();
+            foreach(MetricConfig metric in metrics)
+            {
+                XmlElement rootElem = configDocument_.CreateElement(metric.name);
+                XmlElement weightElem = configDocument_.CreateElement("weight");
+                weightElem.InnerText = metric.weight.ToString();
+                XmlElement depthElem = configDocument_.CreateElement("depth");
+                depthElem.InnerText = metric.depth.ToString();
+                rootElem.AppendChild(weightElem);
+                rootElem.AppendChild(depthElem);
+                elemList[0].AppendChild(rootElem);
+            }
+        }
+
         private string GetData(string id)
         {
             if (!cache.ContainsKey(id))
@@ -55,26 +79,6 @@ namespace Betting.Config
             return cache[id];
         }
 
-        public string GetCompetitionsUrl()
-        {
-            return GetData("competitions");
-        }
-
-        public string GetFixturesForLeagueUrl()
-        {
-            return GetData("fixturesforleague");
-        }
-
-        public string GetLeagueTableUrl()
-        {
-            return GetData("leaguetable");
-        }
-
-        public string GetLeagueInfoUrl()
-        {
-            return GetData("leagueinfo");
-        }
-
         public string GetLeagueName()
         {
             return GetData("league");
@@ -83,6 +87,16 @@ namespace Betting.Config
         public int GetYear()
         {
             return Int32.Parse(GetData("year"));
+        }
+
+        public int GetReverseYears()
+        {
+            return Int32.Parse(GetData("yreverse"));
+        }
+
+        public LogLevel GetLogLevel()
+        {
+            return (LogLevel)Enum.Parse(typeof(LogLevel), GetData("loglevel"));
         }
 
         public int GetDrawMargin()
@@ -97,18 +111,24 @@ namespace Betting.Config
 
         public int GetMatchDay()
         {
-            int matchDay =  Int32.Parse(GetData("matchday"));
-            if(matchDay == -1)
-            {
-                matchDay = FixtureRetriever.GetCurrentMatchDay(GetYear());
-            }
-            return matchDay;
+            return Int32.Parse(GetData("matchday"));
         }
 
         public int GetReverseDays()
         {
-            return Int32.Parse(GetData("reverse"));
+            return Int32.Parse(GetData("mreverse"));
         }
+
+        public float GetMaxOdds()
+        {
+            return float.Parse(GetData("maxodds"));
+        }
+
+        public float GetMinMetricCorrect()
+        {
+            return float.Parse(GetData("minmetriccorrect"));
+        }
+        
 
         private ConfigManager()
         {

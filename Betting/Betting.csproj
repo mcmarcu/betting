@@ -75,7 +75,6 @@
     <Compile Include="DataModel\Fixture.cs" />
     <Compile Include="Metrics\GoalsConcededMetric.cs" />
     <Compile Include="Metrics\GoalsScoredMetric.cs" />
-    <Compile Include="Metrics\LastHomeAwayGamesMetric.cs" />
     <Compile Include="Metrics\LastGamesMetric.cs" />
     <Compile Include="Metrics\MetricFactory.cs" />
     <Compile Include="Metrics\MetricInterface.cs" />
@@ -87,28 +86,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="DB\Championship2010.csv" />
+    <None Include="DB\Championship2011.csv" />
+    <None Include="DB\Championship2012.csv" />
+    <None Include="DB\Championship2013.csv" />
+    <None Include="DB\Championship2014.csv" />
+    <None Include="DB\Championship2015.csv" />
+    <None Include="DB\Championship2016.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config\globalconfig - %2865.8%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Config\globalconfig - %2866.3%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Config\globalconfig - %2866.5%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Config\globalconfig - %2867.5%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="DB\cachedata.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DB\cachedata_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>cachedata.mdf</DependentUpon>
-    </Content>
     <Content Include="Config\globalconfig.xml">
       <SubType>Designer</SubType>
     </Content>

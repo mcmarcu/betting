@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
-
-    enum FixtureMode
-    {
-        All,
-        Home,
-        Away
-    }
+    
 
     abstract class MetricInterface
     {
-        abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2);
+        abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
 
         public MetricInterface(MetricConfig config, int matchDay, int year)
         {
@@ -25,21 +19,34 @@ namespace Betting.Metrics
             this.matchDay = matchDay;
             this.year = year;
         }
-        
-        public Fixture FindFixture(List<Fixture> fixtures, string teamName, FixtureMode fixtureMode)
+
+        public List<Fixture> FindFixtures(List<Fixture> allFixtures, string thisTeam, Fixture fixture, int depth)
         {
-            foreach(Fixture fixture in fixtures)
+            List<Fixture> result = new List<Fixture>();
+            int startIdx = 0;
+            for (int i=allFixtures.Count -1; i>=0; --i)
             {
-                if(fixture.homeTeamName == teamName && (fixtureMode==FixtureMode.Home || fixtureMode == FixtureMode.All))
+                if( allFixtures[i].homeTeamName == fixture.homeTeamName &&
+                    allFixtures[i].awayTeamName == fixture.awayTeamName)
                 {
-                    return fixture;
-                }
-                if (fixture.awayTeamName == teamName && (fixtureMode == FixtureMode.Away || fixtureMode == FixtureMode.All))
-                {
-                    return fixture;
+                    startIdx = i;
+                    break;
                 }
             }
-            throw new KeyNotFoundException();
+
+            for (int i = startIdx - 1; i >= 0; --i)
+            {
+                if (allFixtures[i].homeTeamName == thisTeam || allFixtures[i].awayTeamName == thisTeam)
+                {
+                    result.Add(allFixtures[i]);
+                }
+                if (result.Count == depth)
+                {
+                    break;
+                }
+            }
+
+            return result;
         }
 
         public MetricConfig config;

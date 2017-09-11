@@ -18,8 +18,6 @@ namespace Betting.Metrics
             {
                 if (config.name == "LastGamesMetric")
                     result.Add(new LastGamesMetric(config, matchDay, year));
-                if (config.name == "LastHomeAwayGamesMetric")
-                    result.Add(new LastHomeAwayGamesMetric(config, matchDay, year));
                 if (config.name == "GoalsScoredMetric")
                     result.Add(new GoalsScoredMetric(config, matchDay, year));
                 if (config.name == "GoalsConcededMetric")

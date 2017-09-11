@@ -17,7 +17,7 @@ namespace Betting.Metrics
             this.dataAvailable = true;
             try
             {
-                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName);
+                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName, fixture);
             }
             catch(Exception)
             {
@@ -27,9 +27,6 @@ namespace Betting.Metrics
 
         public string GetActualResult()
         {
-            if (!fixture.finished)
-                return "";
-
             if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
                 return "X";
             else if (fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
@@ -67,10 +64,7 @@ namespace Betting.Metrics
             try
             {
                 Console.Write("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
-                if (fixture.finished)
-                {
-                    Console.Write(" ---- Final score {0} vs {1} ({2})", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals,GetActualResult());
-                }
+                Console.Write(" ---- Final score {0} vs {1} ({2})", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals,GetActualResult());
                 Console.WriteLine();
             }
             catch (Exception)
@@ -89,7 +83,7 @@ namespace Betting.Metrics
 
         public InterpretResultStatus InterpretResult()
         {
-            if (!fixture.finished || !dataAvailable)
+            if (!dataAvailable)
                 return InterpretResultStatus.NODATA;
             
             try

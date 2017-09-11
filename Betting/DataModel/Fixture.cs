@@ -15,10 +15,7 @@ namespace Betting.DataModel
     {
         public string homeTeamName;
         public string awayTeamName;
-        public int homeTeamId;
-        public int awayTeamId;
         public DateTime date;
-        public bool finished;
         public Score finalScore;
         public Score halfScore;
         public Dictionary<string, float> odds; 

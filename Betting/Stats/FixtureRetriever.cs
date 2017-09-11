@@ -15,183 +15,99 @@ namespace Betting.Stats
 {
     class FixtureRetriever
     {
-       
-        private static void AddDataToDB(string url,string data)
+        private static int GetNumberOfTeams(int year)
         {
-            var insertSQL = "INSERT INTO sitedata (url, data) VALUES (@URL, @DATA)";
-            url = url.Replace("https://api.football-data.org/v1/", "");
-
-            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\cachedata.mdf\";Integrated Security=True";
-            using (var cn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(insertSQL, cn))
+            if (numberOfTeamsCache != null && numberOfTeamsCache.ContainsKey(year))
             {
-                cn.Open();
-
-                cmd.Parameters.AddWithValue("@URL", url);
-                cmd.Parameters.AddWithValue("@DATA", data);
-                cmd.ExecuteNonQuery();
+                return numberOfTeamsCache[year];
             }
-        }
-
-        private static bool GetDataFromDB(string url, out string data)
-        {
-            url = url.Replace("https://api.football-data.org/v1/", "");
-            var selectSQL = "SELECT * FROM sitedata where url=@URL";
-
-            try
-            {
-                string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\cachedata.mdf\";Integrated Security=True";
-                using (var cn = new SqlConnection(connectionString))
-                using (var cmd = new SqlCommand(selectSQL, cn))
-                {
-                    cn.Open();
-
-                    cmd.Parameters.AddWithValue("@URL", url);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            data = reader[1].ToString();
-                            return true;
-                        }
-                        else
-                        {
-                            data = "";
-                            return false;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                data = "";
-                return false;
-            }
-        }
-
-        private static string GetHtmlData(string url, bool useCache = true)
-        {
-            string html = string.Empty;
-            if (useCache && GetDataFromDB(url, out html))
-            {
-                return html;
-            }
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.AutomaticDecompression = DecompressionMethods.GZip;
-
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                html = reader.ReadToEnd();
-            }
-
-            if (useCache)
-            {
-                AddDataToDB(url, html);
-            }
-
-            return html;
-        }
-
-        private static int GetLeagueId(int year)
-        {
             string leagueName = ConfigManager.Instance.GetLeagueName();
-            string templateUrl = ConfigManager.Instance.GetCompetitionsUrl();
-            string competitionsUrl = String.Format(templateUrl, year);
-            string response = GetHtmlData(competitionsUrl);
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            dynamic leagues = serializer.DeserializeObject(response);
-            foreach(dynamic league in leagues)
+            HashSet<string> teams = new HashSet<string>();
+            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\" + leagueName + year + ".csv"))
             {
-                if (league["caption"].IndexOf(leagueName) == 0)
-                    return league["id"];
-            }
-            throw new KeyNotFoundException();
-        }
 
-        private static int GetNumberOfMatchdays(int year)
-        {
-            string templateUrl = ConfigManager.Instance.GetLeagueInfoUrl();
-            string infoUrl = String.Format(templateUrl, GetLeagueId(year));
-            string response = GetHtmlData(infoUrl);
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            dynamic info = serializer.DeserializeObject(response);
-            return info["numberOfMatchdays"];
-        }
-
-        private static Dictionary<string,float> GetOdds(Fixture baseFixture, int leagueId)
-        {
-            Dictionary<string,float> result = new Dictionary<string, float>();
-            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\"+leagueId+".csv"))
-            {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
                 while (!parser.EndOfData)
                 {
-                    //Process row
                     string[] fields = parser.ReadFields();
-                    if( baseFixture.homeTeamName.Contains(fields[2]) && baseFixture.awayTeamName.Contains(fields[3]))
-                    {
-                        result.Add("1", float.Parse(fields[23]));
-                        result.Add("X", float.Parse(fields[24]));
-                        result.Add("2", float.Parse(fields[25]));
-                        result.Add("1X", (result["1"] * result["X"]) / (result["1"] + result["X"]));
-                        result.Add("X2", (result["X"] * result["2"]) / (result["X"] + result["2"]));
-                        result.Add("12", (result["1"] * result["2"]) / (result["1"] + result["2"]));
-                        result.Add("1X2", 0);
-                        break;
-                    }
+                    teams.Add(fields[2]);
+                }
+            }
+            if (numberOfTeamsCache == null)
+                numberOfTeamsCache = new Dictionary<int, int>();
+            numberOfTeamsCache.Add(year, teams.Count);
+            return teams.Count;
+
+        }
+        private static int GetNumberOfMatchdays(int year)
+        {
+            return GetNumberOfTeams(year) * 2;
+        }
+
+        private static int GetGamesPerMatchDay(int year)
+        {
+            return GetNumberOfTeams(year) / 2;
+        }
+
+        public static List<Fixture> GetAllFixtures(int year)
+        {
+            if (fixturesCache != null && fixturesCache.ContainsKey(year))
+            {
+                return fixturesCache[year];
+            }
+            string leagueName = ConfigManager.Instance.GetLeagueName();
+            int gamesPerMatchDay = GetGamesPerMatchDay(year);
+            List<Fixture> result = new List<Fixture>();
+            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\" + leagueName + year + ".csv"))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                parser.ReadFields();
+                while (!parser.EndOfData)
+                {
+                    string[] fields = parser.ReadFields();
+                    Fixture newFixture = new Fixture();
+                    newFixture.homeTeamName = fields[2];
+                    newFixture.awayTeamName = fields[3];
+                    newFixture.finalScore.homeTeamGoals = Int32.Parse(fields[4]);
+                    newFixture.finalScore.awayTeamGoals = Int32.Parse(fields[5]);
+                    newFixture.halfScore.homeTeamGoals = Int32.Parse(fields[7]);
+                    newFixture.halfScore.awayTeamGoals = Int32.Parse(fields[8]);
+                    newFixture.date = DateTime.Parse(fields[1]);
+
+                    newFixture.odds = new Dictionary<string, float>();
+                    newFixture.odds.Add("1", float.Parse(fields[23]));
+                    newFixture.odds.Add("X", float.Parse(fields[24]));
+                    newFixture.odds.Add("2", float.Parse(fields[25]));
+                    newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
+                    newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
+                    newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
+                    newFixture.odds.Add("1X2", 0);
+
+                    result.Add(newFixture);
                 }
             }
 
+            if (fixturesCache == null)
+                fixturesCache = new Dictionary<int, List<Fixture>>();
+            fixturesCache.Add(year, result);
             return result;
         }
 
+
         public static List<Fixture> GetRound(int year, int matchDay)
         {
-            if (fixturesCache != null && fixturesCache.ContainsKey(new Tuple<int, int>(year, matchDay)))
-            {
-                return fixturesCache[new Tuple<int, int>(year, matchDay)];
-            }
+            List<Fixture> all = GetAllFixtures(year);
+
+            int gamesPerMatchDay = GetGamesPerMatchDay(year);
+            int startRow = (matchDay - 1) * gamesPerMatchDay;
+            
             List<Fixture> result = new List<Fixture>();
-            string templateUrl = ConfigManager.Instance.GetFixturesForLeagueUrl();
-            string fixturesUrl = String.Format(templateUrl, GetLeagueId(year), matchDay);
-            bool useCache = year < DateTime.Now.Year || matchDay < GetCurrentMatchDay(year);
-            string response = GetHtmlData(fixturesUrl, useCache);
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            dynamic fixtures = serializer.DeserializeObject(response);
-            foreach (dynamic fixture in fixtures["fixtures"])
+            for(int i = 0;i<gamesPerMatchDay;++i)
             {
-                Fixture newFixture = new Fixture();
-                newFixture.homeTeamName = fixture["homeTeamName"];
-                newFixture.awayTeamName = fixture["awayTeamName"];
-                newFixture.homeTeamId = Int32.Parse(fixture["_links"]["homeTeam"]["href"].Replace("http://api.football-data.org/v1/teams/", ""));
-                newFixture.awayTeamId = Int32.Parse(fixture["_links"]["awayTeam"]["href"].Replace("http://api.football-data.org/v1/teams/", ""));
-                newFixture.finished = fixture["status"] == "FINISHED";
-                try
-                {
-                    newFixture.finalScore.homeTeamGoals = fixture["result"]["goalsHomeTeam"];
-                    newFixture.finalScore.awayTeamGoals = fixture["result"]["goalsAwayTeam"];
-                    newFixture.halfScore.homeTeamGoals = fixture["result"]["halfTime"]["goalsHomeTeam"];
-                    newFixture.halfScore.awayTeamGoals = fixture["result"]["halfTime"]["goalsAwayTeam"];
-                    newFixture.date = DateTime.Parse(fixture["date"]);
-                }
-                catch(Exception)
-                {}
-
-                newFixture.odds = GetOdds(newFixture, GetLeagueId(year));
-
-                result.Add(newFixture);
+                result.Add(all[startRow + i]);
             }
-            if (fixturesCache == null)
-                fixturesCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
-            fixturesCache.Add(new Tuple<int, int>(year, matchDay), result);
             return result;
         }
 
@@ -209,17 +125,7 @@ namespace Betting.Stats
             }  
         }
 
-        public static int GetCurrentMatchDay(int year)
-        {
-            string templateUrl = ConfigManager.Instance.GetLeagueInfoUrl();
-            string infoUrl = String.Format(templateUrl, GetLeagueId(year));
-            string response = GetHtmlData(infoUrl, false);
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            dynamic info = serializer.DeserializeObject(response);
-            return info["currentMatchday"];
-        }
-
-        public static Dictionary<Tuple<int,int>, List<Fixture>> fixturesCache;
+        public static Dictionary<int, List<Fixture>> fixturesCache;
+        public static Dictionary<int, int> numberOfTeamsCache;
     }
 }
