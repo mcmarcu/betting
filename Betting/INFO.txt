@@ -5,42 +5,8 @@ TODO: add how many times we run the simulation? how many matchdays behind
 http://www.football-data.co.uk/englandm.php
 https://betting.betfair.com/football/football-betting-systems-what-works-and-what-doesnt.html
 
-<league>PremierLeague</league>
-<year>2016</year>
-<yreverse>5</yreverse><!-- how many years behind we go-->
-<drawmargin>2</drawmargin><!--40 to 50-->
-<drawmixedmargin>20</drawmixedmargin><!--40 to 60-->
-<maxodds>3.0</maxodds>
-<minmetriccorrect>1</minmetriccorrect>
-
-
-<matchday>38</matchday><!-- max Championship = 46-->
-<mreverse>24</mreverse><!--how many matchdays behind we go-->
-<minyearprofit>2.0</minyearprofit>
-{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648, 2658, 2659, 2688, 2712, 2715, 2746, 2747 };
-			
-
-<matchday>38</matchday><!-- max Championship = 46-->
-<mreverse>10</mreverse><!--how many matchdays behind we go-->
-<minyearprofit>2.0</minyearprofit>
-{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648,					  2712,       2746, 2747 };
-
-<matchday>38</matchday>
-<mreverse>5</mreverse>
-<minyearprofit>0.5</minyearprofit>
-{ 2215,                         2315,                                                       2715,            };
-
-<matchday>33</matchday>
-<mreverse>5</mreverse>
-<minyearprofit>0.5</minyearprofit>
-{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648, 2658, 2659, 2688, 2712,             2747 };
-	
-			
-<matchday>38</matchday>
-<mreverse>10</mreverse>
-<minyearprofit>4.0</minyearprofit>
-{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647,                         2712,       2746, 2747 };
-			
-
-
-
+try strategy of convergence: 
+1. each match on his own!
+2. be more aggresive with results:
+	* all metric intersection != 1x2 then get result
+	* if at least half have an x then expected result has x

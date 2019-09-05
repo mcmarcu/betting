@@ -26,21 +26,21 @@ namespace Betting
 
             MetricConfig lastGamesMetric2 = new MetricConfig
             {
-                name = "GoalsScoredMetric",
+                name = "LastGamesMetric",
                 depth = (i / 10) % 10
             };
             metricConfigs.Add(lastGamesMetric2);
 
             MetricConfig goalsScoredMetric1 = new MetricConfig
             {
-                name = "DirectGamesMetric",
+                name = "GoalsScoredMetric",
                 depth = (i / 100) % 10
             };
             metricConfigs.Add(goalsScoredMetric1);
 
             MetricConfig goalsScoredMetric2 = new MetricConfig
             {
-                name = "DirectGamesMetric",
+                name = "GoalsConcededMetric",
                 depth = (i / 1000) % 10
             };
             metricConfigs.Add(goalsScoredMetric2);
@@ -50,9 +50,9 @@ namespace Betting
 
         static void Main(string[] args)
         {
-            //int[] configs = { 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648, 2658, 2659, 2688, 2712, 2715, 2746, 2747 };
-            for(int i = 1111; i<=4499; ++i)
-            //foreach(int i in configs)
+            int[] configs = { 1158 };
+            //for (int i = 1111; i<=9999; ++i)
+            foreach(int i in configs)
             {
                 if (i.ToString().Contains("0"))
                     continue;

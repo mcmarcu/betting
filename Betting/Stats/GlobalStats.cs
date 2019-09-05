@@ -46,8 +46,8 @@ namespace Betting.Stats
 
             }
 
-            if (reverseYears - correctYears > 1)
-                success = false;
+            //if (reverseYears - correctYears > 1)
+            //    success = false;
 
             if (!success)
                 averageProfit = 0;

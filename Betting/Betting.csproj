@@ -94,6 +94,15 @@
     <None Include="DB\Championship2014.csv" />
     <None Include="DB\Championship2015.csv" />
     <None Include="DB\Championship2016.csv" />
+    <None Include="DB\Championship2017.csv" />
+    <None Include="DB\Championship2018.csv" />
+    <None Include="DB\PremierLeague2010.csv" />
+    <None Include="DB\PremierLeague2011.csv" />
+    <None Include="DB\PremierLeague2012.csv" />
+    <None Include="DB\PremierLeague2013.csv" />
+    <None Include="DB\PremierLeague2014.csv" />
+    <None Include="DB\PremierLeague2015.csv" />
+    <None Include="DB\PremierLeague2016.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
