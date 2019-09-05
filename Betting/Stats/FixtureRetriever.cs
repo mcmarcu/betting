@@ -31,7 +31,8 @@ namespace Betting.Stats
                 while (!parser.EndOfData)
                 {
                     string[] fields = parser.ReadFields();
-                    teams.Add(fields[2]);
+                    if(fields[2]!="" && fields[2]!="HomeTeam")
+                        teams.Add(fields[2]);
                 }
             }
             if (numberOfTeamsCache == null)
@@ -42,7 +43,7 @@ namespace Betting.Stats
         }
         private static int GetNumberOfMatchdays(int year)
         {
-            return GetNumberOfTeams(year) * 2;
+            return (GetNumberOfTeams(year) - 1) * 2;
         }
 
         private static int GetGamesPerMatchDay(int year)
@@ -67,6 +68,8 @@ namespace Betting.Stats
                 while (!parser.EndOfData)
                 {
                     string[] fields = parser.ReadFields();
+                    if (fields[2] == "")
+                        break;
                     Fixture newFixture = new Fixture();
                     newFixture.homeTeamName = fields[2];
                     newFixture.awayTeamName = fields[3];

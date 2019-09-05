@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <config>
-  <league>Championship</league>
+  <league>PremierLeague</league>
   <year>2016</year>
   <yreverse>5</yreverse><!-- how many years behind we go-->
-  <matchday>46</matchday><!-- max Championship = 46-->
-  <mreverse>23</mreverse><!--how many matchdays behind we go-->
+  <matchday>38</matchday><!-- max Championship = 46-->
+  <mreverse>10</mreverse><!--how many matchdays behind we go-->
 
   <drawmargin>2</drawmargin><!--40 to 50-->
   <drawmixedmargin>20</drawmixedmargin><!--40 to 60-->
   <maxodds>2.0</maxodds>
   <minmetriccorrect>1</minmetriccorrect>
+  <minyearprofit>1.0</minyearprofit>
 
-  <loglevel>LOG_RESULT</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
+  <loglevel>LOG_EXTRA</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
   
   <metrics>
     <LastGamesMetric>

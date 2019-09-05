@@ -5,43 +5,42 @@ TODO: add how many times we run the simulation? how many matchdays behind
 http://www.football-data.co.uk/englandm.php
 https://betting.betfair.com/football/football-betting-systems-what-works-and-what-doesnt.html
 
-
-<league>Championship</league>
+<league>PremierLeague</league>
 <year>2016</year>
-<yreverse>4</yreverse><!-- how many years behind we go-->
-<matchday>46</matchday><!-- max Championship = 46-->
-<mreverse>23</mreverse><!--how many matchdays behind we go-->
-
+<yreverse>5</yreverse><!-- how many years behind we go-->
 <drawmargin>2</drawmargin><!--40 to 50-->
 <drawmixedmargin>20</drawmixedmargin><!--40 to 60-->
-<maxodds>2.0</maxodds>
-<minmetriccorrect>0.80</minmetriccorrect>
-Global success rate : 67.11, profit 1.45 on year 2016  -------
-Global success rate : 66.67, profit 1.81 on year 2015  -------
-Global success rate : 66.67, profit 2.81 on year 2014  -------
-Global success rate : 72.60, profit 7.84 on year 2013  -------
-Result True, avgProfit 3.477317 idx 1219
+<maxodds>3.0</maxodds>
+<minmetriccorrect>1</minmetriccorrect>
 
-Global success rate : 63.16, profit 1.06 on year 2016  -------
-Global success rate : 64.86, profit 3.40 on year 2015  -------
-Global success rate : 61.54, profit 1.48 on year 2014  -------
-Global success rate : 73.53, profit 8.58 on year 2013  -------
-Result True, avgProfit 3.63 idx 1311
 
-Global success rate : 69.62, profit 4.79 on year 2016  -------
-Global success rate : 66.67, profit 2.70 on year 2015  -------
-Global success rate : 65.88, profit 2.05 on year 2014  -------
-Global success rate : 74.03, profit 9.44 on year 2013  -------
-Result True, avgProfit 4.743096 idx 1815
+<matchday>38</matchday><!-- max Championship = 46-->
+<mreverse>24</mreverse><!--how many matchdays behind we go-->
+<minyearprofit>2.0</minyearprofit>
+{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648, 2658, 2659, 2688, 2712, 2715, 2746, 2747 };
+			
 
-Global success rate : 71.95, profit 6.81 on year 2016  -------
-Global success rate : 65.57, profit 1.34 on year 2015  -------
-Global success rate : 65.48, profit 1.91 on year 2014  -------
-Global success rate : 72.73, profit 8.81 on year 2013  -------
-Result True, avgProfit 4.718292 idx 1915
+<matchday>38</matchday><!-- max Championship = 46-->
+<mreverse>10</mreverse><!--how many matchdays behind we go-->
+<minyearprofit>2.0</minyearprofit>
+{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648,					  2712,       2746, 2747 };
 
-Global success rate : 70.59, profit 5.44 on year 2016  -------
-Global success rate : 65.08, profit 1.42 on year 2015  -------
-Global success rate : 66.67, profit 1.98 on year 2014  -------
-Global success rate : 73.49, profit 9.09 on year 2013  -------
-Result True, avgProfit 4.48152 idx 1918
+<matchday>38</matchday>
+<mreverse>5</mreverse>
+<minyearprofit>0.5</minyearprofit>
+{ 2215,                         2315,                                                       2715,            };
+
+<matchday>33</matchday>
+<mreverse>5</mreverse>
+<minyearprofit>0.5</minyearprofit>
+{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647, 2648, 2658, 2659, 2688, 2712,             2747 };
+	
+			
+<matchday>38</matchday>
+<mreverse>10</mreverse>
+<minyearprofit>4.0</minyearprofit>
+{ 2215, 2216, 2217, 2288, 2299, 2315, 2316, 2546, 2569, 2647,                         2712,       2746, 2747 };
+			
+
+
+

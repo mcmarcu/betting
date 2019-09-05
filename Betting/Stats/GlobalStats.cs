@@ -18,6 +18,7 @@ namespace Betting.Stats
             int yearTotal = 0;
             int yearCorrect = 0;
             float yearProfit = 0;
+            int correctYears = 0;
 
             averageProfit = 0;
             success = true;
@@ -36,11 +37,17 @@ namespace Betting.Stats
                     Console.ResetColor();
                 }
 
-                if (yearProfit < 0)
+                if (yearProfit < ConfigManager.Instance.GetMinYearProfit())
                     success = false;
+
+                if (yearProfit >= 0)
+                    correctYears++;
                 averageProfit += yearProfit;
 
             }
+
+            if (reverseYears - correctYears > 1)
+                success = false;
 
             if (!success)
                 averageProfit = 0;
@@ -64,7 +71,7 @@ namespace Betting.Stats
             {
                 GlobalStats.GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
 
-                if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
+                if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_ALL)
                     Console.Write("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
                 correctFixturesWithData += correctFixtures;
                 totalFixturesWithData += totalFixtures;

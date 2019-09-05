@@ -22,6 +22,8 @@ namespace Betting.Metrics
                     result.Add(new GoalsScoredMetric(config, matchDay, year));
                 if (config.name == "GoalsConcededMetric")
                     result.Add(new GoalsConcededMetric(config, matchDay, year));
+                if (config.name == "DirectGamesMetric")
+                    result.Add(new DirectGamesMetric(config, matchDay, year));
             }
             return result;
         }

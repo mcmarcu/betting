@@ -128,6 +128,11 @@ namespace Betting.Config
         {
             return float.Parse(GetData("minmetriccorrect"));
         }
+
+        public float GetMinYearProfit()
+        {
+            return float.Parse(GetData("minyearprofit"));
+        }
         
 
         private ConfigManager()

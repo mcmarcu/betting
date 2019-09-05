@@ -20,6 +20,7 @@ namespace Betting.Metrics
             this.year = year;
         }
 
+        // Find <depth> fixtures with <thisTeam> starting from <fixture>
         public List<Fixture> FindFixtures(List<Fixture> allFixtures, string thisTeam, Fixture fixture, int depth)
         {
             List<Fixture> result = new List<Fixture>();
@@ -43,6 +44,59 @@ namespace Betting.Metrics
                 if (result.Count == depth)
                 {
                     break;
+                }
+            }
+
+            return result;
+        }
+
+        // Find all fixtures with these 2 teams
+        public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, bool getIncludingFixture)
+        {
+            List<Fixture> result = new List<Fixture>();
+
+            int startIdx = allFixtures.Count - 1;
+            if (!getIncludingFixture)
+            {
+                for (int i = allFixtures.Count - 1; i >= 0; --i)
+                {
+                    if (allFixtures[i].homeTeamName == fixture.homeTeamName &&
+                        allFixtures[i].awayTeamName == fixture.awayTeamName)
+                    {
+                        startIdx = i - 1;
+                        break;
+                    }
+                }
+            }
+
+            for (int i = startIdx; i >= 0; --i)
+            {
+                if (allFixtures[i].homeTeamName == fixture.homeTeamName &&
+                    allFixtures[i].awayTeamName == fixture.awayTeamName)
+                {
+                    result.Add(allFixtures[i]);
+                }
+                if (allFixtures[i].awayTeamName == fixture.homeTeamName &&
+                    allFixtures[i].homeTeamName == fixture.awayTeamName)
+                {
+                    result.Add(allFixtures[i]);
+                }
+            }
+
+            return result;
+        }
+
+        // Find all fixtures with this team
+        public List<Fixture> FindFixtures(List<Fixture> allFixtures, string thisTeam)
+        {
+            List<Fixture> result = new List<Fixture>();
+
+            for (int i = allFixtures.Count - 1; i >= 0; --i)
+            {
+                if (allFixtures[i].homeTeamName == thisTeam &&
+                    allFixtures[i].awayTeamName == thisTeam)
+                {
+                    result.Add(allFixtures[i]);
                 }
             }
 
