@@ -23,7 +23,7 @@ namespace Betting.Stats
             }
             string leagueName = ConfigManager.Instance.GetLeagueName();
             HashSet<string> teams = new HashSet<string>();
-            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\" + leagueName + year + ".csv"))
+            using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
             {
 
                 parser.TextFieldType = FieldType.Delimited;
@@ -60,7 +60,7 @@ namespace Betting.Stats
             string leagueName = ConfigManager.Instance.GetLeagueName();
             int gamesPerMatchDay = GetGamesPerMatchDay(year);
             List<Fixture> result = new List<Fixture>();
-            using (TextFieldParser parser = new TextFieldParser("C:\\Users\\mcmar\\documents\\visual studio 2017\\Projects\\Betting\\Betting\\DB\\" + leagueName + year + ".csv"))
+            using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");

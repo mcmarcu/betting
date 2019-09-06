@@ -10,3 +10,28 @@ try strategy of convergence:
 2. be more aggresive with results:
 	* all metric intersection != 1x2 then get result
 	* if at least half have an x then expected result has x
+
+
+Usage: Betting [options]
+
+Options:
+  -?|-h|--help                         Show help information
+  -e|--evaluateMetrics                 Evaluate all metrics
+  -l|--league <optionvalue>            League name (PremierLeague/Championship)
+  -y|--year <optionvalue>              Yeasr to start compute (2018)
+  -r|--yreverse <optionvalue>          Year to go behind(7)
+  -m|--matchday <optionvalue>          Matchday to start compute (max Championship = 46 max Premier League = 38)
+  -v|--mreverse <optionvalue>          Matchdays to go behind(Matchday-10)
+  -d|--drawmargin <optionvalue>        Percent safety for draw(2)
+  -i|--drawmixedmargin <optionvalue>   Percent safety for draw mixed(20)
+  -o|--maxodds <optionvalue>           Max odds (2.0)
+  -c|--minmetriccorrect <optionvalue>  ?? 1
+  -p|--minyearprofit <optionvalue>     Min profit per year (-5)
+  -e|--loglevel <optionvalue>          LOG_ALL, LOG_EXTRA, LOG_RESULT
+
+Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_EXTRA
+Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_EXTRA
+
+
+
+Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=1.8 --minyearprofit=-5 --successrate=81 --loglevel=LOG_EXTRA

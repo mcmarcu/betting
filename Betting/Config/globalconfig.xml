@@ -8,19 +8,21 @@
 
   <drawmargin>2</drawmargin><!--48 to 52-->
   <drawmixedmargin>20</drawmixedmargin><!--40 to 60-->
-  <maxodds>2.0</maxodds>
+  <maxodds>1.8</maxodds>
   <minmetriccorrect>1</minmetriccorrect>
-  <minyearprofit>-1</minyearprofit>
+  <minyearprofit>-5</minyearprofit>
+  <successrate>75</successrate>
 
-  <loglevel>LOG_ALL</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
+  <loglevel>LOG_EXTRA</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
   
   <metrics>
+    <!-- 
     <LastGamesMetric>
       <depth>1</depth>
       <weight>7</weight>
     </LastGamesMetric>
 
-    <!--<GoalsScoredMetric>
+    <GoalsScoredMetric>
       <depth>6</depth>
       <weight>7</weight>
     </GoalsScoredMetric>-->

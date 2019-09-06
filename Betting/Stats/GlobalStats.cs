@@ -10,7 +10,7 @@ namespace Betting.Stats
 {
     public class GlobalStats
     {
-        public static void GetAllYearsData(out bool success, out float averageProfit)
+        public static void GetAllYearsData(out bool success, out float rate, out float averageProfit)
         {
             int year = ConfigManager.Instance.GetYear();
             int reverseYears = ConfigManager.Instance.GetReverseYears();
@@ -22,18 +22,19 @@ namespace Betting.Stats
 
             averageProfit = 0;
             success = true;
+            rate = 0;
 
             for(int i=0;i<reverseYears; ++i)
             {
                 int computeYear = year - i;
                 GlobalStats.GetYearData(out yearCorrect, out yearTotal, out yearProfit, computeYear);
-                float rate = ((float)yearCorrect / (float)yearTotal) * 100;
-
+                float yearRate = ((float)yearCorrect / (float)yearTotal) * 100;
+                rate += yearRate;
 
                 if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.Write("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", rate, yearProfit, computeYear);
+                    Console.Write("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
                     Console.ResetColor();
                 }
 
@@ -45,6 +46,8 @@ namespace Betting.Stats
                 averageProfit += yearProfit;
 
             }
+
+            rate /= reverseYears;
 
             //if (reverseYears - correctYears > 1)
             //    success = false;
@@ -80,6 +83,53 @@ namespace Betting.Stats
             }
         }
 
+
+        public static float GetMatchdayProfit(List<float> matchdayOdds)
+        {
+            float profit = 0;
+
+            //one by one
+            foreach(float odd in matchdayOdds)
+            {
+                if (odd > 0)
+                    profit += odd - 1;
+                else
+                    profit -= 1;
+            }
+
+            //two by twos
+            if(matchdayOdds.Count >=2)
+            {
+                for(int i=0;i<matchdayOdds.Count-1;++i)
+                    for(int j=i+1;j<matchdayOdds.Count;++j)
+                    {
+                        float newOdd = matchdayOdds[i] * matchdayOdds[j];
+                        if (newOdd > 0)
+                            profit += newOdd - 1;
+                        else
+                            profit -= 1;
+                    }
+            }
+
+            //three by threes
+            if (matchdayOdds.Count >= 3)
+            {
+                for (int i = 0; i < matchdayOdds.Count - 2; ++i)
+                    for (int j = i + 1; j < matchdayOdds.Count - 1; ++j)
+                        for (int k = j + 1; k < matchdayOdds.Count; ++k)
+                        {
+                            float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k];
+                            if (newOdd > 0)
+                                profit += newOdd- 1;
+                            else
+                                profit -= 1;
+                        }
+            }
+
+            return profit;
+
+        }
+
         public static void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
         {
             List<MetricInterface> metrics = MetricFactory.GetMetrics(matchDay, year);
@@ -88,7 +138,7 @@ namespace Betting.Stats
 
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
-            currentProfit = 0;
+            List<float> matchdayOdds = new List<float>();
 
             foreach (Fixture fixture in thisRoundFixtures)
             {
@@ -108,6 +158,7 @@ namespace Betting.Stats
 
                 }
 
+                //TODO: what does GetMinMetricCorrect do?
                 int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData); 
                 string possibleResults = "1X2";
                 foreach(char result in possibleResults)
@@ -117,20 +168,38 @@ namespace Betting.Stats
                         computedResult += result;
                     }
                 }
+                //TODO: put under config
+                if(computedResult == "1" && aggregateResult.Split('X').Length - 1 > 0)
+                {
+                    computedResult = "1X";
+                }
+                if (computedResult == "2" && aggregateResult.Split('X').Length - 1 > 0)
+                {
+                    computedResult = "X2";
+                }
+
+                if (computedResult == "X")
+                {
+                    computedResult = "1X2";
+                    totalMetricsWithData = 0;
+                }
+                //END X related hacks
 
                 //bad expected 1X2
-                if(computedResult.Length == 3 || computedResult.Length == 0)
+                if (computedResult.Length == 3 || computedResult.Length == 0)
                 {
                     computedResult = "1X2";
                     totalMetricsWithData = 0;
                 }
 
+
                 if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds())
                 {
                     totalMetricsWithData = 0;
                 }
-                
 
+                
+                
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
                 if (totalMetricsWithData == metrics.Count && computedResult != String.Empty && actualResult != String.Empty)
                 {
@@ -142,12 +211,12 @@ namespace Betting.Stats
 
                     if (metricSuccess)
                     {
-                        currentProfit += (fixture.odds[computedResult] - 1);
+                        matchdayOdds.Add(fixture.odds[computedResult]);
                         Console.ForegroundColor = ConsoleColor.Green;
                     }
                     else
                     {
-                        currentProfit -= 1;
+                        matchdayOdds.Add(0);
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
                 }
@@ -162,6 +231,7 @@ namespace Betting.Stats
                 Console.ResetColor();
             }
 
+            currentProfit = GetMatchdayProfit(matchdayOdds);
         }
     }
 }

@@ -30,6 +30,23 @@ namespace Betting.Config
             }
         }
 
+        public void SetMetricConfigs(List<MetricConfig> metrics)
+        {
+            XmlNodeList elemList = configDocument_.GetElementsByTagName("metrics");
+            elemList[0].RemoveAll();
+            foreach (MetricConfig metric in metrics)
+            {
+                XmlElement rootElem = configDocument_.CreateElement(metric.name);
+                XmlElement weightElem = configDocument_.CreateElement("weight");
+                weightElem.InnerText = metric.weight.ToString();
+                XmlElement depthElem = configDocument_.CreateElement("depth");
+                depthElem.InnerText = metric.depth.ToString();
+                rootElem.AppendChild(weightElem);
+                rootElem.AppendChild(depthElem);
+                elemList[0].AppendChild(rootElem);
+            }
+        }
+
         public List<MetricConfig> GetMetricConfigs()
         {
             List<MetricConfig> result = new List<MetricConfig>();
@@ -51,22 +68,9 @@ namespace Betting.Config
             }
             return result;
         }
-
-        public void SetMetricConfigs(List<MetricConfig> metrics)
+        private void SetData(string id, string value)
         {
-            XmlNodeList elemList = configDocument_.GetElementsByTagName("metrics");
-            elemList[0].RemoveAll();
-            foreach(MetricConfig metric in metrics)
-            {
-                XmlElement rootElem = configDocument_.CreateElement(metric.name);
-                XmlElement weightElem = configDocument_.CreateElement("weight");
-                weightElem.InnerText = metric.weight.ToString();
-                XmlElement depthElem = configDocument_.CreateElement("depth");
-                depthElem.InnerText = metric.depth.ToString();
-                rootElem.AppendChild(weightElem);
-                rootElem.AppendChild(depthElem);
-                elemList[0].AppendChild(rootElem);
-            }
+            cache[id] = value;
         }
 
         private string GetData(string id)
@@ -79,9 +83,19 @@ namespace Betting.Config
             return cache[id];
         }
 
+        public void SetLeagueName(string value)
+        {
+            SetData("league", value);
+        }
+
         public string GetLeagueName()
         {
             return GetData("league");
+        }
+
+        public void SetYear(string value)
+        {
+            SetData("year", value);
         }
 
         public int GetYear()
@@ -89,9 +103,19 @@ namespace Betting.Config
             return Int32.Parse(GetData("year"));
         }
 
+        public void SetReverseYears(string value)
+        {
+            SetData("yreverse", value);
+        }
+
         public int GetReverseYears()
         {
             return Int32.Parse(GetData("yreverse"));
+        }
+
+        public void SetLogLevel(string value)
+        {
+            SetData("loglevel", value);
         }
 
         public LogLevel GetLogLevel()
@@ -99,9 +123,19 @@ namespace Betting.Config
             return (LogLevel)Enum.Parse(typeof(LogLevel), GetData("loglevel"));
         }
 
+        public void SetDrawMargin(string value)
+        {
+            SetData("drawmargin", value);
+        }
+
         public int GetDrawMargin()
         {
             return Int32.Parse(GetData("drawmargin"));
+        }
+
+        public void SetDrawMixedMargin(string value)
+        {
+            SetData("drawmixedmargin", value);
         }
 
         public int GetDrawMixedMargin()
@@ -109,9 +143,19 @@ namespace Betting.Config
             return Int32.Parse(GetData("drawmixedmargin"));
         }
 
+        public void SetMatchDay(string value)
+        {
+            SetData("matchday", value);
+        }
+
         public int GetMatchDay()
         {
             return Int32.Parse(GetData("matchday"));
+        }
+
+        public void SetReverseDays(string value)
+        {
+            SetData("mreverse", value);
         }
 
         public int GetReverseDays()
@@ -119,9 +163,19 @@ namespace Betting.Config
             return Int32.Parse(GetData("mreverse"));
         }
 
+        public void SetMaxOdds(string value)
+        {
+            SetData("maxodds", value);
+        }
+
         public float GetMaxOdds()
         {
             return float.Parse(GetData("maxodds"));
+        }
+
+        public void SetMinMetricCorrect(string value)
+        {
+            SetData("minmetriccorrect", value);
         }
 
         public float GetMinMetricCorrect()
@@ -129,16 +183,31 @@ namespace Betting.Config
             return float.Parse(GetData("minmetriccorrect"));
         }
 
+        public void SetMinYearProfit(string value)
+        {
+            SetData("minyearprofit", value);
+        }
+
         public float GetMinYearProfit()
         {
             return float.Parse(GetData("minyearprofit"));
         }
-        
+
+        public void SetSuccessRate(string value)
+        {
+            SetData("successrate", value);
+        }
+
+        public float GetSuccessRate()
+        {
+            return float.Parse(GetData("successrate"));
+        }
+
 
         private ConfigManager()
         {
             configDocument_ = new XmlDocument();
-            configDocument_.Load(@"c:\users\mcmar\documents\visual studio 2017\Projects\Betting\Betting\Config\globalconfig.xml");
+            configDocument_.Load("..\\..\\Config\\globalconfig.xml");
         }
         private static ConfigManager instance;
         private XmlDocument configDocument_;
