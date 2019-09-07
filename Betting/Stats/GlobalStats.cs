@@ -52,10 +52,10 @@ namespace Betting.Stats
             //if (reverseYears - correctYears > 1)
             //    success = false;
 
-            if (!success)
-                averageProfit = 0;
-            else
-                averageProfit = averageProfit/reverseYears;
+            //if (!success)
+            //    averageProfit = 0;
+            //else
+            averageProfit = averageProfit/reverseYears;
         }
 
         public static void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int year)

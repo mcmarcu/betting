@@ -13,6 +13,36 @@ namespace Betting
 {
     class Program
     {
+        public static void PrintMetricList(int i)
+        {
+            List<MetricConfig> metricConfigs = new List<MetricConfig>();
+
+            int LastGamesMetricD = i % 10;
+            int GoalsScoredMetricD = (i / 10) % 10;
+            int GoalsConcededMetricD = (i / 100) % 10;
+
+            if (LastGamesMetricD != 0)
+            {
+                Console.Write(" LastGames ({0}); ", LastGamesMetricD);
+            }
+
+            if (GoalsScoredMetricD != 0)
+            {
+                Console.Write(" GoalsScored ({0}); ", GoalsScoredMetricD);
+            }
+
+            if (GoalsConcededMetricD != 0)
+            {
+                Console.Write(" GoalsConceded ({0}); ", GoalsConcededMetricD);
+            }
+
+            if (i / 1000 > 0)
+            {
+                PrintMetricList(i / 1000);
+            }
+            Console.Write("\n");
+
+        }
 
         public static List<MetricConfig> GetMetricList(int i)
         {
@@ -29,7 +59,6 @@ namespace Betting
                     name = "LastGamesMetric",
                     depth = LastGamesMetricD
                 };
-                Console.Write("Name {0}, Depth {1} \n", lastGamesMetric.name, lastGamesMetric.depth);
                 metricConfigs.Add(lastGamesMetric);
             }
 
@@ -40,7 +69,6 @@ namespace Betting
                     name = "GoalsScoredMetric",
                     depth = GoalsScoredMetricD
                 };
-                Console.Write("Name {0}, Depth {1} \n", goalsScoredMetric.name, goalsScoredMetric.depth);
                 metricConfigs.Add(goalsScoredMetric);
             }
 
@@ -51,7 +79,6 @@ namespace Betting
                     name = "GoalsConcededMetric",
                     depth = GoalsConcededMetricD
                 };
-                Console.Write("Name {0}, Depth {1} \n", goalsConcededMetric.name, goalsConcededMetric.depth);
                 metricConfigs.Add(goalsConcededMetric);
             }
 
@@ -73,6 +100,8 @@ namespace Betting
             app.HelpOption("-?|-h|--help");
 
             var executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
+            var inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
+
             var leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
             var yearOption = app.Option("-y|--year <optionvalue>", "Yeasr to start compute (2018)", CommandOptionType.SingleValue);
             var yReverseOption = app.Option("-r|--yreverse <optionvalue>", "Year to go behind(7)", CommandOptionType.SingleValue);
@@ -85,6 +114,10 @@ namespace Betting
             var minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (-5)", CommandOptionType.SingleValue);
             var logLevelOption = app.Option("-g|--loglevel <optionvalue>", "LOG_ALL, LOG_EXTRA, LOG_RESULT", CommandOptionType.SingleValue);
             var successRateOption = app.Option("-s|--successrate <optionvalue>", "how much should be correct(75)", CommandOptionType.SingleValue);
+            var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
+            var filterTopProfit = app.Option("-f|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
+
+
 
             app.OnExecute(() =>
             {
@@ -112,15 +145,42 @@ namespace Betting
                     ConfigManager.Instance.SetLogLevel(logLevelOption.Value());
                 if (successRateOption.HasValue())
                     ConfigManager.Instance.SetSuccessRate(successRateOption.Value());
+                if (filterTopRate.HasValue())
+                    ConfigManager.Instance.SetSuccessRate(filterTopRate.Value());
+                if (filterTopProfit.HasValue())
+                    ConfigManager.Instance.SetSuccessRate(filterTopProfit.Value());
 
-                if (executeMetrics.HasValue())
+                if (inspectMetric.HasValue())
                 {
-                    for (int i = 0; i <= 1000000; ++i)
+                    int metricConfigId = Int32.Parse(inspectMetric.Value());
+                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
+                    PrintMetricList(metricConfigId);
+                    ConfigManager.Instance.SetMetricConfigs(metricConfigs);
+
+                    GlobalStats.GetAllYearsData(out bool success, out float rate, out float averageProfit);
+
+                    Console.ForegroundColor = success ? ConsoleColor.Green : ConsoleColor.Red;
+
+                    Console.Write("Result {0}, Rate {1}, avgProfit {2} \n", success, rate, averageProfit);
+
+                    Console.ResetColor();
+                }
+                else if (executeMetrics.HasValue())
+                {
+                    SortedDictionary<float, Tuple<float, float, int>> topByProfit =
+                        new SortedDictionary<float, Tuple<float, float, int>>();
+                    SortedDictionary<float, Tuple<float, float, int>> topByRate =
+                        new SortedDictionary<float, Tuple<float, float, int>>();
+
+                    for (int i = 0; i <= 1000; ++i)
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 
                         if (metricConfigs.Count == 0)
                             continue;
+
+                        if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
+                            PrintMetricList(i);
 
                         ConfigManager.Instance.SetMetricConfigs(metricConfigs);
 
@@ -129,12 +189,43 @@ namespace Betting
                         if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
                         {
                             Console.ForegroundColor = success ? ConsoleColor.Green : ConsoleColor.Red;
-                                
+
                             Console.Write("Result {0}, Rate {1}, avgProfit {2} \n", success, rate, averageProfit);
-                            if (success || rate > ConfigManager.Instance.GetSuccessRate())
-                                Console.ReadLine();
+                            //if (success || rate > ConfigManager.Instance.GetSuccessRate())
+                            //    Console.ReadLine();
 
                             Console.ResetColor();
+                        }
+                        if(!topByProfit.ContainsKey(averageProfit))
+                            topByProfit.Add(averageProfit, Tuple.Create(rate, averageProfit, i));
+                        if(topByProfit.Count>ConfigManager.Instance.GetFilterTopProfit())
+                            topByProfit.Remove(topByProfit.Keys.First());
+
+                        if(!topByRate.ContainsKey(rate))
+                            topByRate.Add(rate, Tuple.Create(rate, averageProfit, i));
+                        if (topByRate.Count > ConfigManager.Instance.GetFilterTopRate())
+                            topByRate.Remove(topByRate.Keys.First());
+                    }
+
+                    if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
+                    {
+
+                        Console.Write("TopByProfit {0}: \n", ConfigManager.Instance.GetFilterTopProfit());
+
+                        foreach (Tuple<float,float,int> t in topByProfit.Values)
+                        {
+                            Console.Write("Rate {0}, avgProfit {1}, id {2}:  ", t.Item1, t.Item2, t.Item3);
+                            PrintMetricList(t.Item3);
+                            Console.Write("---------------- \n", t.Item1, t.Item2);
+                        }
+
+                        Console.Write("TopByRate {0}: \n", ConfigManager.Instance.GetFilterTopRate());
+
+                        foreach (Tuple<float, float, int> t in topByRate.Values)
+                        {
+                            Console.Write("Rate {0}, avgProfit {1}, id {2}: ", t.Item1, t.Item2, t.Item3);
+                            PrintMetricList(t.Item3);
+                            Console.Write("---------------- \n", t.Item1, t.Item2);
                         }
                     }
                 }

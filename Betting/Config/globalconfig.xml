@@ -12,6 +12,8 @@
   <minmetriccorrect>1</minmetriccorrect>
   <minyearprofit>-5</minyearprofit>
   <successrate>75</successrate>
+  <filtertoprate>10</filtertoprate>
+  <filtertopprofit>10</filtertopprofit>
 
   <loglevel>LOG_EXTRA</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
   

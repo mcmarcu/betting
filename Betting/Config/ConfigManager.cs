@@ -203,6 +203,26 @@ namespace Betting.Config
             return float.Parse(GetData("successrate"));
         }
 
+        public void SetFilterTopRate(string value)
+        {
+            SetData("filtertoprate", value);
+        }
+
+        public int GetFilterTopRate()
+        {
+            return Int32.Parse(GetData("filtertoprate"));
+        }
+
+        public void SetFilterTopProfit(string value)
+        {
+            SetData("filtertopprofit", value);
+        }
+
+        public int GetFilterTopProfit()
+        {
+            return Int32.Parse(GetData("filtertopprofit"));
+        }
+
 
         private ConfigManager()
         {
