@@ -34,4 +34,49 @@ Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 
 
 
 
-Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=1.8 --minyearprofit=-5 --successrate=81 --loglevel=LOG_EXTRA
+Betting.exe -x=690 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_EXTRA
+
+
+TopByProfit 10:
+Rate 73.5811, avgProfit 61.15142, id 670:   GoalsScored (7);  GoalsConceded (6);
+----------------
+Rate 71.17324, avgProfit 62.76107, id 15:   LastGames (5);  GoalsScored (1);
+----------------
+Rate 73.81774, avgProfit 73.54518, id 840:   GoalsScored (4);  GoalsConceded (8);
+----------------
+Rate 74.1461, avgProfit 75.2719, id 690:   GoalsScored (9);  GoalsConceded (6);
+----------------
+Rate 73.03871, avgProfit 81.91441, id 940:   GoalsScored (4);  GoalsConceded (9);
+----------------
+Rate 70.84354, avgProfit 90.89423, id 44:   LastGames (4);  GoalsScored (4);
+----------------
+Rate 72.03873, avgProfit 97.46544, id 94:   LastGames (4);  GoalsScored (9);
+----------------
+Rate 72.43901, avgProfit 105.7392, id 95:   LastGames (5);  GoalsScored (9);
+----------------
+Rate 71.71126, avgProfit 114.6907, id 96:   LastGames (6);  GoalsScored (9);
+----------------
+Rate 74.67442, avgProfit 119.4739, id 590:   GoalsScored (9);  GoalsConceded (5);
+----------------
+TopByRate 10:
+Rate 73.81774, avgProfit 73.54518, id 840:  GoalsScored (4);  GoalsConceded (8);
+----------------
+Rate 73.85103, avgProfit -28.81231, id 780:  GoalsScored (8);  GoalsConceded (7);
+----------------
+Rate 73.88055, avgProfit 26.51432, id 980:  GoalsScored (8);  GoalsConceded (9);
+----------------
+Rate 73.90476, avgProfit 56.55337, id 490:  GoalsScored (9);  GoalsConceded (4);
+----------------
+Rate 74.07619, avgProfit 38.21673, id 890:  GoalsScored (9);  GoalsConceded (8);
+----------------
+Rate 74.11599, avgProfit 48.04989, id 580:  GoalsScored (8);  GoalsConceded (5);
+----------------
+Rate 74.1461, avgProfit 75.2719, id 690:  GoalsScored (9);  GoalsConceded (6);
+----------------
+Rate 74.19574, avgProfit 48.05423, id 680:  GoalsScored (8);  GoalsConceded (6);
+----------------
+Rate 74.67442, avgProfit 119.4739, id 590:  GoalsScored (9);  GoalsConceded (5);
+----------------
+Rate 74.6814, avgProfit 48.93542, id 880:  GoalsScored (8);  GoalsConceded (8);
+----------------
+DONE

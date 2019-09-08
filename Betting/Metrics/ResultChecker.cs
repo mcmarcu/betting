@@ -12,7 +12,6 @@ namespace Betting.Metrics
     {
         public ResultChecker(MetricInterface metric, Fixture fixture)
         {
-            this.metric = metric;
             this.fixture = fixture;
             this.dataAvailable = true;
             try
@@ -102,7 +101,6 @@ namespace Betting.Metrics
             }
         }
 
-        private MetricInterface metric;
         private Fixture fixture;
         private int pct1;
         private int pct2;

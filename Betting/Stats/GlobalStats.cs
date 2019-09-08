@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Betting.Stats
 {
@@ -14,22 +15,20 @@ namespace Betting.Stats
         {
             int year = ConfigManager.Instance.GetYear();
             int reverseYears = ConfigManager.Instance.GetReverseYears();
+     
+            float laverageProfit = 0;
+            bool lsuccess = true;
+            float lrate = 0;
 
-            int yearTotal = 0;
-            int yearCorrect = 0;
-            float yearProfit = 0;
-            int correctYears = 0;
-
-            averageProfit = 0;
-            success = true;
-            rate = 0;
-
-            for(int i=0;i<reverseYears; ++i)
+            Parallel.For(0, reverseYears, (i, state) =>
             {
+                int yearTotal = 0;
+                int yearCorrect = 0;
+                float yearProfit = 0;
                 int computeYear = year - i;
                 GlobalStats.GetYearData(out yearCorrect, out yearTotal, out yearProfit, computeYear);
                 float yearRate = ((float)yearCorrect / (float)yearTotal) * 100;
-                rate += yearRate;
+                lrate += yearRate;
 
                 if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
                 {
@@ -39,23 +38,14 @@ namespace Betting.Stats
                 }
 
                 if (yearProfit < ConfigManager.Instance.GetMinYearProfit())
-                    success = false;
+                    lsuccess = false;
 
-                if (yearProfit >= 0)
-                    correctYears++;
-                averageProfit += yearProfit;
+                laverageProfit += yearProfit;
+            });
 
-            }
-
-            rate /= reverseYears;
-
-            //if (reverseYears - correctYears > 1)
-            //    success = false;
-
-            //if (!success)
-            //    averageProfit = 0;
-            //else
-            averageProfit = averageProfit/reverseYears;
+            success = lsuccess;
+            rate = lrate/reverseYears;
+            averageProfit = laverageProfit/reverseYears;
         }
 
         public static void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int year)
@@ -126,8 +116,22 @@ namespace Betting.Stats
                         }
             }
 
+            //four by fours
+            if (matchdayOdds.Count >= 4)
+            {
+                for (int i = 0; i < matchdayOdds.Count - 3; ++i)
+                    for (int j = i + 1; j < matchdayOdds.Count - 2; ++j)
+                        for (int k = j + 1; k < matchdayOdds.Count -1; ++k)
+                            for (int l = k + 1; l < matchdayOdds.Count; ++l)
+                            {
+                                float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k] * matchdayOdds[l];
+                                if (newOdd > 0)
+                                    profit += newOdd - 1;
+                                else
+                                    profit -= 1;
+                            }
+            }
             return profit;
-
         }
 
         public static void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)

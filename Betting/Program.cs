@@ -165,19 +165,20 @@ namespace Betting
 
                     Console.ResetColor();
                 }
-                else if (executeMetrics.HasValue())
+                //else if (executeMetrics.HasValue())
                 {
                     SortedDictionary<float, Tuple<float, float, int>> topByProfit =
                         new SortedDictionary<float, Tuple<float, float, int>>();
                     SortedDictionary<float, Tuple<float, float, int>> topByRate =
                         new SortedDictionary<float, Tuple<float, float, int>>();
 
+                    //Parallel.For(0, 1000, (i, state) =>
                     for (int i = 0; i <= 1000; ++i)
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 
                         if (metricConfigs.Count == 0)
-                            continue;
+                            continue;//return;//continue;
 
                         if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
                             PrintMetricList(i);
@@ -196,16 +197,17 @@ namespace Betting
 
                             Console.ResetColor();
                         }
-                        if(!topByProfit.ContainsKey(averageProfit))
+                        if (!topByProfit.ContainsKey(averageProfit))
                             topByProfit.Add(averageProfit, Tuple.Create(rate, averageProfit, i));
-                        if(topByProfit.Count>ConfigManager.Instance.GetFilterTopProfit())
+                        if (topByProfit.Count > ConfigManager.Instance.GetFilterTopProfit())
                             topByProfit.Remove(topByProfit.Keys.First());
 
-                        if(!topByRate.ContainsKey(rate))
+                        if (!topByRate.ContainsKey(rate))
                             topByRate.Add(rate, Tuple.Create(rate, averageProfit, i));
                         if (topByRate.Count > ConfigManager.Instance.GetFilterTopRate())
                             topByRate.Remove(topByRate.Keys.First());
                     }
+                    //});
 
                     if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
                     {

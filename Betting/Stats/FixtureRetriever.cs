@@ -10,6 +10,7 @@ using Betting.Config;
 using System.Web.Script.Serialization;
 using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
+using System.Threading;
 
 namespace Betting.Stats
 {
@@ -17,7 +18,7 @@ namespace Betting.Stats
     {
         private static int GetNumberOfTeams(int year)
         {
-            if (numberOfTeamsCache != null && numberOfTeamsCache.ContainsKey(year))
+            if (numberOfTeamsCache.ContainsKey(year))
             {
                 return numberOfTeamsCache[year];
             }
@@ -35,8 +36,7 @@ namespace Betting.Stats
                         teams.Add(fields[2]);
                 }
             }
-            if (numberOfTeamsCache == null)
-                numberOfTeamsCache = new Dictionary<int, int>();
+
             numberOfTeamsCache.Add(year, teams.Count);
             return teams.Count;
 
@@ -53,49 +53,50 @@ namespace Betting.Stats
 
         public static List<Fixture> GetAllFixtures(int year)
         {
-            if (fixturesCache != null && fixturesCache.ContainsKey(year))
+            lock (fixturesCache)
             {
-                return fixturesCache[year];
-            }
-            string leagueName = ConfigManager.Instance.GetLeagueName();
-            int gamesPerMatchDay = GetGamesPerMatchDay(year);
-            List<Fixture> result = new List<Fixture>();
-            using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                parser.ReadFields();
-                while (!parser.EndOfData)
+                if (fixturesCache.ContainsKey(year))
                 {
-                    string[] fields = parser.ReadFields();
-                    if (fields[2] == "")
-                        break;
-                    Fixture newFixture = new Fixture();
-                    newFixture.homeTeamName = fields[2];
-                    newFixture.awayTeamName = fields[3];
-                    newFixture.finalScore.homeTeamGoals = Int32.Parse(fields[4]);
-                    newFixture.finalScore.awayTeamGoals = Int32.Parse(fields[5]);
-                    newFixture.halfScore.homeTeamGoals = Int32.Parse(fields[7]);
-                    newFixture.halfScore.awayTeamGoals = Int32.Parse(fields[8]);
-                    newFixture.date = DateTime.Parse(fields[1]);
-
-                    newFixture.odds = new Dictionary<string, float>();
-                    newFixture.odds.Add("1", float.Parse(fields[23]));
-                    newFixture.odds.Add("X", float.Parse(fields[24]));
-                    newFixture.odds.Add("2", float.Parse(fields[25]));
-                    newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
-                    newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
-                    newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
-                    newFixture.odds.Add("1X2", 0);
-
-                    result.Add(newFixture);
+                    return fixturesCache[year];
                 }
-            }
+                string leagueName = ConfigManager.Instance.GetLeagueName();
+                int gamesPerMatchDay = GetGamesPerMatchDay(year);
+                List<Fixture> result = new List<Fixture>();
+                using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
+                {
+                    parser.TextFieldType = FieldType.Delimited;
+                    parser.SetDelimiters(",");
+                    parser.ReadFields();
+                    while (!parser.EndOfData)
+                    {
+                        string[] fields = parser.ReadFields();
+                        if (fields[2] == "")
+                            break;
+                        Fixture newFixture = new Fixture();
+                        newFixture.homeTeamName = fields[2];
+                        newFixture.awayTeamName = fields[3];
+                        newFixture.finalScore.homeTeamGoals = Int32.Parse(fields[4]);
+                        newFixture.finalScore.awayTeamGoals = Int32.Parse(fields[5]);
+                        newFixture.halfScore.homeTeamGoals = Int32.Parse(fields[7]);
+                        newFixture.halfScore.awayTeamGoals = Int32.Parse(fields[8]);
+                        newFixture.date = DateTime.Parse(fields[1]);
 
-            if (fixturesCache == null)
-                fixturesCache = new Dictionary<int, List<Fixture>>();
-            fixturesCache.Add(year, result);
-            return result;
+                        newFixture.odds = new Dictionary<string, float>();
+                        newFixture.odds.Add("1", float.Parse(fields[23]));
+                        newFixture.odds.Add("X", float.Parse(fields[24]));
+                        newFixture.odds.Add("2", float.Parse(fields[25]));
+                        newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
+                        newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
+                        newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
+                        newFixture.odds.Add("1X2", 0);
+
+                        result.Add(newFixture);
+                    }
+                }
+
+                fixturesCache.Add(year, result);
+                return result;
+            }
         }
 
 
@@ -128,7 +129,7 @@ namespace Betting.Stats
             }  
         }
 
-        public static Dictionary<int, List<Fixture>> fixturesCache;
-        public static Dictionary<int, int> numberOfTeamsCache;
+        public static Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
+        public static Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
     }
 }
