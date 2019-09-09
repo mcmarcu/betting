@@ -133,6 +133,23 @@ namespace Betting.Stats
                                     profit -= 1;
                             }
             }
+
+            //five by fives
+            if (matchdayOdds.Count >= 5)
+            {
+                for (int i = 0; i < matchdayOdds.Count - 4; ++i)
+                    for (int j = i + 1; j < matchdayOdds.Count - 3; ++j)
+                        for (int k = j + 1; k < matchdayOdds.Count - 2; ++k)
+                            for (int l = k + 1; l < matchdayOdds.Count -1; ++l)
+                                for (int m = l + 1; m < matchdayOdds.Count ; ++m)
+                                {
+                                    float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k] * matchdayOdds[l] * matchdayOdds[m];
+                                    if (newOdd > 0)
+                                        profit += newOdd - 1;
+                                    else
+                                        profit -= 1;
+                                }
+            }
             return profit;
         }
 

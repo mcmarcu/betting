@@ -170,7 +170,7 @@ namespace Betting
                     List<Tuple<bool, float, float, int>> successRuns =
                         new List<Tuple<bool, float, float, int>>();
 
-                    Parallel.For(0, 10000, (i, state) =>
+                    Parallel.For(0, 1000, (i, state) =>
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 
