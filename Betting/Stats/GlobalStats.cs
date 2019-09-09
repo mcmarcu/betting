@@ -25,7 +25,9 @@ namespace Betting.Stats
             bool lsuccess = true;
             float lrate = 0;
 
-            Parallel.For(0, reverseYears, (i, state) =>
+            int maxThreads = ConfigManager.Instance.GetLogLevel() == ConfigManager.LogLevel.LOG_DEBUG ? 1 : 8;
+
+            Parallel.For(0, reverseYears, new ParallelOptions { MaxDegreeOfParallelism = maxThreads }, (i, state) =>
             {
                 int yearTotal = 0;
                 int yearCorrect = 0;
@@ -203,8 +205,7 @@ namespace Betting.Stats
                     totalMetricsWithData = 0;
                 }
 
-                
-                
+
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
                 if (totalMetricsWithData == metrics.Count && computedResult != String.Empty && actualResult != String.Empty)
                 {
@@ -216,15 +217,20 @@ namespace Betting.Stats
 
                     if (metricSuccess)
                     {
+                        Logger.LogDebugSuccess("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
                         matchdayOdds.Add(fixture.odds[computedResult]);
                     }
                     else
                     {
+                        Logger.LogDebugFail("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
                         matchdayOdds.Add(0);
                     }
                 }
+                else
+                {
+                    Logger.LogDebug("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
+                }
 
-                Logger.LogDebug("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
             }
 
             currentProfit = GetMatchdayProfit(matchdayOdds);

@@ -162,13 +162,15 @@ namespace Betting
                         Logger.LogResultFail("Result {0}, Rate {1}, avgProfit {2} \n", success, rate, averageProfit);
                 }
                 else if (executeMetrics.HasValue())
-                {
-                    SortedDictionary<float, Tuple<float, float, int>> topByProfit =
-                        new SortedDictionary<float, Tuple<float, float, int>>();
-                    SortedDictionary<float, Tuple<float, float, int>> topByRate =
-                        new SortedDictionary<float, Tuple<float, float, int>>();
+                {   
+                    SortedDictionary<float, Tuple<bool ,float, float, int>> topByProfit =
+                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
+                    SortedDictionary<float, Tuple<bool, float, float, int>> topByRate =
+                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
+                    List<Tuple<bool, float, float, int>> successRuns =
+                        new List<Tuple<bool, float, float, int>>();
 
-                    Parallel.For(0, 1000, (i, state) =>
+                    Parallel.For(0, 10000, (i, state) =>
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 
@@ -181,15 +183,23 @@ namespace Betting
                         GlobalStats gs = new GlobalStats(metricConfigs);
                         gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
 
-                        if(success)
+                        if (success)
+                        {
+                            lock(successRuns)
+                            {
+                                successRuns.Add(Tuple.Create(success, rate, averageProfit, i));
+                            }
+
                             Logger.LogResultSuccess("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
+                        }
                         else
                             Logger.LogResultFail("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
-                        
+
+                                                
                         lock (topByProfit)
                         {
                             if (!topByProfit.ContainsKey(averageProfit))
-                                topByProfit.Add(averageProfit, Tuple.Create(rate, averageProfit, i));
+                                topByProfit.Add(averageProfit, Tuple.Create(success, rate, averageProfit, i));
                             if (topByProfit.Count > ConfigManager.Instance.GetFilterTopProfit())
                                 topByProfit.Remove(topByProfit.Keys.First());
                         }
@@ -197,7 +207,7 @@ namespace Betting
                         lock (topByRate)
                         {
                             if (!topByRate.ContainsKey(rate))
-                                topByRate.Add(rate, Tuple.Create(rate, averageProfit, i));
+                                topByRate.Add(rate, Tuple.Create(success, rate, averageProfit, i));
                             if (topByRate.Count > ConfigManager.Instance.GetFilterTopRate())
                                 topByRate.Remove(topByRate.Keys.First());
                         }
@@ -205,21 +215,39 @@ namespace Betting
 
                     if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
                     {
-                        Logger.LogResult("TopByProfit {0}: \n", ConfigManager.Instance.GetFilterTopProfit());
+                        Logger.LogResult("TopByProfit {0}: \n\n", ConfigManager.Instance.GetFilterTopProfit());
 
-                        foreach (Tuple<float,float,int> t in topByProfit.Values)
+                        foreach (Tuple<bool, float, float, int> t in topByProfit.Values)
                         {
-                            Logger.LogResult("Rate {0}, avgProfit {1}, id {2}:  ", t.Item1, t.Item2, t.Item3);
-                            PrintMetricList(t.Item3);
+                            if (t.Item1)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            else
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            PrintMetricList(t.Item4);
                             Logger.LogResult("\n ---------------- \n");
                         }
 
-                        Logger.LogResult("TopByRate {0}: \n", ConfigManager.Instance.GetFilterTopRate());
+                        Logger.LogResult("TopByRate {0}: \n\n", ConfigManager.Instance.GetFilterTopRate());
 
-                        foreach (Tuple<float, float, int> t in topByRate.Values)
+                        foreach (Tuple<bool, float, float, int> t in topByRate.Values)
                         {
-                            Logger.LogResult("Rate {0}, avgProfit {1}, id {2}: ", t.Item1, t.Item2, t.Item3);
-                            PrintMetricList(t.Item3);
+                            if(t.Item1)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            else
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            PrintMetricList(t.Item4);
+                            Logger.LogResult("\n ---------------- \n");
+                        }
+
+                        Logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
+
+                        foreach (Tuple<bool, float, float, int> t in successRuns)
+                        {
+                            if (t.Item1)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            else
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            PrintMetricList(t.Item4);
                             Logger.LogResult("\n ---------------- \n");
                         }
                     }
