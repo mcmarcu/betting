@@ -14,6 +14,7 @@
   <successrate>75</successrate>
   <filtertoprate>10</filtertoprate>
   <filtertopprofit>10</filtertopprofit>
+  <betstyle>12345</betstyle>
 
   <loglevel>LOG_INFO</loglevel><!-- LOG_DEBUG, LOG_INFO, LOG_RESULT -->
   

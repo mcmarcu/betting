@@ -80,17 +80,22 @@ namespace Betting.Stats
         {
             float profit = 0;
 
+            string betStyle = ConfigManager.Instance.GetBetStyle();
+
             //one by one
-            foreach(float odd in matchdayOdds)
-            {
-                if (odd > 0)
-                    profit += odd - 1;
-                else
-                    profit -= 1;
+            if(betStyle.Contains('1') && matchdayOdds.Count >= 1)
+            { 
+                foreach (float odd in matchdayOdds)
+                {
+                    if (odd > 0)
+                        profit += odd - 1;
+                    else
+                        profit -= 1;
+                }
             }
 
             //two by twos
-            if(matchdayOdds.Count >=2)
+            if (betStyle.Contains('2') && matchdayOdds.Count >=2)
             {
                 for(int i=0;i<matchdayOdds.Count-1;++i)
                     for(int j=i+1;j<matchdayOdds.Count;++j)
@@ -104,7 +109,7 @@ namespace Betting.Stats
             }
 
             //three by threes
-            if (matchdayOdds.Count >= 3)
+            if (betStyle.Contains('3') && matchdayOdds.Count >= 3)
             {
                 for (int i = 0; i < matchdayOdds.Count - 2; ++i)
                     for (int j = i + 1; j < matchdayOdds.Count - 1; ++j)
@@ -119,7 +124,7 @@ namespace Betting.Stats
             }
 
             //four by fours
-            if (matchdayOdds.Count >= 4)
+            if (betStyle.Contains('4') && matchdayOdds.Count >= 4)
             {
                 for (int i = 0; i < matchdayOdds.Count - 3; ++i)
                     for (int j = i + 1; j < matchdayOdds.Count - 2; ++j)
@@ -135,7 +140,7 @@ namespace Betting.Stats
             }
 
             //five by fives
-            if (matchdayOdds.Count >= 5)
+            if (betStyle.Contains('5') && matchdayOdds.Count >= 5)
             {
                 for (int i = 0; i < matchdayOdds.Count - 4; ++i)
                     for (int j = i + 1; j < matchdayOdds.Count - 3; ++j)

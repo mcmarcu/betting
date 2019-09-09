@@ -185,6 +185,16 @@ namespace Betting.Config
             return Int32.Parse(GetData("filtertopprofit"));
         }
 
+        public void SetBetStyle(string value)
+        {
+            SetData("betstyle", value);
+        }
+
+        public string GetBetStyle()
+        {
+            return GetData("betstyle");
+        }
+
 
         private ConfigManager()
         {

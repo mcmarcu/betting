@@ -113,7 +113,8 @@ namespace Betting
             var successRateOption = app.Option("-s|--successrate <optionvalue>", "how much should be correct(75)", CommandOptionType.SingleValue);
             var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
             var filterTopProfit = app.Option("-f|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
-
+            var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
+            
 
 
             app.OnExecute(() =>
@@ -146,6 +147,8 @@ namespace Betting
                     ConfigManager.Instance.SetSuccessRate(filterTopRate.Value());
                 if (filterTopProfit.HasValue())
                     ConfigManager.Instance.SetSuccessRate(filterTopProfit.Value());
+                if (betStyleOption.HasValue())
+                    ConfigManager.Instance.SetBetStyle(betStyleOption.Value());
 
                 if (inspectMetric.HasValue())
                 {
