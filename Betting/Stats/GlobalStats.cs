@@ -82,8 +82,20 @@ namespace Betting.Stats
 
             string betStyle = ConfigManager.Instance.GetBetStyle();
 
+            //max
+            if (betStyle.Contains("max") && matchdayOdds.Count >= 1)
+            {
+                float newOdd = 1;
+                for (int i = 0; i < matchdayOdds.Count; ++i)
+                    newOdd *= matchdayOdds[i];
+                if (newOdd > 0)
+                    profit += newOdd - 1;
+                else
+                    profit -= 1;
+            }
+
             //one by one
-            if(betStyle.Contains('1') && matchdayOdds.Count >= 1)
+            if (betStyle.Contains('1') && matchdayOdds.Count >= 1)
             { 
                 foreach (float odd in matchdayOdds)
                 {

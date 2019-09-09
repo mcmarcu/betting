@@ -36,7 +36,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(list[0].ToString(), split(list));
-                    
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
 
         }
@@ -47,6 +47,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(list[0].ToString(), split(list));
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
 
@@ -67,6 +68,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(list[0].ToString(), split(list));
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
         }
 
@@ -77,6 +79,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(list[0].ToString(), split(list));
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
         }
 
@@ -97,6 +100,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(list[0].ToString(), split(list));
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
         }
 
@@ -107,6 +111,7 @@ namespace Betting.Config
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write(list[0].ToString(), split(list));
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
         }
 

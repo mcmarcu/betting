@@ -34,7 +34,9 @@ Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 
 
 
 
-Betting.exe -x=885 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
+Betting.exe -x=1 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
+
+Betting.exe -x=840 --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
 
 
 
