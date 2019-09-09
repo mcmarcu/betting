@@ -9,9 +9,14 @@ using System.Threading.Tasks;
 
 namespace Betting.Stats
 {
-    public class GlobalStats
+    class GlobalStats
     {
-        public static void GetAllYearsData(out bool success, out float rate, out float averageProfit)
+        public GlobalStats(List<MetricConfig> metricConfigs)
+        {
+            this.metricConfigs = metricConfigs;
+        }
+
+        public void GetAllYearsData(out bool success, out float rate, out float averageProfit)
         {
             int year = ConfigManager.Instance.GetYear();
             int reverseYears = ConfigManager.Instance.GetReverseYears();
@@ -26,16 +31,11 @@ namespace Betting.Stats
                 int yearCorrect = 0;
                 float yearProfit = 0;
                 int computeYear = year - i;
-                GlobalStats.GetYearData(out yearCorrect, out yearTotal, out yearProfit, computeYear);
+                GetYearData(out yearCorrect, out yearTotal, out yearProfit, computeYear);
                 float yearRate = ((float)yearCorrect / (float)yearTotal) * 100;
                 lrate += yearRate;
 
-                if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_EXTRA)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.Write("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
-                    Console.ResetColor();
-                }
+                Logger.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
 
                 if (yearProfit < ConfigManager.Instance.GetMinYearProfit())
                     lsuccess = false;
@@ -48,7 +48,7 @@ namespace Betting.Stats
             averageProfit = laverageProfit/reverseYears;
         }
 
-        public static void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int year)
+        public void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int year)
         {
             int matchDay = ConfigManager.Instance.GetMatchDay();
             int reverseDays = ConfigManager.Instance.GetReverseDays();
@@ -62,10 +62,10 @@ namespace Betting.Stats
 
             for (int i = 0; i < reverseDays; ++i)
             {
-                GlobalStats.GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
+                GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
 
-                if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_ALL)
-                    Console.Write("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
+                Logger.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
+
                 correctFixturesWithData += correctFixtures;
                 totalFixturesWithData += totalFixtures;
                 currentProfit += matchdayProfit;
@@ -74,7 +74,7 @@ namespace Betting.Stats
         }
 
 
-        public static float GetMatchdayProfit(List<float> matchdayOdds)
+        public float GetMatchdayProfit(List<float> matchdayOdds)
         {
             float profit = 0;
 
@@ -134,9 +134,9 @@ namespace Betting.Stats
             return profit;
         }
 
-        public static void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
+        public void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
         {
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(matchDay, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, matchDay, year);
 
             List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, matchDay);
 
@@ -172,6 +172,7 @@ namespace Betting.Stats
                         computedResult += result;
                     }
                 }
+
                 //TODO: put under config
                 if(computedResult == "1" && aggregateResult.Split('X').Length - 1 > 0)
                 {
@@ -216,26 +217,19 @@ namespace Betting.Stats
                     if (metricSuccess)
                     {
                         matchdayOdds.Add(fixture.odds[computedResult]);
-                        Console.ForegroundColor = ConsoleColor.Green;
                     }
                     else
                     {
                         matchdayOdds.Add(0);
-                        Console.ForegroundColor = ConsoleColor.Red;
                     }
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                }
 
-                if(ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_ALL)
-                    Console.Write("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
-
-                Console.ResetColor();
+                Logger.LogDebug("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
             }
 
             currentProfit = GetMatchdayProfit(matchdayOdds);
         }
+
+        private List<MetricConfig> metricConfigs;
     }
 }

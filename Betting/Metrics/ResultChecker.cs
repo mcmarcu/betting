@@ -54,23 +54,16 @@ namespace Betting.Metrics
         public void PrintResult()
         {
             InterpretResultStatus status = InterpretResult();
-            if (status == InterpretResultStatus.CORRECT)
-                Console.ForegroundColor = ConsoleColor.Green;
-            else if (status == InterpretResultStatus.WRONG)
-                Console.ForegroundColor = ConsoleColor.Red;
-            else
-                Console.ResetColor();
+
             try
             {
-                Console.Write("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
-                Console.Write(" ---- Final score {0} vs {1} ({2})", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals,GetActualResult());
-                Console.WriteLine();
+                Logger.LogDebug("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
+                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, GetActualResult());
             }
             catch (Exception)
             {
-                Console.Write("{0} vs {1} \t not enough data\n", fixture.homeTeamName, fixture.awayTeamName);
+                Logger.LogDebug("{0} vs {1} \t not enough data\n", fixture.homeTeamName, fixture.awayTeamName);
             }
-            Console.ResetColor();
         }
 
         public enum InterpretResultStatus

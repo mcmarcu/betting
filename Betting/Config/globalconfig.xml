@@ -15,45 +15,6 @@
   <filtertoprate>10</filtertoprate>
   <filtertopprofit>10</filtertopprofit>
 
-  <loglevel>LOG_EXTRA</loglevel><!-- LOG_ALL, LOG_EXTRA, LOG_RESULT -->
+  <loglevel>LOG_INFO</loglevel><!-- LOG_DEBUG, LOG_INFO, LOG_RESULT -->
   
-  <metrics>
-    <!-- 
-    <LastGamesMetric>
-      <depth>1</depth>
-      <weight>7</weight>
-    </LastGamesMetric>
-
-    <GoalsScoredMetric>
-      <depth>6</depth>
-      <weight>7</weight>
-    </GoalsScoredMetric>-->
-    
-    <!--
-    <LastGamesMetric>
-      <depth>7</depth>
-      <weight>7</weight>
-    </LastGamesMetric>
-    <LastGamesMetric>
-      <depth>7</depth>
-      <weight>7</weight>
-    </LastGamesMetric>
-   <GoalsConcededMetric>
-      <depth>10</depth>
-      <weight>7</weight>
-    </GoalsConcededMetric>
-    <GoalsConcededMetric>
-      <depth>2</depth>
-      <weight>7</weight>
-    </GoalsConcededMetric>
-    <GoalsScoredMetric>
-      <depth>4</depth>
-      <weight>7</weight>
-    </GoalsScoredMetric>
-    <GoalsScoredMetric>
-      <depth>5</depth>
-      <weight>7</weight>
-    </GoalsScoredMetric>
-    -->
-  </metrics>
 </config>

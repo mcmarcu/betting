@@ -10,10 +10,9 @@ namespace Betting.Metrics
 {
     class MetricFactory
     {
-        static public List<MetricInterface> GetMetrics(int matchDay, int year)
+        static public List<MetricInterface> GetMetrics(List<MetricConfig> configs, int matchDay, int year)
         {
             List<MetricInterface> result = new List<MetricInterface>();
-            List<MetricConfig> configs = ConfigManager.Instance.GetMetricConfigs();
             foreach(MetricConfig config in configs)
             {
                 if (config.name == "LastGamesMetric")

@@ -13,8 +13,8 @@ namespace Betting.Config
     {
         public enum LogLevel
         {
-            LOG_ALL,
-            LOG_EXTRA,
+            LOG_DEBUG,
+            LOG_INFO,
             LOG_RESULT
         }
 
@@ -30,44 +30,6 @@ namespace Betting.Config
             }
         }
 
-        public void SetMetricConfigs(List<MetricConfig> metrics)
-        {
-            XmlNodeList elemList = configDocument_.GetElementsByTagName("metrics");
-            elemList[0].RemoveAll();
-            foreach (MetricConfig metric in metrics)
-            {
-                XmlElement rootElem = configDocument_.CreateElement(metric.name);
-                XmlElement weightElem = configDocument_.CreateElement("weight");
-                weightElem.InnerText = metric.weight.ToString();
-                XmlElement depthElem = configDocument_.CreateElement("depth");
-                depthElem.InnerText = metric.depth.ToString();
-                rootElem.AppendChild(weightElem);
-                rootElem.AppendChild(depthElem);
-                elemList[0].AppendChild(rootElem);
-            }
-        }
-
-        public List<MetricConfig> GetMetricConfigs()
-        {
-            List<MetricConfig> result = new List<MetricConfig>();
-            XmlNodeList elemList = configDocument_.GetElementsByTagName("metrics");
-            foreach (XmlNode metric in elemList[0].ChildNodes)
-            {
-                MetricConfig config = new MetricConfig();
-                config.name = metric.Name;
-                foreach (XmlNode attr in metric.ChildNodes)
-                {
-                    if (attr.Name == "weight")
-                        config.weight = Int32.Parse(attr.InnerText);
-
-                    if (attr.Name == "depth")
-                        config.depth = Int32.Parse(attr.InnerText);
-
-                }
-                result.Add(config);
-            }
-            return result;
-        }
         private void SetData(string id, string value)
         {
             cache[id] = value;

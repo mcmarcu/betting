@@ -10,6 +10,5 @@ namespace Betting.DataModel
     {
         public string name;
         public int depth;
-        public int weight;
     }
 }

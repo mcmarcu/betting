@@ -18,27 +18,30 @@ namespace Betting.Stats
     {
         private static int GetNumberOfTeams(int year)
         {
-            if (numberOfTeamsCache.ContainsKey(year))
+            lock (numberOfTeamsCache)
             {
-                return numberOfTeamsCache[year];
-            }
-            string leagueName = ConfigManager.Instance.GetLeagueName();
-            HashSet<string> teams = new HashSet<string>();
-            using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
-            {
-
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
-                while (!parser.EndOfData)
+                if (numberOfTeamsCache.ContainsKey(year))
                 {
-                    string[] fields = parser.ReadFields();
-                    if(fields[2]!="" && fields[2]!="HomeTeam")
-                        teams.Add(fields[2]);
+                    return numberOfTeamsCache[year];
                 }
-            }
+                string leagueName = ConfigManager.Instance.GetLeagueName();
+                HashSet<string> teams = new HashSet<string>();
+                using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
+                {
 
-            numberOfTeamsCache.Add(year, teams.Count);
-            return teams.Count;
+                    parser.TextFieldType = FieldType.Delimited;
+                    parser.SetDelimiters(",");
+                    while (!parser.EndOfData)
+                    {
+                        string[] fields = parser.ReadFields();
+                        if (fields[2] != "" && fields[2] != "HomeTeam")
+                            teams.Add(fields[2]);
+                    }
+                }
+
+                numberOfTeamsCache.Add(year, teams.Count);
+                return teams.Count;
+            }
 
         }
         private static int GetNumberOfMatchdays(int year)
