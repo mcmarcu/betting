@@ -77,30 +77,26 @@ namespace Betting.Stats
 
         private int GetNumOnesInInteger(int n)
         {
-            int mask = 1;
-            int num = 0;
-            for (int l = 0; l < 32; ++l)
+            int count = 0;
+            while (n > 0)
             {
-                if ((n & mask) != 0)
-                {
-                    num++;
-                }
-                mask <<= 1;
+                count += n & 1;
+                n >>= 1;
             }
-            return num;
+            return count;
         }
 
-        private float GetCombinationProfit(List<float> matchdayOdds, string betStyle)
+        private float GetCombinationProfit(List<float> matchdayOdds, int betStyleMask)
         {
             double count = Math.Pow(2, matchdayOdds.Count);
             float profit = 0;
             for (int i = 1; i <= count - 1; i++)
             {
-                if (!betStyle.Contains(GetNumOnesInInteger(i).ToString()))
+                if ((betStyleMask & (1 << GetNumOnesInInteger(i))) == 0)
                     continue;
 
                 float cProfit = 1;
-                for (int j = 0; j < 32; j++)
+                for (int j = 0; j < matchdayOdds.Count; j++)
                 {
                     if ( ((i >> j) & 1) == 1)
                     {
@@ -120,19 +116,30 @@ namespace Betting.Stats
             int maxGames = matchdayOdds.Count;
             string betStyle = ConfigManager.Instance.GetBetStyle();
 
+            int betStyleMask = 0;
+
             //max
             if (betStyle.Contains("max") && !betStyle.Contains(maxGames.ToString()))
-                betStyle.Replace("max", maxGames.ToString());
+            {
+                betStyleMask |= 1 << maxGames;
+                betStyle = betStyle.Replace("max", "");
+            }
 
             //all
             if (betStyle.Contains("all"))
             {
-                betStyle = "";
                 for (int i = 1; i <= maxGames; ++i)
-                    betStyle += i.ToString();
+                    betStyleMask |= 1 << i;
+                betStyle = betStyle.Replace("all", "");
             }
 
-            return GetCombinationProfit(matchdayOdds, betStyle);
+            
+            for(int i=0;i<betStyle.Count();++i)
+            {
+                betStyleMask |= 1 << (betStyle[i] -'0');
+            }
+
+            return GetCombinationProfit(matchdayOdds, betStyleMask);
         }
 
         public void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
