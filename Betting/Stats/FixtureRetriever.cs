@@ -49,14 +49,74 @@ namespace Betting.Stats
             return (GetNumberOfTeams(year) - 1) * 2;
         }
 
-        private static int GetGamesPerMatchDay(int year)
+        public static int GetGamesPerMatchDay(int year)
         {
             return GetNumberOfTeams(year) / 2;
         }
 
+        public static List<Fixture> GetAllFixtures(int year, string team)
+        {
+            Tuple<int, string> t = Tuple.Create(year, team);
+
+            fixturesTeamCacheLock.EnterReadLock();
+            try
+            {
+                if (fixturesTeamCache.ContainsKey(t))
+                {
+                    return fixturesTeamCache[t];
+                }
+            }
+            finally
+            {
+                fixturesTeamCacheLock.ExitReadLock();
+            }
+
+            fixturesTeamCacheLock.EnterWriteLock();
+            try
+            {
+                if (fixturesTeamCache.ContainsKey(t))
+                {
+                    return fixturesTeamCache[t];
+                }
+
+                List<Fixture> allFixtures = GetAllFixtures(year);
+
+                List<Fixture> result = new List<Fixture>();
+                for (int i = 0; i < allFixtures.Count; ++i)
+                {
+                    if (allFixtures[i].homeTeamName == team ||
+                        allFixtures[i].awayTeamName == team)
+                    {
+                        result.Add(allFixtures[i]);
+                    }
+                }
+
+                fixturesTeamCache.Add(t, result);
+                return result;
+            }
+            finally
+            {
+                fixturesTeamCacheLock.ExitWriteLock();
+            }
+        }
+
         public static List<Fixture> GetAllFixtures(int year)
         {
-            lock (fixturesCache)
+            fixturesCacheLock.EnterReadLock();
+            try
+            {
+                if (fixturesCache.ContainsKey(year))
+                {
+                    return fixturesCache[year];
+                }
+            }
+            finally
+            {
+                fixturesCacheLock.ExitReadLock();
+            }
+
+            fixturesCacheLock.EnterWriteLock();
+            try
             {
                 if (fixturesCache.ContainsKey(year))
                 {
@@ -100,8 +160,11 @@ namespace Betting.Stats
                 fixturesCache.Add(year, result);
                 return result;
             }
+            finally
+            {
+                fixturesCacheLock.ExitWriteLock();
+            }
         }
-
 
         public static List<Fixture> GetRound(int year, int matchDay)
         {
@@ -133,6 +196,10 @@ namespace Betting.Stats
         }
 
         public static Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
+        private static ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
+        public static Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+        private static ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
         public static Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
+
     }
 }

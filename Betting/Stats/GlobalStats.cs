@@ -75,99 +75,64 @@ namespace Betting.Stats
             }
         }
 
-
-        public float GetMatchdayProfit(List<float> matchdayOdds)
+        private int GetNumOnesInInteger(int n)
         {
-            float profit = 0;
-
-            string betStyle = ConfigManager.Instance.GetBetStyle();
-
-            //max
-            if (betStyle.Contains("max") && matchdayOdds.Count >= 1)
+            int mask = 1;
+            int num = 0;
+            for (int l = 0; l < 32; ++l)
             {
-                float newOdd = 1;
-                for (int i = 0; i < matchdayOdds.Count; ++i)
-                    newOdd *= matchdayOdds[i];
-                if (newOdd > 0)
-                    profit += newOdd - 1;
+                if ((n & mask) != 0)
+                {
+                    num++;
+                }
+                mask <<= 1;
+            }
+            return num;
+        }
+
+        private float GetCombinationProfit(List<float> matchdayOdds, string betStyle)
+        {
+            double count = Math.Pow(2, matchdayOdds.Count);
+            float profit = 0;
+            for (int i = 1; i <= count - 1; i++)
+            {
+                if (!betStyle.Contains(GetNumOnesInInteger(i).ToString()))
+                    continue;
+
+                float cProfit = 1;
+                for (int j = 0; j < 32; j++)
+                {
+                    if ( ((i >> j) & 1) == 1)
+                    {
+                        cProfit *= matchdayOdds[j];
+                    }
+                }
+                if (cProfit > 0)
+                    profit += cProfit - 1;
                 else
                     profit -= 1;
             }
-
-            //one by one
-            if (betStyle.Contains('1') && matchdayOdds.Count >= 1)
-            { 
-                foreach (float odd in matchdayOdds)
-                {
-                    if (odd > 0)
-                        profit += odd - 1;
-                    else
-                        profit -= 1;
-                }
-            }
-
-            //two by twos
-            if (betStyle.Contains('2') && matchdayOdds.Count >=2)
-            {
-                for(int i=0;i<matchdayOdds.Count-1;++i)
-                    for(int j=i+1;j<matchdayOdds.Count;++j)
-                    {
-                        float newOdd = matchdayOdds[i] * matchdayOdds[j];
-                        if (newOdd > 0)
-                            profit += newOdd - 1;
-                        else
-                            profit -= 1;
-                    }
-            }
-
-            //three by threes
-            if (betStyle.Contains('3') && matchdayOdds.Count >= 3)
-            {
-                for (int i = 0; i < matchdayOdds.Count - 2; ++i)
-                    for (int j = i + 1; j < matchdayOdds.Count - 1; ++j)
-                        for (int k = j + 1; k < matchdayOdds.Count; ++k)
-                        {
-                            float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k];
-                            if (newOdd > 0)
-                                profit += newOdd- 1;
-                            else
-                                profit -= 1;
-                        }
-            }
-
-            //four by fours
-            if (betStyle.Contains('4') && matchdayOdds.Count >= 4)
-            {
-                for (int i = 0; i < matchdayOdds.Count - 3; ++i)
-                    for (int j = i + 1; j < matchdayOdds.Count - 2; ++j)
-                        for (int k = j + 1; k < matchdayOdds.Count -1; ++k)
-                            for (int l = k + 1; l < matchdayOdds.Count; ++l)
-                            {
-                                float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k] * matchdayOdds[l];
-                                if (newOdd > 0)
-                                    profit += newOdd - 1;
-                                else
-                                    profit -= 1;
-                            }
-            }
-
-            //five by fives
-            if (betStyle.Contains('5') && matchdayOdds.Count >= 5)
-            {
-                for (int i = 0; i < matchdayOdds.Count - 4; ++i)
-                    for (int j = i + 1; j < matchdayOdds.Count - 3; ++j)
-                        for (int k = j + 1; k < matchdayOdds.Count - 2; ++k)
-                            for (int l = k + 1; l < matchdayOdds.Count -1; ++l)
-                                for (int m = l + 1; m < matchdayOdds.Count ; ++m)
-                                {
-                                    float newOdd = matchdayOdds[i] * matchdayOdds[j] * matchdayOdds[k] * matchdayOdds[l] * matchdayOdds[m];
-                                    if (newOdd > 0)
-                                        profit += newOdd - 1;
-                                    else
-                                        profit -= 1;
-                                }
-            }
             return profit;
+        }
+
+        public float GetMatchdayProfit(List<float> matchdayOdds, int year)
+        {
+            int maxGames = matchdayOdds.Count;
+            string betStyle = ConfigManager.Instance.GetBetStyle();
+
+            //max
+            if (betStyle.Contains("max") && !betStyle.Contains(maxGames.ToString()))
+                betStyle.Replace("max", maxGames.ToString());
+
+            //all
+            if (betStyle.Contains("all"))
+            {
+                betStyle = "";
+                for (int i = 1; i <= maxGames; ++i)
+                    betStyle += i.ToString();
+            }
+
+            return GetCombinationProfit(matchdayOdds, betStyle);
         }
 
         public void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
@@ -224,7 +189,7 @@ namespace Betting.Stats
                     computedResult = "1X2";
                     totalMetricsWithData = 0;
                 }
-                //END X related hacks
+                //END X related TODOs
 
                 //bad expected 1X2
                 if (computedResult.Length == 3 || computedResult.Length == 0)
@@ -267,7 +232,7 @@ namespace Betting.Stats
 
             }
 
-            currentProfit = GetMatchdayProfit(matchdayOdds);
+            currentProfit = GetMatchdayProfit(matchdayOdds, year);
         }
 
         private List<MetricConfig> metricConfigs;

@@ -29,8 +29,8 @@ Options:
   -p|--minyearprofit <optionvalue>     Min profit per year (-5)
   -e|--loglevel <optionvalue>          LOG_ALL, LOG_EXTRA, LOG_RESULT
 
-Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
-Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
+Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_RESULT
+Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_RESULT
 
 
 

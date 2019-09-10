@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
+using System.Diagnostics;
 
 namespace Betting
 {
@@ -119,6 +120,9 @@ namespace Betting
 
             app.OnExecute(() =>
             {
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
                 if (leagueOption.HasValue())
                     ConfigManager.Instance.SetLeagueName(leagueOption.Value());
                 if (yearOption.HasValue())
@@ -256,7 +260,9 @@ namespace Betting
                     }
                 }
 
-                Console.ReadLine();
+                stopWatch.Stop();
+                Logger.LogResult("Time spent: {0}", stopWatch.ElapsedMilliseconds);
+
                 return 0;
             });
 
