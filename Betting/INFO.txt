@@ -1,4 +1,7 @@
 
+https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/getting-started/Regression_TaxiFarePrediction
+
+
 TODO: add cutoff to config see globalStats.cs line 58
 TODO: add how many times we run the simulation? how many matchdays behind
 
