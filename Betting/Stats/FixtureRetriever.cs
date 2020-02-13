@@ -138,10 +138,10 @@ namespace Betting.Stats
                         Fixture newFixture = new Fixture();
                         newFixture.homeTeamName = fields[2];
                         newFixture.awayTeamName = fields[3];
-                        newFixture.finalScore.homeTeamGoals = Int32.Parse(fields[4]);
-                        newFixture.finalScore.awayTeamGoals = Int32.Parse(fields[5]);
-                        newFixture.halfScore.homeTeamGoals = Int32.Parse(fields[7]);
-                        newFixture.halfScore.awayTeamGoals = Int32.Parse(fields[8]);
+                        Int32.TryParse(fields[4], out newFixture.finalScore.homeTeamGoals);
+                        Int32.TryParse(fields[5], out newFixture.finalScore.awayTeamGoals);
+                        Int32.TryParse(fields[7], out newFixture.halfScore.homeTeamGoals);
+                        Int32.TryParse(fields[8], out newFixture.halfScore.awayTeamGoals);
                         newFixture.date = DateTime.Parse(fields[1]);
 
                         newFixture.odds = new Dictionary<string, float>();

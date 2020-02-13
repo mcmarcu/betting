@@ -242,6 +242,89 @@ namespace Betting.Stats
             currentProfit = GetMatchdayProfit(matchdayOdds, year);
         }
 
+        public void ProcessUpcomingFixtures()
+        {
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, ConfigManager.Instance.GetMatchDay(), ConfigManager.Instance.GetYear());
+
+            List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(ConfigManager.Instance.GetYear(), ConfigManager.Instance.GetMatchDay());
+
+            List<float> matchdayOdds = new List<float>();
+
+            foreach (Fixture fixture in thisRoundFixtures)
+            {
+                int totalMetricsWithData = 0;
+                string computedResult = String.Empty;
+                string aggregateResult = String.Empty;
+                foreach (MetricInterface metric in metrics)
+                {
+                    ResultChecker checker = new ResultChecker(metric, fixture);
+                    if (checker.dataAvailable)
+                    {
+                        aggregateResult += checker.GetExpectedResult() + " ";
+                        totalMetricsWithData++;
+                    }
+
+                }
+
+                //TODO: what does GetMinMetricCorrect do?
+                int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
+                string possibleResults = "1X2";
+                foreach (char result in possibleResults)
+                {
+                    if (aggregateResult.Split(result).Length - 1 >= goodMetricsCount)
+                    {
+                        computedResult += result;
+                    }
+                }
+
+                //TODO: put under config
+                if (computedResult == "1" && aggregateResult.Split('X').Length - 1 > 0)
+                {
+                    computedResult = "1X";
+                }
+                if (computedResult == "2" && aggregateResult.Split('X').Length - 1 > 0)
+                {
+                    computedResult = "X2";
+                }
+
+                if (computedResult == "X")
+                {
+                    computedResult = "1X2";
+                    totalMetricsWithData = 0;
+                }
+                //END X related TODOs
+
+                //bad expected 1X2
+                if (computedResult.Length == 3 || computedResult.Length == 0)
+                {
+                    computedResult = "1X2";
+                    totalMetricsWithData = 0;
+                }
+
+
+                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds())
+                {
+                    totalMetricsWithData = 0;
+                }
+
+
+                string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
+                if (totalMetricsWithData == metrics.Count && computedResult != String.Empty)
+                {
+
+                    Logger.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult);
+                    matchdayOdds.Add(fixture.odds[computedResult]);
+                }
+                else
+                {
+                    Logger.LogInfoFail("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult);
+                }
+
+            }
+
+            Logger.LogInfo("Profit: {0}", GetMatchdayProfit(matchdayOdds, ConfigManager.Instance.GetYear()));
+        }
+
         private List<MetricConfig> metricConfigs;
     }
 }

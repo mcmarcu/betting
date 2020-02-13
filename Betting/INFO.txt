@@ -5,6 +5,8 @@ https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/get
 TODO: add cutoff to config see globalStats.cs line 58
 TODO: add how many times we run the simulation? how many matchdays behind
 
+https://www.football-data.co.uk/matches.php
+
 http://www.football-data.co.uk/englandm.php
 https://betting.betfair.com/football/football-betting-systems-what-works-and-what-doesnt.html
 
@@ -32,58 +34,85 @@ Options:
   -p|--minyearprofit <optionvalue>     Min profit per year (-5)
   -e|--loglevel <optionvalue>          LOG_ALL, LOG_EXTRA, LOG_RESULT
 
-Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_RESULT
+-e --league=Championship --year=2018 --matchday=44 --mreverse=34 --maxodds=3.0 --minyearprofit=-80 --successrate=70 --loglevel=LOG_RESULT
+-x=877 --league=Championship --year=2018 --matchday=44 --mreverse=34 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
+-x=877 --league=Championship --year=2019 --matchday=31 --mreverse=20 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
+
+-x=885 --league=Championship --year=2018 --matchday=44 --mreverse=34 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=3 --loglevel=LOG_INFO
+-e --league=Championship --year=2018 --matchday=44 --mreverse=34 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=3 --loglevel=LOG_RESULT 
+succes
+860
+870
+880
+rate
+885
+884
+
+#########################
+-w -x=885 --league=Championship --year=2019 --matchday=32 --maxodds=3.0 --betstyle=all --loglevel=LOG_INFO
+##########################
+
+*************************
+-x=885 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=12 --loglevel=LOG_INFO
+*************************
+
+
+-e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=12 --loglevel=LOG_RESULT 
+
+
+
+-w -x=877 --league=Championship --year=2019 --matchday=32 --maxodds=3.0 --loglevel=LOG_INFO
+
+155
+154
+157
+
+319
+619
+
+885
+884
+888
+7
+6
+90
+
+877
+887
+
+
 Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_RESULT
 
 
 
-Betting.exe -x=1 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
+Betting.exe -x=96 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
 
 Betting.exe -x=840 --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
 
 
 
 Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
-TopByProfit 10:
-Rate 73.03871, avgProfit 205.763, id 940:   GoalsScored (4);  GoalsConceded (9);
-----------------
-Rate 69.2318, avgProfit 212.1835, id 5:   LastGames (5);
-----------------
-Rate 71.58675, avgProfit 220.423, id 97:   LastGames (7);  GoalsScored (9);
-----------------
-Rate 74.67442, avgProfit 283.9297, id 590:   GoalsScored (9);  GoalsConceded (5);
-----------------
-Rate 72.03873, avgProfit 288.1829, id 94:   LastGames (4);  GoalsScored (9);
-----------------
-Rate 72.43901, avgProfit 293.1976, id 95:   LastGames (5);  GoalsScored (9);
-----------------
-Rate 70.14314, avgProfit 325.5362, id 90:   GoalsScored (9);
-----------------
-Rate 71.71126, avgProfit 353.3252, id 96:   LastGames (6);  GoalsScored (9);
-----------------
-Rate 68.37238, avgProfit 398.9345, id 400:   GoalsConceded (4);
-----------------
-Rate 68.01286, avgProfit 548.6146, id 4:   LastGames (4);
-----------------
-TopByRate 10:
-Rate 74.88963, avgProfit 89.84959, id 888:  LastGames (8);  GoalsScored (8);  GoalsConceded (8);
-----------------
-Rate 74.90469, avgProfit 11.7296, id 583:  LastGames (3);  GoalsScored (8);  GoalsConceded (5);
-----------------
-Rate 74.9156, avgProfit 44.03817, id 886:  LastGames (6);  GoalsScored (8);  GoalsConceded (8);
-----------------
-Rate 75.12118, avgProfit 181.5444, id 594:  LastGames (4);  GoalsScored (9);  GoalsConceded (5);
-----------------
-Rate 75.13716, avgProfit -26.45033, id 681:  LastGames (1);  GoalsScored (8);  GoalsConceded (6);
-----------------
-Rate 75.19533, avgProfit -35.03434, id 581:  LastGames (1);  GoalsScored (8);  GoalsConceded (5);
-----------------
-Rate 75.21659, avgProfit 69.96742, id 884:  LastGames (4);  GoalsScored (8);  GoalsConceded (8);
-----------------
-Rate 75.22581, avgProfit 45.5332, id 593:  LastGames (3);  GoalsScored (9);  GoalsConceded (5);
-----------------
-Rate 75.23034, avgProfit -3.414658, id 881:  LastGames (1);  GoalsScored (8);  GoalsConceded (8);
-----------------
-Rate 75.47447, avgProfit 89.48991, id 885:  LastGames (5);  GoalsScored (8);  GoalsConceded (8);
-----------------
-DONE
+
+888 *** 155 complement
+
+-x=155 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
+Global success rate : 70.54, profit 285.14 on year 2017  -------
+Global success rate : 72.88, profit -13.84 on year 2015  -------
+Global success rate : 70.77, profit 70.13 on year 2014  -------
+Global success rate : 68.69, profit -32.22 on year 2016  -------
+Global success rate : 75.65, profit 30.44 on year 2018  -------
+Global success rate : 68.60, profit 687.70 on year 2013  -------
+Global success rate : 61.76, profit -78.20 on year 2012  -------
+
+Result False, Rate 69.84171, avgProfit 135.593
+Time spent: 4761
+
+Global success rate : 68.38, profit 29.91 on year 2014  -------
+Global success rate : 68.29, profit 519.73 on year 2017  -------
+Global success rate : 74.56, profit -1.36 on year 2015  -------
+Global success rate : 68.32, profit -12.40 on year 2016  -------
+Global success rate : 73.15, profit 3.25 on year 2018  -------
+Global success rate : 68.70, profit 154.51 on year 2013  -------
+Global success rate : 62.75, profit -79.09 on year 2012  -------
+Result False, Rate 69.16227, avgProfit 87.79159
+Time spent: 4691

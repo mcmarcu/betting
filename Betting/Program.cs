@@ -99,6 +99,7 @@ namespace Betting
 
             var executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
             var inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
+            var predictResults = app.Option("-w|--predictResults", "predict results", CommandOptionType.NoValue);
 
             var leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
             var yearOption = app.Option("-y|--year <optionvalue>", "Yeasr to start compute (2018)", CommandOptionType.SingleValue);
@@ -154,7 +155,16 @@ namespace Betting
                 if (betStyleOption.HasValue())
                     ConfigManager.Instance.SetBetStyle(betStyleOption.Value());
 
-                if (inspectMetric.HasValue())
+                if (predictResults.HasValue())
+                {
+                    int metricConfigId = Int32.Parse(inspectMetric.Value());
+                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
+                    PrintMetricList(metricConfigId);
+                    Logger.LogResultSuccess("\n Results: \n");
+                    GlobalStats gs = new GlobalStats(metricConfigs);
+                    gs.ProcessUpcomingFixtures();
+                }
+                else if (inspectMetric.HasValue())
                 {
                     int metricConfigId = Int32.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
@@ -174,8 +184,8 @@ namespace Betting
                         new SortedDictionary<float, Tuple<bool, float, float, int>>();
                     SortedDictionary<float, Tuple<bool, float, float, int>> topByRate =
                         new SortedDictionary<float, Tuple<bool, float, float, int>>();
-                    List<Tuple<bool, float, float, int>> successRuns =
-                        new List<Tuple<bool, float, float, int>>();
+                    SortedDictionary<float, Tuple<bool, float, float, int>> successRuns =
+                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
 
                     Parallel.For(0, 1000, (i, state) =>
                     {
@@ -194,7 +204,7 @@ namespace Betting
                         {
                             lock(successRuns)
                             {
-                                successRuns.Add(Tuple.Create(success, rate, averageProfit, i));
+                                successRuns.Add(averageProfit, Tuple.Create(success, rate, averageProfit, i));
                             }
 
                             Logger.LogResultSuccess("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
@@ -248,7 +258,7 @@ namespace Betting
 
                         Logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
 
-                        foreach (Tuple<bool, float, float, int> t in successRuns)
+                        foreach (Tuple<bool, float, float, int> t in successRuns.Values)
                         {
                             if (t.Item1)
                                 Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
@@ -261,12 +271,14 @@ namespace Betting
                 }
 
                 stopWatch.Stop();
-                Logger.LogResult("Time spent: {0}", stopWatch.ElapsedMilliseconds);
+                Logger.LogResult("\nTime spent: {0}", stopWatch.ElapsedMilliseconds);
+                Console.ReadLine();
 
                 return 0;
             });
 
             app.Execute(args);
+            
         }
     }
 }
