@@ -129,25 +129,52 @@ namespace Betting.Stats
                 {
                     parser.TextFieldType = FieldType.Delimited;
                     parser.SetDelimiters(",");
-                    parser.ReadFields();
+
+                    string[] fields = parser.ReadFields();
+                    int idxDate = Array.FindIndex(fields, item => item == "Date");
+                    int idxHomeTeam = Array.FindIndex(fields, item => item == "HomeTeam");
+                    int idxAwayTeam = Array.FindIndex(fields, item => item == "AwayTeam");
+                    int idxFTHG = Array.FindIndex(fields, item => item == "FTHG");
+                    int idxFTAG = Array.FindIndex(fields, item => item == "FTAG");
+                    int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
+                    int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
+                    int idxB365H = Array.FindIndex(fields, item => item == "B365H");
+                    int idxB365D = Array.FindIndex(fields, item => item == "B365D");
+                    int idxB365A = Array.FindIndex(fields, item => item == "B365A");
+                    int idxBWH = Array.FindIndex(fields, item => item == "BWH");
+                    int idxBWD = Array.FindIndex(fields, item => item == "BWD");
+                    int idxBWA = Array.FindIndex(fields, item => item == "BWA");
+
+                    
+
                     while (!parser.EndOfData)
                     {
-                        string[] fields = parser.ReadFields();
+                        fields = parser.ReadFields();
                         if (fields[2] == "")
                             break;
                         Fixture newFixture = new Fixture();
-                        newFixture.homeTeamName = fields[2];
-                        newFixture.awayTeamName = fields[3];
-                        Int32.TryParse(fields[4], out newFixture.finalScore.homeTeamGoals);
-                        Int32.TryParse(fields[5], out newFixture.finalScore.awayTeamGoals);
-                        Int32.TryParse(fields[7], out newFixture.halfScore.homeTeamGoals);
-                        Int32.TryParse(fields[8], out newFixture.halfScore.awayTeamGoals);
-                        newFixture.date = DateTime.Parse(fields[1]);
+                        newFixture.homeTeamName = fields[idxHomeTeam];
+                        newFixture.awayTeamName = fields[idxAwayTeam];
+                        Int32.TryParse(fields[idxFTHG], out newFixture.finalScore.homeTeamGoals);
+                        Int32.TryParse(fields[idxFTAG], out newFixture.finalScore.awayTeamGoals);
+                        Int32.TryParse(fields[idxHTHG], out newFixture.halfScore.homeTeamGoals);
+                        Int32.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
+                        newFixture.date = DateTime.Parse(fields[idxDate]);
 
                         newFixture.odds = new Dictionary<string, float>();
-                        newFixture.odds.Add("1", float.Parse(fields[23]));
-                        newFixture.odds.Add("X", float.Parse(fields[24]));
-                        newFixture.odds.Add("2", float.Parse(fields[25]));
+                        try
+                        { newFixture.odds.Add("1", float.Parse(fields[idxB365H])); }
+                        catch(Exception)
+                        { newFixture.odds.Add("1", float.Parse(fields[idxBWH])); }
+                        try
+                        { newFixture.odds.Add("X", float.Parse(fields[idxB365D])); }
+                        catch (Exception)
+                        { newFixture.odds.Add("X", float.Parse(fields[idxBWD])); }
+                        try
+                        { newFixture.odds.Add("2", float.Parse(fields[idxB365A])); }
+                        catch (Exception)
+                        { newFixture.odds.Add("2", float.Parse(fields[idxBWA])); }
+
                         newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
                         newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
                         newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));

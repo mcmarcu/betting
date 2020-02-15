@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,8 +28,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -90,6 +90,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="DB\2Bundesliga2010.csv" />
+    <None Include="DB\2Bundesliga2011.csv" />
+    <None Include="DB\2Bundesliga2012.csv" />
+    <None Include="DB\2Bundesliga2013.csv" />
+    <None Include="DB\2Bundesliga2014.csv" />
+    <None Include="DB\2Bundesliga2015.csv" />
+    <None Include="DB\2Bundesliga2016.csv" />
+    <None Include="DB\2Bundesliga2017.csv" />
+    <None Include="DB\2Bundesliga2018.csv" />
+    <None Include="DB\Bundesliga2010.csv" />
+    <None Include="DB\Bundesliga2011.csv" />
+    <None Include="DB\Bundesliga2012.csv" />
+    <None Include="DB\Bundesliga2013.csv" />
+    <None Include="DB\Bundesliga2014.csv" />
+    <None Include="DB\Bundesliga2015.csv" />
+    <None Include="DB\Bundesliga2016.csv" />
+    <None Include="DB\Bundesliga2017.csv" />
+    <None Include="DB\Bundesliga2018.csv" />
     <None Include="DB\Championship2010.csv" />
     <None Include="DB\Championship2011.csv" />
     <None Include="DB\Championship2012.csv" />
@@ -99,6 +117,7 @@
     <None Include="DB\Championship2016.csv" />
     <None Include="DB\Championship2017.csv" />
     <None Include="DB\Championship2018.csv" />
+    <None Include="DB\Championship2019.csv" />
     <None Include="DB\PremierLeague2010.csv" />
     <None Include="DB\PremierLeague2011.csv" />
     <None Include="DB\PremierLeague2012.csv" />

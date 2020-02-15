@@ -25,7 +25,8 @@ Options:
   -l|--league <optionvalue>            League name (PremierLeague/Championship)
   -y|--year <optionvalue>              Yeasr to start compute (2018)
   -r|--yreverse <optionvalue>          Year to go behind(7)
-  -m|--matchday <optionvalue>          Matchday to start compute (max Championship = 46 max Premier League = 38)
+  -m|--matchday <optionvalue>          Matchday to start compute (max Championship = 46 max Premier League = 38 max Bundesliga = 34 
+										2Bundesliga= 34)
   -v|--mreverse <optionvalue>          Matchdays to go behind(Matchday-10)
   -d|--drawmargin <optionvalue>        Percent safety for draw(2)
   -i|--drawmixedmargin <optionvalue>   Percent safety for draw mixed(20)
@@ -49,16 +50,18 @@ rate
 884
 
 #########################
--w -x=885 --league=Championship --year=2019 --matchday=32 --maxodds=3.0 --betstyle=all --loglevel=LOG_INFO
+-x=414 --league=2Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 ##########################
 
 *************************
--x=885 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=12 --loglevel=LOG_INFO
+-x=885 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 *************************
 
 
--e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=12 --loglevel=LOG_RESULT 
+-e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
 
+-e --league=Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
+-e --league=2Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
 
 
 -w -x=877 --league=Championship --year=2019 --matchday=32 --maxodds=3.0 --loglevel=LOG_INFO
