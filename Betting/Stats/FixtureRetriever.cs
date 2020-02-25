@@ -31,11 +31,14 @@ namespace Betting.Stats
 
                     parser.TextFieldType = FieldType.Delimited;
                     parser.SetDelimiters(",");
+
+                    string[] fields = parser.ReadFields();
+                    int idxHomeTeam = Array.FindIndex(fields, item => item == "HomeTeam");
                     while (!parser.EndOfData)
                     {
-                        string[] fields = parser.ReadFields();
-                        if (fields[2] != "" && fields[2] != "HomeTeam")
-                            teams.Add(fields[2]);
+                        fields = parser.ReadFields();
+                        if (fields[idxHomeTeam] != "" && fields[2] != "HomeTeam")
+                            teams.Add(fields[idxHomeTeam]);
                     }
                 }
 

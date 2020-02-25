@@ -64,58 +64,18 @@ rate
 -e --league=2Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
 
 
--w -x=877 --league=Championship --year=2019 --matchday=32 --maxodds=3.0 --loglevel=LOG_INFO
-
-155
-154
-157
-
-319
-619
-
-885
-884
-888
-7
-6
-90
-
-877
-887
+-w -x=885 --league=Championship --year=2019 --matchday=34 --maxodds=3.0 --loglevel=LOG_INFO
 
 
-Betting.exe -e --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_RESULT
+9855
+9854
+9858
+9857
+9867
 
+-e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
+-x=9662 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
-Betting.exe -x=96 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
-
-Betting.exe -x=840 --league=PremierLeague --matchday=36 --mreverse=26 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
-
-
-
-Betting.exe -e --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-10 --successrate=70 --loglevel=LOG_INFO
-
-888 *** 155 complement
-
--x=155 --league=Championship --matchday=44 --mreverse=34 --maxodds=2.0 --minyearprofit=-20 --successrate=70 --loglevel=LOG_INFO
-Global success rate : 70.54, profit 285.14 on year 2017  -------
-Global success rate : 72.88, profit -13.84 on year 2015  -------
-Global success rate : 70.77, profit 70.13 on year 2014  -------
-Global success rate : 68.69, profit -32.22 on year 2016  -------
-Global success rate : 75.65, profit 30.44 on year 2018  -------
-Global success rate : 68.60, profit 687.70 on year 2013  -------
-Global success rate : 61.76, profit -78.20 on year 2012  -------
-
-Result False, Rate 69.84171, avgProfit 135.593
-Time spent: 4761
-
-Global success rate : 68.38, profit 29.91 on year 2014  -------
-Global success rate : 68.29, profit 519.73 on year 2017  -------
-Global success rate : 74.56, profit -1.36 on year 2015  -------
-Global success rate : 68.32, profit -12.40 on year 2016  -------
-Global success rate : 73.15, profit 3.25 on year 2018  -------
-Global success rate : 68.70, profit 154.51 on year 2013  -------
-Global success rate : 62.75, profit -79.09 on year 2012  -------
-Result False, Rate 69.16227, avgProfit 87.79159
-Time spent: 4691
+9662
+9762

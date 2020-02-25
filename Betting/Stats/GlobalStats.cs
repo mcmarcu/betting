@@ -312,12 +312,12 @@ namespace Betting.Stats
                 if (totalMetricsWithData == metrics.Count && computedResult != String.Empty)
                 {
 
-                    Logger.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult);
+                    Logger.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
                     matchdayOdds.Add(fixture.odds[computedResult]);
                 }
                 else
                 {
-                    Logger.LogInfoFail("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult);
+                    Logger.LogInfoFail("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
                 }
 
             }

@@ -21,6 +21,8 @@ namespace Betting.Metrics
                     result.Add(new GoalsScoredMetric(config, matchDay, year));
                 if (config.name == "GoalsConcededMetric")
                     result.Add(new GoalsConcededMetric(config, matchDay, year));
+                if (config.name == "HomeAdvantageMetric")
+                    result.Add(new HomeAdvantageMetric(config, matchDay, year));
             }
             return result;
         }

@@ -19,6 +19,7 @@ namespace Betting
             int LastGamesMetricD = i % 10;
             int GoalsScoredMetricD = (i / 10) % 10;
             int GoalsConcededMetricD = (i / 100) % 10;
+            int HomeAdvantageMetricD = (i / 1000) % 10;
 
             if (LastGamesMetricD != 0)
             {
@@ -34,10 +35,14 @@ namespace Betting
             {
                 Logger.LogResult(" GoalsConceded ({0}); ", GoalsConcededMetricD);
             }
-
-            if (i / 1000 > 0)
+            if (HomeAdvantageMetricD != 0)
             {
-                PrintMetricList(i / 1000);
+                Logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
+            }
+
+            if (i / 10000 > 0)
+            {
+                PrintMetricList(i / 10000);
             }
 
         }
@@ -49,6 +54,7 @@ namespace Betting
             int LastGamesMetricD = i % 10;
             int GoalsScoredMetricD = (i / 10) % 10;
             int GoalsConcededMetricD = (i / 100) % 10;
+            int HomeAdvantageMetricD = (i / 1000) % 10;
 
             if (LastGamesMetricD != 0)
             { 
@@ -80,9 +86,19 @@ namespace Betting
                 metricConfigs.Add(goalsConcededMetric);
             }
 
-            if(i / 1000 > 0)
+            if (HomeAdvantageMetricD != 0)
             {
-                metricConfigs.AddRange(GetMetricList(i / 1000));
+                MetricConfig homeAdvantageMetric = new MetricConfig
+                {
+                    name = "HomeAdvantageMetric",
+                    depth = HomeAdvantageMetricD
+                };
+                metricConfigs.Add(homeAdvantageMetric);
+            }
+
+            if (i / 10000 > 0)
+            {
+                metricConfigs.AddRange(GetMetricList(i / 10000));
             }
 
             return metricConfigs;
@@ -187,7 +203,7 @@ namespace Betting
                     SortedDictionary<float, Tuple<bool, float, float, int>> successRuns =
                         new SortedDictionary<float, Tuple<bool, float, float, int>>();
 
-                    Parallel.For(0, 1000, (i, state) =>
+                    Parallel.For(0, 10000, (i, state) =>
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 

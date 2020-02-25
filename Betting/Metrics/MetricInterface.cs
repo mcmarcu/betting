@@ -21,7 +21,7 @@ namespace Betting.Metrics
         }
 
         // Find <depth> fixtures with <thisTeam> starting from <fixture>
-        public List<Fixture> FindFixtures(List<Fixture> allFixtures, string thisTeam, Fixture fixture, int depth)
+        public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, int depth)
         {
             List<Fixture> result = new List<Fixture>();
             int startIdx = 0;

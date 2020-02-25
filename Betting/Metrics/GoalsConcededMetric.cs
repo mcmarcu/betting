@@ -24,13 +24,13 @@ namespace Betting.Metrics
             int pctTeam2 = 0;
 
             List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
-            List<Fixture> fixturesTeam1 = FindFixtures(allT1, teamName1, fixture, config.depth);
+            List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
                 pctTeam1 += GetGoals(fix, teamName1);
             }
             List<Fixture> allT2 = FixtureRetriever.GetAllFixtures(year, teamName2);
-            List<Fixture> fixturesTeam2 = FindFixtures(allT2, teamName2, fixture, config.depth);
+            List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam2)
             {
                 pctTeam2 += GetGoals(fix, teamName2);
