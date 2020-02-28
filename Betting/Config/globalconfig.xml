@@ -2,7 +2,7 @@
 <config>
   <league>Championship</league>
   <year>2018</year>
-  <yreverse>9</yreverse><!-- how many years behind we go-->
+  <yreverse>8</yreverse><!-- how many years behind we go-->
   <matchday>44</matchday><!-- max Championship = 46 max Premier League = 38-->
   <mreverse>34</mreverse><!--how many matchdays behind we go-->
 
@@ -15,6 +15,7 @@
   <filtertoprate>20</filtertoprate>
   <filtertopprofit>20</filtertopprofit>
   <betstyle>3</betstyle><!-- all max-->
+  <useexpanded>0</useexpanded>
 
   <loglevel>LOG_INFO</loglevel><!-- LOG_DEBUG, LOG_INFO, LOG_RESULT -->
   

@@ -1,4 +1,5 @@
-﻿using Betting.DataModel;
+﻿using Betting.Config;
+using Betting.DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,24 @@ namespace Betting.Metrics
             this.config = config;
             this.matchDay = matchDay;
             this.year = year;
+        }
+
+        public float GetTeamCoeficient(string teamName, Fixture fixture)
+        {
+            if (ConfigManager.Instance.GetUseExpanded())
+            {
+                float homeTeamCoeficient = fixture.gamesPlayed.homeTeamGamesPlayed > 0 ? (float)fixture.points.homeTeamPoints / (float)fixture.gamesPlayed.homeTeamGamesPlayed : 0;
+                float awayTeamCoeficient = fixture.gamesPlayed.awayTeamGamesPlayed > 0 ? (float)fixture.points.awayTeamPoints / (float)fixture.gamesPlayed.awayTeamGamesPlayed : 0;
+
+                if (teamName == fixture.homeTeamName)
+                    return awayTeamCoeficient;
+                else
+                    return homeTeamCoeficient;
+            }
+            else
+            {
+                return 1;
+            }
         }
 
         // Find <depth> fixtures with <thisTeam> starting from <fixture>

@@ -16,6 +16,12 @@ namespace Betting.Stats
 {
     class FixtureRetriever
     {
+        public static int GetNumberOfMatchDays(int year)
+        {
+            int teams = GetNumberOfTeams(year);
+            return (teams - 1) * 2;
+        }
+
         private static int GetNumberOfTeams(int year)
         {
             lock (numberOfTeamsCache)
@@ -128,7 +134,17 @@ namespace Betting.Stats
                 string leagueName = ConfigManager.Instance.GetLeagueName();
                 int gamesPerMatchDay = GetGamesPerMatchDay(year);
                 List<Fixture> result = new List<Fixture>();
-                using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
+                string fileName;
+                if (ConfigManager.Instance.GetUseExpanded())
+                {
+                    fileName = "..\\..\\DBEX\\" + leagueName + year + ".csv";
+                }
+                else
+                {
+                    fileName = "..\\..\\DB\\" + leagueName + year + ".csv";
+                }
+
+                using (TextFieldParser parser = new TextFieldParser(fileName))
                 {
                     parser.TextFieldType = FieldType.Delimited;
                     parser.SetDelimiters(",");
@@ -147,6 +163,20 @@ namespace Betting.Stats
                     int idxBWH = Array.FindIndex(fields, item => item == "BWH");
                     int idxBWD = Array.FindIndex(fields, item => item == "BWD");
                     int idxBWA = Array.FindIndex(fields, item => item == "BWA");
+
+                    int idxHPTS = -1;
+                    int idxAPTS = -1;
+                    int idxHPL = -1;
+                    int idxAPL = -1;
+
+
+                    if (ConfigManager.Instance.GetUseExpanded())
+                    {
+                        idxHPTS = Array.FindIndex(fields, item => item == "HPTS");
+                        idxAPTS = Array.FindIndex(fields, item => item == "APTS");
+                        idxHPL = Array.FindIndex(fields, item => item == "HPL");
+                        idxAPL = Array.FindIndex(fields, item => item == "APL");
+                    }
 
                     
 
@@ -182,6 +212,17 @@ namespace Betting.Stats
                         newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
                         newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
                         newFixture.odds.Add("1X2", 0);
+
+
+                        if (ConfigManager.Instance.GetUseExpanded())
+                        {
+                            newFixture.points.homeTeamPoints = Int32.Parse(fields[idxHPTS]);
+                            newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
+                            newFixture.gamesPlayed.homeTeamGamesPlayed = Int32.Parse(fields[idxHPL]);
+                            newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
+
+                            newFixture.SetCoeficients();
+                        }
 
                         result.Add(newFixture);
                     }

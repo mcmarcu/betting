@@ -116,6 +116,8 @@ namespace Betting
             var executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
             var inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
             var predictResults = app.Option("-w|--predictResults", "predict results", CommandOptionType.NoValue);
+            var valueStats = app.Option("-z|--valueStats <optionvalue>", "get value stats for metric", CommandOptionType.SingleValue);
+            var dbUpdate = app.Option("-u|--dbUpdate", "Create enhanced csv files", CommandOptionType.NoValue);
 
             var leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
             var yearOption = app.Option("-y|--year <optionvalue>", "Yeasr to start compute (2018)", CommandOptionType.SingleValue);
@@ -132,7 +134,8 @@ namespace Betting
             var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
             var filterTopProfit = app.Option("-f|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
             var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
-            
+            var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.NoValue);
+
 
 
             app.OnExecute(() =>
@@ -170,8 +173,24 @@ namespace Betting
                     ConfigManager.Instance.SetSuccessRate(filterTopProfit.Value());
                 if (betStyleOption.HasValue())
                     ConfigManager.Instance.SetBetStyle(betStyleOption.Value());
+                if (useExpanded.HasValue())
+                    ConfigManager.Instance.SetUseExpanded(true);
 
-                if (predictResults.HasValue())
+
+                if (dbUpdate.HasValue())
+                {
+                    DBUpdater.AddPoints();
+                }
+                else if (valueStats.HasValue())
+                {
+                    int metricConfigId = Int32.Parse(valueStats.Value());
+                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
+                    PrintMetricList(metricConfigId);
+                    Logger.LogResultSuccess("\n Value Stats: \n");
+                    ValueStats vs = new ValueStats(metricConfigs);
+                    vs.GetAllYearsData();
+                }
+                else if (predictResults.HasValue())
                 {
                     int metricConfigId = Int32.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);

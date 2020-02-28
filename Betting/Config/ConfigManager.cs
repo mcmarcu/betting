@@ -196,6 +196,16 @@ namespace Betting.Config
             return GetData("betstyle");
         }
 
+        public void SetUseExpanded(bool value)
+        {
+            SetData("useexpanded", value ? "1" : "0");
+        }
+
+        public bool GetUseExpanded()
+        {
+            return Int32.Parse(GetData("useexpanded")) == 1;
+        }
+
 
         private ConfigManager()
         {

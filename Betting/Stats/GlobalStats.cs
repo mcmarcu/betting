@@ -54,7 +54,6 @@ namespace Betting.Stats
         {
             int matchDay = ConfigManager.Instance.GetMatchDay();
             int reverseDays = ConfigManager.Instance.GetReverseDays();
-            int reverseYears = ConfigManager.Instance.GetReverseYears();
             int totalFixtures = 0;
             int correctFixtures = 0;
             correctFixturesWithData = 0;
@@ -166,7 +165,7 @@ namespace Betting.Stats
                         aggregateResult += checker.GetExpectedResult() + " ";
                         totalMetricsWithData++;
                     }
-                    actualResult = checker.GetActualResult();
+                    actualResult = fixture.GetResult();
 
                 }
 

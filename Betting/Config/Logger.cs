@@ -10,8 +10,8 @@ namespace Betting.Config
     {
         public static object[] split(params object[] list)
         {
-            object[] result = new object[list.Count()-1];
-            for (int i=1;i<list.Count();++i)
+            object[] result = new object[list.Count() - 1];
+            for (int i = 1; i < list.Count(); ++i)
             {
                 result[i - 1] = list[i];
             }
@@ -49,7 +49,7 @@ namespace Betting.Config
                     Console.Write(list[0].ToString(), split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-            }
+        }
 
         public static void LogInfo(params object[] list)
         {

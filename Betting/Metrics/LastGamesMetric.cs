@@ -25,7 +25,7 @@ namespace Betting.Metrics
 
             List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
-            foreach(Fixture fix in fixturesTeam1)
+            foreach (Fixture fix in fixturesTeam1)
             {
                 pctTeam1 += GetPoints(fix, teamName1);
             }
@@ -37,7 +37,7 @@ namespace Betting.Metrics
                 pctTeam2 += GetPoints(fix, teamName2);
             }
 
-            pTeam1 = (int)((float)pctTeam1/((float)pctTeam1 + (float)pctTeam2)*100);
+            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 

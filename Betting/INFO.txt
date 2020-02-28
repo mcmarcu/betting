@@ -10,6 +10,8 @@ https://www.football-data.co.uk/matches.php
 http://www.football-data.co.uk/englandm.php
 https://betting.betfair.com/football/football-betting-systems-what-works-and-what-doesnt.html
 
+https://www.football-data.co.uk/ratings.pdf
+
 try strategy of convergence: 
 1. each match on his own!
 2. be more aggresive with results:
@@ -66,6 +68,14 @@ rate
 
 -w -x=885 --league=Championship --year=2019 --matchday=34 --maxodds=3.0 --loglevel=LOG_INFO
 
+-x=9855 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+//9855/9854
+
+
+-x=865 -X --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+//864
+
 
 9855
 9854
@@ -73,9 +83,19 @@ rate
 9857
 9867
 
--e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-u --league=Championship -y=2018 -r=9
 
--x=9662 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-x=9855 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+
+
+-e --league=Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-x=8948 --league=Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+-e --league=2Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+
+-e --league=PremierLeague --year=2018 --matchday=38 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
 9662
 9762

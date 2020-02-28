@@ -24,15 +24,6 @@ namespace Betting.Metrics
             }
         }
 
-        public string GetActualResult()
-        {
-            if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
-                return "X";
-            else if (fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
-                return "1";
-            else
-                return "2";
-        }
 
         public string GetExpectedResult()
         {
@@ -58,7 +49,7 @@ namespace Betting.Metrics
             try
             {
                 Logger.LogDebug("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
-                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, GetActualResult());
+                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, fixture.GetResult());
             }
             catch (Exception)
             {
@@ -81,7 +72,7 @@ namespace Betting.Metrics
             try
             {
                 string expectedResult = GetExpectedResult();
-                string actualResult = GetActualResult();
+                string actualResult = fixture.GetResult();
 
                 if (expectedResult.Contains(actualResult))
                     return InterpretResultStatus.CORRECT;
@@ -95,8 +86,8 @@ namespace Betting.Metrics
         }
 
         private Fixture fixture;
-        private int pct1;
-        private int pct2;
+        public int pct1;
+        public int pct2;
         public bool dataAvailable;
     }
 }
