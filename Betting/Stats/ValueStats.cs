@@ -111,11 +111,11 @@ namespace Betting.Stats
 
 
                 int key = Convert.ToInt32(ptsHome*100/(ptsHome + ptsAway));
-                if (fixture.GetResult() == "1")
+                if (fixture.result == "1")
                 {
                     AddToDict(ref diffHome, key, 1);
                 }
-                else if (fixture.GetResult() == "X")
+                else if (fixture.result == "X")
                 {
                     AddToDict(ref diffDraw, key, 1);
                 }

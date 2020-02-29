@@ -59,6 +59,15 @@ rate
 -x=885 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 *************************
 
+)()()()()(()(())))))))
+-w -x=9855 --league=Championship --year=2019 --matchday=36 --maxodds=3.0 --loglevel=LOG_INFO
+-x=9855 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+()()()()()(()(((()))))
+-w -x=865 -X --league=Championship --year=2019 --matchday=36 --maxodds=3.0 --loglevel=LOG_INFO
+-x=865 -X --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+
 
 -e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
 
@@ -73,6 +82,7 @@ rate
 //9855/9854
 
 
+////////////////////////////////////////////////////////////////////////
 -x=865 -X --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=-20 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 //864
 
@@ -84,6 +94,14 @@ rate
 9867
 
 -u --league=Championship -y=2018 -r=9
+-u --league=Championship -y=2019 -r=1
+
+-u --league=Bundesliga -y=2018 -r=9
+-u --league=2Bundesliga -y=2018 -r=9
+-u --league=PremierLeague -y=2018 -r=9
+
+
+
 
 -e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 -x=9855 --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
@@ -95,7 +113,25 @@ rate
 
 -e --league=2Bundesliga --year=2018 --matchday=34 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
--e --league=PremierLeague --year=2018 --matchday=38 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-e -X --league=PremierLeague --year=2018 --matchday=38 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+-x=1 -X --league=PremierLeague --year=2018 --matchday=38 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
 
 9662
 9762
+
+=====================================CHAMPIONSHIP===========================================
+
+-w -x=9855 --league=Championship --year=2019 --matchday=36 --maxodds=3.0 --loglevel=LOG_INFO
+
+Reading - Barnsley,                                    result X2,        odds 1.65       aggregate 2 X2 X2 X2
+West Brom - Wigan,                                     result 1X,        odds 1.09       aggregate 1X 1X 1X 1X
+
+
+-w -x=865 -X --league=Championship --year=2019 --matchday=36 --maxodds=3.0 --loglevel=LOG_INFO
+
+QPR - Birmingham,                                      result X2,        odds 1.69       aggregate X2 X2 X2  
+Reading - Barnsley,                                    result X2,        odds 1.65       aggregate 2 X2 X2    
+Sheffield Weds - Derby,                                result X2,        odds 1.70       aggregate X2 2 X2     
+West Brom - Wigan,                                     result 1X,        odds 1.09       aggregate 1X 1X 1X   
+Middlesbrough - Nott'm Forest,                         result X2,        odds 1.51       aggregate 2 X2 X2      

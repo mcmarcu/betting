@@ -18,23 +18,21 @@ namespace Betting.Metrics
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
-            int thisYear = year;
-            int thisMatchDay = matchDay;
-            int pctTeam1 = 0;
-            int pctTeam2 = 0;
+            float pctTeam1 = 0;
+            float pctTeam2 = 0;
 
             List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
-                pctTeam1 += GetPoints(fix, teamName1);
+                pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix,teamName1);
             }
 
             List<Fixture> allT2 = FixtureRetriever.GetAllFixtures(year, teamName2);
             List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam2)
             {
-                pctTeam2 += GetPoints(fix, teamName2);
+                pctTeam2 += GetPoints(fix, teamName2) * GetCoeficient(fix, teamName2);
             }
 
             pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
@@ -43,14 +41,22 @@ namespace Betting.Metrics
 
         public int GetPoints(Fixture fixture, string teamName)
         {
-            if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
+            if (fixture.result == "X")
                 return 1;
-            else if (teamName == fixture.homeTeamName && fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
+            else if (teamName == fixture.homeTeamName && fixture.result == "1")
                 return 3;
-            else if (teamName == fixture.awayTeamName && fixture.finalScore.homeTeamGoals < fixture.finalScore.awayTeamGoals)
+            else if (teamName == fixture.awayTeamName && fixture.result == "2")
                 return 3;
             else
                 return 0;
+        }
+
+        public float GetCoeficient(Fixture fixture, string teamName)
+        {
+            if (teamName == fixture.homeTeamName)
+                return fixture.coeficient.awayTeam;
+            else
+                return fixture.coeficient.homeTeam;
         }
     }
 }

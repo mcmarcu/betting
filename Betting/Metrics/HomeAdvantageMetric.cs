@@ -18,17 +18,15 @@ namespace Betting.Metrics
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
-            int thisYear = year;
-            int thisMatchDay = matchDay;
-            int pctTeam1 = 0;
-            int pctTeam2 = 0;
+            float pctTeam1 = 0;
+            float pctTeam2 = 0;
 
             List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth * 2);
             foreach (Fixture fix in fixturesTeam1)
             {
                 if (fix.homeTeamName == teamName1)
-                    pctTeam1 += GetPoints(fix, teamName1);
+                    pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix, teamName1);
             }
 
             List<Fixture> allT2 = FixtureRetriever.GetAllFixtures(year, teamName2);
@@ -36,7 +34,7 @@ namespace Betting.Metrics
             foreach (Fixture fix in fixturesTeam2)
             {
                 if (fix.awayTeamName == teamName2)
-                    pctTeam2 += GetPoints(fix, teamName2);
+                    pctTeam2 += GetPoints(fix, teamName2) * GetCoeficient(fix, teamName2);
             }
 
             pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
@@ -53,6 +51,14 @@ namespace Betting.Metrics
                 return 3;
             else
                 return 0;
+        }
+
+        public float GetCoeficient(Fixture fixture, string teamName)
+        {
+            if (teamName == fixture.homeTeamName)
+                return fixture.coeficient.awayTeam;
+            else
+                return fixture.coeficient.homeTeam;
         }
     }
 }

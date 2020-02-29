@@ -165,7 +165,7 @@ namespace Betting.Stats
                         aggregateResult += checker.GetExpectedResult() + " ";
                         totalMetricsWithData++;
                     }
-                    actualResult = fixture.GetResult();
+                    actualResult = fixture.result;
 
                 }
 

@@ -49,7 +49,7 @@ namespace Betting.Metrics
             try
             {
                 Logger.LogDebug("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
-                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, fixture.GetResult());
+                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, fixture.result);
             }
             catch (Exception)
             {
@@ -72,7 +72,7 @@ namespace Betting.Metrics
             try
             {
                 string expectedResult = GetExpectedResult();
-                string actualResult = fixture.GetResult();
+                string actualResult = fixture.result;
 
                 if (expectedResult.Contains(actualResult))
                     return InterpretResultStatus.CORRECT;

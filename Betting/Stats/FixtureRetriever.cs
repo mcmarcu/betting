@@ -220,9 +220,8 @@ namespace Betting.Stats
                             newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
                             newFixture.gamesPlayed.homeTeamGamesPlayed = Int32.Parse(fields[idxHPL]);
                             newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
-
-                            newFixture.SetCoeficients();
                         }
+                        newFixture.init();
 
                         result.Add(newFixture);
                     }

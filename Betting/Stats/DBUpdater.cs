@@ -66,12 +66,12 @@ namespace Betting.Stats
                         outputLine = parser.ReadLine() + ',' + homePointCnt.ToString() + ',' + awayPointCnt.ToString() + ',' + homePlayCnt + ',' + awayPlayCnt;
                         outputFile.WriteLine(outputLine);
 
-                        if (fixture.GetResult() == "1")
+                        if (fixture.result == "1")
                         {
                             AddToDict(ref currentPoints, fixture.homeTeamName, 3);
 
                         }
-                        else if (fixture.GetResult() == "X")
+                        else if (fixture.result == "X")
                         {
                             AddToDict(ref currentPoints, fixture.homeTeamName, 1);
                             AddToDict(ref currentPoints, fixture.awayTeamName, 1);
