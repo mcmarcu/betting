@@ -238,17 +238,42 @@ namespace Betting.Stats
 
         public static List<Fixture> GetRound(int year, int matchDay)
         {
-            List<Fixture> all = GetAllFixtures(year);
+            Tuple<int, int> t = Tuple.Create(year, matchDay);
 
-            int gamesPerMatchDay = GetGamesPerMatchDay(year);
-            int startRow = (matchDay - 1) * gamesPerMatchDay;
-            
-            List<Fixture> result = new List<Fixture>();
-            for(int i = 0;i<gamesPerMatchDay;++i)
+            matchdayFixtureCacheLock.EnterReadLock();
+            try
             {
-                result.Add(all[startRow + i]);
+                if (matchdayFixtureCache.ContainsKey(t))
+                {
+                    return matchdayFixtureCache[t];
+                }
             }
-            return result;
+            finally
+            {
+                matchdayFixtureCacheLock.ExitReadLock();
+            }
+
+            matchdayFixtureCacheLock.EnterWriteLock();
+            try
+            {
+
+                List<Fixture> all = GetAllFixtures(year);
+
+                int gamesPerMatchDay = GetGamesPerMatchDay(year);
+                int startRow = (matchDay - 1) * gamesPerMatchDay;
+
+                List<Fixture> result = new List<Fixture>();
+                for (int i = 0; i < gamesPerMatchDay; ++i)
+                {
+                    result.Add(all[startRow + i]);
+                }
+                matchdayFixtureCache[t] = result;
+                return result;
+            }
+            finally
+            {
+                matchdayFixtureCacheLock.ExitWriteLock();
+            }
         }
 
         public static void GetPrevRound(out int outYear, out int outDay, int currentYear, int currentDay)
@@ -265,11 +290,16 @@ namespace Betting.Stats
             }  
         }
 
-        public static Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
+        private static Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
         private static ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
-        public static Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+
+        private static Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
+        private static ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
+
+        private static Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
         private static ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
-        public static Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
+
+        private static Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
 
     }
 }

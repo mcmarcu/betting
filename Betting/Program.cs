@@ -9,11 +9,94 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 using System.Diagnostics;
+using Accord.MachineLearning;
 
 namespace Betting
 {
     class Program
     {
+        public class RunOutput
+        {
+            public bool  success;
+            public float rate;
+            public float averageProfit;
+            public int metricId;
+            public List<double> metricDepths;
+            public int cluster;
+
+            public RunOutput(bool success_, float rate_, float averageProfit_, int i, int maxI)
+            {
+                success = success_;
+                rate = rate_;
+                averageProfit = averageProfit_;
+                metricDepths = new List<double>();
+                metricId = i;
+                maxI /= 10;
+                while (maxI>0)
+                {
+                    metricDepths.Add(i % 10);
+                    maxI /= 10;
+                    i /= 10;
+                }
+                cluster = 0;
+            }
+        }
+
+        public static void AddClusterInfo(ref SortedDictionary<float, RunOutput> dict)
+        {
+            if (dict.Count <= 1)
+                return;
+
+            Accord.Math.Random.Generator.Seed = 0;
+
+            double[][] metrics = new double[dict.Count][];
+            int i = 0;
+            foreach (RunOutput t in dict.Values)
+            {
+                metrics[i++] = t.metricDepths.ToArray();
+            }
+
+            // Create a new K-Means algorithm
+            KMeans kmeans = new KMeans(k: dict.Count/3);
+
+            // Compute and retrieve the data centroids
+            var clusters = kmeans.Learn(metrics);
+
+            // Use the centroids to parition all the data
+            int[] labels = clusters.Decide(metrics);
+
+            int j = 0;
+            foreach (RunOutput v in dict.Values)
+            {
+                v.cluster = labels[j++];
+            }
+        }
+
+        public static void PrintClusterInfo(SortedDictionary<float, RunOutput> dict)
+        {
+            if (ConfigManager.Instance.GetLogLevel() > ConfigManager.LogLevel.LOG_RESULT)
+                return;
+
+            SortedDictionary<int, SortedSet<int>> clusteredOutput = new SortedDictionary<int, SortedSet<int>>();
+
+            foreach(RunOutput t in dict.Values)
+            {
+                if (!clusteredOutput.ContainsKey(t.cluster))
+                    clusteredOutput.Add(t.cluster, new SortedSet<int>());
+           
+                clusteredOutput[t.cluster].Add(t.metricId);
+            }
+
+            foreach(int k in clusteredOutput.Keys)
+            {
+                Logger.LogResult("config {0}", k);
+                foreach(int t in clusteredOutput[k])
+                    Logger.LogResult(", {0}", t);
+                Logger.LogResult("\n");
+            }
+
+        }
+
         public static void PrintMetricList(int i)
         {
             int LastGamesMetricD = i % 10;
@@ -127,6 +210,7 @@ namespace Betting
             var drawMarginOption = app.Option("-d|--drawmargin <optionvalue>", "Percent safety for draw(2)", CommandOptionType.SingleValue);
             var drawMixedMarginOption = app.Option("-i|--drawmixedmargin <optionvalue>", "Percent safety for draw mixed(20)", CommandOptionType.SingleValue);
             var maxOddsOption = app.Option("-o|--maxodds <optionvalue>", "Max odds (2.0)", CommandOptionType.SingleValue);
+            var minOddsOption = app.Option("-O|--minodds <optionvalue>", "Min odds (2.0)", CommandOptionType.SingleValue);
             var minMetricCorrectOption = app.Option("-c|--minmetriccorrect <optionvalue>", "?? 1", CommandOptionType.SingleValue);
             var minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (-5)", CommandOptionType.SingleValue);
             var logLevelOption = app.Option("-g|--loglevel <optionvalue>", "LOG_DEBUG, LOG_INFO, LOG_RESULT", CommandOptionType.SingleValue);
@@ -137,9 +221,10 @@ namespace Betting
             var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.NoValue);
 
 
-
             app.OnExecute(() =>
             {
+                //ClusterPrint();
+
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
@@ -150,7 +235,12 @@ namespace Betting
                 if (yReverseOption.HasValue())
                     ConfigManager.Instance.SetReverseYears(yReverseOption.Value());
                 if (matchdayOption.HasValue())
-                    ConfigManager.Instance.SetMatchDay(matchdayOption.Value());
+                {
+                    if(matchdayOption.Value() == "max")
+                        ConfigManager.Instance.SetMatchDay(FixtureRetriever.GetNumberOfMatchDays(ConfigManager.Instance.GetYear()).ToString());
+                    else
+                        ConfigManager.Instance.SetMatchDay(matchdayOption.Value());
+                }
                 if (mReverseOption.HasValue())
                     ConfigManager.Instance.SetReverseDays(mReverseOption.Value());
                 if (drawMarginOption.HasValue())
@@ -159,6 +249,8 @@ namespace Betting
                     ConfigManager.Instance.SetDrawMixedMargin(drawMixedMarginOption.Value());
                 if (maxOddsOption.HasValue())
                     ConfigManager.Instance.SetMaxOdds(maxOddsOption.Value());
+                if (minOddsOption.HasValue())
+                    ConfigManager.Instance.SetMinOdds(minOddsOption.Value());
                 if (minMetricCorrectOption.HasValue())
                     ConfigManager.Instance.SetMinMetricCorrect(minMetricCorrectOption.Value());
                 if (minYearProfitOption.HasValue())
@@ -215,14 +307,16 @@ namespace Betting
                 }
                 else if (executeMetrics.HasValue())
                 {   
-                    SortedDictionary<float, Tuple<bool ,float, float, int>> topByProfit =
-                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
-                    SortedDictionary<float, Tuple<bool, float, float, int>> topByRate =
-                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
-                    SortedDictionary<float, Tuple<bool, float, float, int>> successRuns =
-                        new SortedDictionary<float, Tuple<bool, float, float, int>>();
+                    SortedDictionary<float, RunOutput> topByProfit =
+                        new SortedDictionary<float, RunOutput>();
+                    SortedDictionary<float, RunOutput> topByRate =
+                        new SortedDictionary<float, RunOutput>();
+                    SortedDictionary<float, RunOutput> successRuns =
+                        new SortedDictionary<float, RunOutput>();
 
-                    Parallel.For(0, 10000, (i, state) =>
+                    int numMetrics = 4;
+                    int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
+                    Parallel.For(0, maxI, (i, state) =>
                     {
                         List<MetricConfig> metricConfigs = GetMetricList(i);
 
@@ -239,7 +333,14 @@ namespace Betting
                         {
                             lock(successRuns)
                             {
-                                successRuns.Add(averageProfit, Tuple.Create(success, rate, averageProfit, i));
+                                try
+                                {
+                                    successRuns.Add(averageProfit, new RunOutput(success, rate, averageProfit, i, maxI));
+                                }
+                                catch(Exception)
+                                {
+
+                                }
                             }
 
                             Logger.LogResultSuccess("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
@@ -251,7 +352,7 @@ namespace Betting
                         lock (topByProfit)
                         {
                             if (!topByProfit.ContainsKey(averageProfit))
-                                topByProfit.Add(averageProfit, Tuple.Create(success, rate, averageProfit, i));
+                                topByProfit.Add(averageProfit, new RunOutput(success, rate, averageProfit, i, maxI));
                             if (topByProfit.Count > ConfigManager.Instance.GetFilterTopProfit())
                                 topByProfit.Remove(topByProfit.Keys.First());
                         }
@@ -259,7 +360,7 @@ namespace Betting
                         lock (topByRate)
                         {
                             if (!topByRate.ContainsKey(rate))
-                                topByRate.Add(rate, Tuple.Create(success, rate, averageProfit, i));
+                                topByRate.Add(rate, new RunOutput(success, rate, averageProfit, i, maxI));
                             if (topByRate.Count > ConfigManager.Instance.GetFilterTopRate())
                                 topByRate.Remove(topByRate.Keys.First());
                         }
@@ -269,39 +370,43 @@ namespace Betting
                     {
                         Logger.LogResult("TopByProfit {0}: \n\n", ConfigManager.Instance.GetFilterTopProfit());
 
-                        foreach (Tuple<bool, float, float, int> t in topByProfit.Values)
+                        AddClusterInfo(ref topByProfit);
+                        foreach (RunOutput t in topByProfit.Values)
                         {
-                            if (t.Item1)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            if (t.success)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
-                            PrintMetricList(t.Item4);
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
 
                         Logger.LogResult("TopByRate {0}: \n\n", ConfigManager.Instance.GetFilterTopRate());
 
-                        foreach (Tuple<bool, float, float, int> t in topByRate.Values)
+                        AddClusterInfo(ref topByRate);
+                        foreach (RunOutput t in topByRate.Values)
                         {
-                            if(t.Item1)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            if(t.success)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
-                            PrintMetricList(t.Item4);
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
 
                         Logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
 
-                        foreach (Tuple<bool, float, float, int> t in successRuns.Values)
+                        AddClusterInfo(ref successRuns);
+                        foreach (RunOutput t in successRuns.Values)
                         {
-                            if (t.Item1)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
+                            if (t.success)
+                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}: ", t.Item2, t.Item3, t.Item4);
-                            PrintMetricList(t.Item4);
+                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
+                        PrintClusterInfo(successRuns);
                     }
                 }
 
@@ -315,5 +420,7 @@ namespace Betting
             app.Execute(args);
             
         }
+
+        
     }
 }

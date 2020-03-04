@@ -130,6 +130,16 @@ namespace Betting.Config
             SetData("maxodds", value);
         }
 
+        public float GetMinOdds()
+        {
+            return float.Parse(GetData("minodds"));
+        }
+
+        public void SetMinOdds(string value)
+        {
+            SetData("minodds", value);
+        }
+
         public float GetMaxOdds()
         {
             return float.Parse(GetData("maxodds"));

@@ -34,7 +34,7 @@ namespace Betting.Stats
                 float yearProfit = 0;
                 int computeYear = year - i;
                 GetYearData(out yearCorrect, out yearTotal, out yearProfit, computeYear);
-                float yearRate = ((float)yearCorrect / (float)yearTotal) * 100;
+                float yearRate = (yearTotal != 0) ? ((float)yearCorrect / (float)yearTotal) * 100 : 100;
                 lrate += yearRate;
 
                 Logger.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
@@ -205,7 +205,8 @@ namespace Betting.Stats
                 }
 
 
-                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds())
+                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() ||
+                    fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
                 }
@@ -301,7 +302,8 @@ namespace Betting.Stats
                 }
 
 
-                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds())
+                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() &&
+                    fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
                 }

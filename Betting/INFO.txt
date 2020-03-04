@@ -1,6 +1,7 @@
 
 https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/getting-started/Regression_TaxiFarePrediction
 
+http://accord-framework.net/docs/html/T_Accord_MachineLearning_KMeans.htm
 
 TODO: add cutoff to config see globalStats.cs line 58
 TODO: add how many times we run the simulation? how many matchdays behind
@@ -99,8 +100,11 @@ rate
 -u --league=Bundesliga -y=2018 -r=9
 -u --league=2Bundesliga -y=2018 -r=9
 -u --league=PremierLeague -y=2018 -r=9
+-u --league=SerieA -y=2018 -r=9
 
+-e --league=SerieA --year=2018 --matchday=max --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
+-e -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
 
 -e --league=Championship --year=2018 --matchday=44 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
@@ -119,6 +123,15 @@ rate
 
 9662
 9762
+
+-e -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+config 0, 6778, 6876, 6877, 6878, 6879,
+config 0, 6668, 6778, 6879, 6878, 6876, 6877
+
+-x=6778 -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+-w -x=865 -X --league=Championship --year=2019 --matchday=35 --minodds=1.0 --maxodds=2.0 --loglevel=LOG_INFO
+
 
 =====================================CHAMPIONSHIP===========================================
 
