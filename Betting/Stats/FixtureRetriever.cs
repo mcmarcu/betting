@@ -157,12 +157,20 @@ namespace Betting.Stats
                     int idxFTAG = Array.FindIndex(fields, item => item == "FTAG");
                     int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
                     int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
-                    int idxB365H = Array.FindIndex(fields, item => item == "B365H");
-                    int idxB365D = Array.FindIndex(fields, item => item == "B365D");
-                    int idxB365A = Array.FindIndex(fields, item => item == "B365A");
-                    int idxBWH = Array.FindIndex(fields, item => item == "BWH");
-                    int idxBWD = Array.FindIndex(fields, item => item == "BWD");
-                    int idxBWA = Array.FindIndex(fields, item => item == "BWA");
+
+                    string []oddProviders = { "B365", "BW", "PS", "VC", "GB" };
+                    Dictionary<string, int> oddIdx = new Dictionary<string, int>();
+
+                    foreach(string oddProvider in oddProviders)
+                    {
+                        int idxH = Array.FindIndex(fields, item => item == (oddProvider + "H"));
+                        oddIdx.Add((oddProvider + "H"), idxH);
+                        int idxD = Array.FindIndex(fields, item => item == (oddProvider + "D"));
+                        oddIdx.Add((oddProvider + "D"), idxD);
+                        int idxA = Array.FindIndex(fields, item => item == (oddProvider + "A"));
+                        oddIdx.Add((oddProvider + "A"), idxA);
+                    }
+                    
 
                     int idxHPTS = -1;
                     int idxAPTS = -1;
@@ -195,18 +203,14 @@ namespace Betting.Stats
                         newFixture.date = DateTime.Parse(fields[idxDate]);
 
                         newFixture.odds = new Dictionary<string, float>();
-                        try
-                        { newFixture.odds.Add("1", float.Parse(fields[idxB365H])); }
-                        catch(Exception)
-                        { newFixture.odds.Add("1", float.Parse(fields[idxBWH])); }
-                        try
-                        { newFixture.odds.Add("X", float.Parse(fields[idxB365D])); }
-                        catch (Exception)
-                        { newFixture.odds.Add("X", float.Parse(fields[idxBWD])); }
-                        try
-                        { newFixture.odds.Add("2", float.Parse(fields[idxB365A])); }
-                        catch (Exception)
-                        { newFixture.odds.Add("2", float.Parse(fields[idxBWA])); }
+                        foreach(string oddProvider in oddProviders)
+                        {
+                            if (tryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
+                                break;
+                        }
+
+                        if (newFixture.odds.Count != 3)
+                            throw new Exception("could not get odds for fixture");
 
                         newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
                         newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
@@ -234,6 +238,25 @@ namespace Betting.Stats
             {
                 fixturesCacheLock.ExitWriteLock();
             }
+        }
+
+        private static bool tryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
+        {
+            string idH = oddProvider + "H";
+            string idD = oddProvider + "D";
+            string idA = oddProvider + "A";
+
+            try
+            {
+                fixture.odds.Add("1", float.Parse(fields[oddIdx[idH]]));
+                fixture.odds.Add("X", float.Parse(fields[oddIdx[idD]]));
+                fixture.odds.Add("2", float.Parse(fields[oddIdx[idA]]));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static List<Fixture> GetRound(int year, int matchDay)
