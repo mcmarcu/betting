@@ -169,33 +169,32 @@ namespace Betting.Stats
 
                 }
 
-                //TODO: what does GetMinMetricCorrect do?
-                int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData); 
+                int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
+                //int goodMetricsCount = 1;//(totalMetricsWithData+1) / 2;//ceil
                 string possibleResults = "1X2";
                 foreach(char result in possibleResults)
                 {
-                    if (aggregateResult.Split(result).Length - 1 >= goodMetricsCount)
+                    int count = aggregateResult.Count(f => f == result);
+                    if (count >= goodMetricsCount)
                     {
                         computedResult += result;
                     }
                 }
 
-                //TODO: put under config
-                if(computedResult == "1" && aggregateResult.Split('X').Length - 1 > 0)
+                
+                if (computedResult == "1" && aggregateResult.Contains('X'))
                 {
                     computedResult = "1X";
                 }
-                if (computedResult == "2" && aggregateResult.Split('X').Length - 1 > 0)
+                if (computedResult == "2" && aggregateResult.Contains('X'))
                 {
                     computedResult = "X2";
                 }
-
                 if (computedResult == "X")
                 {
                     computedResult = "1X2";
                     totalMetricsWithData = 0;
                 }
-                //END X related TODOs
 
                 //bad expected 1X2
                 if (computedResult.Length == 3 || computedResult.Length == 0)
