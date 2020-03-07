@@ -216,6 +216,7 @@ namespace Betting.Stats
                         newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
                         newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
                         newFixture.odds.Add("1X2", 0);
+                        newFixture.odds.Add("", 0);
 
 
                         if (ConfigManager.Instance.GetUseExpanded())

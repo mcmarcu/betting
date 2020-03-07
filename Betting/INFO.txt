@@ -66,8 +66,23 @@ Options:
 config 0, 6778, 6876, 6877, 6878, 6879,
 config 0, 6668, 6778, 6879, 6878, 6876, 6877
 
+after X improvement in GlobalStats:
+config 0, 3872, 3873, 6970, 8670, 8970
+config 1, 3065
+config 2, 4978, 6875, 6979, 8979
+
 -x=6778 -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 
--w -x=6778 -X --league=Championship --year=2019 --matchday=35 --minodds=1.0 --maxodds=2.0 --loglevel=LOG_INFO
+-w -x=6876 -X --league=Championship --year=2019 --matchday=37 --minodds=1.0 --maxodds=4.0 --loglevel=LOG_INFO
+
+
+after X improvement in GlobalStats:
+-e --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+config 0, 3085, 3086, 3095, 3096, 3097
+config 1, 3078, 3087, 3088, 3089, 3098, 3099
+config 2, 4955
+config 3, 8437, 8438, 8439
+config 4, 9727, 9728
+config 5, 3058, 3068, 6058
 
  

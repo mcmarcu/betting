@@ -110,6 +110,50 @@ namespace Betting.Stats
             return profit;
         }
 
+        private string ComputeExpectedResult(string aggregateResult, int totalMetricsWithData)
+        {
+            string computedResult = String.Empty;
+            int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
+            //int goodMetricsCount = 1;//(totalMetricsWithData+1) / 2;//ceil
+            string possibleResults = "1X2";
+            foreach (char result in possibleResults)
+            {
+                int count = aggregateResult.Count(f => f == result);
+                if (count >= goodMetricsCount)
+                {
+                    computedResult += result;
+                }
+            }
+
+
+            if (computedResult == "1" && aggregateResult.Contains('X'))
+            {
+                computedResult = "1X";
+            }
+            else if (computedResult == "2" && aggregateResult.Contains('X'))
+            {
+                computedResult = "X2";
+            }
+            else if (computedResult == "X" || computedResult == "")
+            {
+                int count1 = aggregateResult.Count(f => f == '1');
+                int count2 = aggregateResult.Count(f => f == '2');
+                if (count1 >= (goodMetricsCount+1)/2 && !aggregateResult.Contains('2'))
+                    computedResult = "1X";
+                else if (count2 >= (goodMetricsCount+1) / 2 && !aggregateResult.Contains('1'))
+                    computedResult = "X2";
+                else
+                    computedResult = "";
+            }
+
+            //bad expected 1X2
+            if (computedResult.Length == 3 || computedResult.Length == 0)
+            {
+                computedResult = "";
+            }
+            return computedResult;
+        }
+
         public float GetMatchdayProfit(List<float> matchdayOdds, int year)
         {
             int maxGames = matchdayOdds.Count;
@@ -154,7 +198,6 @@ namespace Betting.Stats
             foreach (Fixture fixture in thisRoundFixtures)
             {
                 int totalMetricsWithData = 0;
-                string computedResult = String.Empty;
                 string aggregateResult = String.Empty;
                 string actualResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
@@ -169,42 +212,13 @@ namespace Betting.Stats
 
                 }
 
-                int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
-                //int goodMetricsCount = 1;//(totalMetricsWithData+1) / 2;//ceil
-                string possibleResults = "1X2";
-                foreach(char result in possibleResults)
-                {
-                    int count = aggregateResult.Count(f => f == result);
-                    if (count >= goodMetricsCount)
-                    {
-                        computedResult += result;
-                    }
-                }
-
+                string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
                 
-                if (computedResult == "1" && aggregateResult.Contains('X'))
+                if (computedResult.Length == 0)
                 {
-                    computedResult = "1X";
-                }
-                if (computedResult == "2" && aggregateResult.Contains('X'))
-                {
-                    computedResult = "X2";
-                }
-                if (computedResult == "X")
-                {
-                    computedResult = "1X2";
                     totalMetricsWithData = 0;
                 }
-
-                //bad expected 1X2
-                if (computedResult.Length == 3 || computedResult.Length == 0)
-                {
-                    computedResult = "1X2";
-                    totalMetricsWithData = 0;
-                }
-
-
-                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() ||
+                else if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() ||
                     fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
@@ -252,7 +266,6 @@ namespace Betting.Stats
             foreach (Fixture fixture in thisRoundFixtures)
             {
                 int totalMetricsWithData = 0;
-                string computedResult = String.Empty;
                 string aggregateResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
@@ -265,43 +278,13 @@ namespace Betting.Stats
 
                 }
 
-                //TODO: what does GetMinMetricCorrect do?
-                int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
-                string possibleResults = "1X2";
-                foreach (char result in possibleResults)
-                {
-                    if (aggregateResult.Split(result).Length - 1 >= goodMetricsCount)
-                    {
-                        computedResult += result;
-                    }
-                }
+                string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
 
-                //TODO: put under config
-                if (computedResult == "1" && aggregateResult.Split('X').Length - 1 > 0)
+                if (computedResult.Length == 0)
                 {
-                    computedResult = "1X";
-                }
-                if (computedResult == "2" && aggregateResult.Split('X').Length - 1 > 0)
-                {
-                    computedResult = "X2";
-                }
-
-                if (computedResult == "X")
-                {
-                    computedResult = "1X2";
                     totalMetricsWithData = 0;
                 }
-                //END X related TODOs
-
-                //bad expected 1X2
-                if (computedResult.Length == 3 || computedResult.Length == 0)
-                {
-                    computedResult = "1X2";
-                    totalMetricsWithData = 0;
-                }
-
-
-                if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() &&
+                else if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() &&
                     fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
