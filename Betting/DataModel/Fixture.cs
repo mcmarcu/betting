@@ -62,10 +62,11 @@ namespace Betting.DataModel
 
         private void SetCoeficients()
         {
+            int weight = ConfigManager.Instance.GetCoeficientWeight();
             if (ConfigManager.Instance.GetUseExpanded())
             {
-                coeficient.homeTeam = (float)points.homeTeamPoints / (3 * gamesPlayed.homeTeamGamesPlayed);
-                coeficient.awayTeam = (float)points.awayTeamPoints / (3 * gamesPlayed.awayTeamGamesPlayed);
+                coeficient.homeTeam = (float)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
+                coeficient.awayTeam = (float)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);
             }
             else
             {

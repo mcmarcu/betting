@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
 using System.Diagnostics;
 using Accord.MachineLearning;
+using System.Data;
 
 namespace Betting
 {
@@ -44,7 +45,7 @@ namespace Betting
 
         public static void AddClusterInfo(ref SortedDictionary<float, RunOutput> dict)
         {
-            if (dict.Count <= 1)
+            if (dict.Count <= 3)
                 return;
 
             Accord.Math.Random.Generator.Seed = 0;
@@ -218,7 +219,7 @@ namespace Betting
             var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
             var filterTopProfit = app.Option("-f|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
             var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
-            var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.NoValue);
+            var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
 
 
             app.OnExecute(() =>
@@ -236,8 +237,12 @@ namespace Betting
                     ConfigManager.Instance.SetReverseYears(yReverseOption.Value());
                 if (matchdayOption.HasValue())
                 {
-                    if(matchdayOption.Value() == "max")
-                        ConfigManager.Instance.SetMatchDay(FixtureRetriever.GetNumberOfMatchDays(ConfigManager.Instance.GetYear()).ToString());
+                    if (matchdayOption.Value().Contains("max"))
+                    {
+                        string expression = matchdayOption.Value().Replace("max", FixtureRetriever.GetNumberOfMatchDays(ConfigManager.Instance.GetYear()).ToString());
+                        DataTable dt = new DataTable();
+                        ConfigManager.Instance.SetMatchDay(dt.Compute(expression, "").ToString());
+                    }
                     else
                         ConfigManager.Instance.SetMatchDay(matchdayOption.Value());
                 }
@@ -266,7 +271,10 @@ namespace Betting
                 if (betStyleOption.HasValue())
                     ConfigManager.Instance.SetBetStyle(betStyleOption.Value());
                 if (useExpanded.HasValue())
+                {
                     ConfigManager.Instance.SetUseExpanded(true);
+                    ConfigManager.Instance.SetCoeficientWeight(Int32.Parse(useExpanded.Value()));
+                }
 
 
                 if (dbUpdate.HasValue())
@@ -411,7 +419,9 @@ namespace Betting
                 }
 
                 stopWatch.Stop();
-                Logger.LogResult("\nTime spent: {0}", stopWatch.ElapsedMilliseconds);
+                TimeSpan ts = stopWatch.Elapsed;
+                string elapsedTime = String.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                Console.WriteLine("\nRunTime " + elapsedTime);
                 Console.ReadLine();
 
                 return 0;

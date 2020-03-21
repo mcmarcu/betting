@@ -48,6 +48,8 @@ Options:
 -u --league=PremierLeague -y=2018 -r=9
 -u --league=SerieA -y=2018 -r=9
 
+-e --league=Scotland --year=2018 --matchday=max --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT 
+
 -e --league=SerieB --year=2018 --matchday=max --mreverse=12 --minodds=1.0 --maxodds=4.0 --minyearprofit=-5 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 
 
@@ -85,4 +87,47 @@ config 3, 8437, 8438, 8439
 config 4, 9727, 9728
 config 5, 3058, 3068, 6058
 
+
+
+-e --league=Greece --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
+-e --league=Greece --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
+
+config 0, 2107, 2117, 3114, 3116, 3117, 4114, 4116, 4117
+config 1, 3121
+config 2, 4119
+
+-x=3086 --league=Greece --year=2018 --matchday=max-2 --mreverse=10 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
  
+
+
+-e -X=2 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+config 0, 3828, 3928, 3968, 6875, 6975
+config 1, 2497, 3065, 3447
+config 2, 2490, 6450, 8870
+
+-X=4
+config 0, 673
+config 1, 4978, 4979, 6878, 6879, 6969, 6979
+config 2, 6870, 6960, 6970
+config 3, 6875, 6876, 6975
+config 4, 3852, 3872, 3873, 3973, 3975
+config 5, 3065
+config 6, 6867, 6966, 6967
+
+-X=6
+config 0, 3872, 6870
+config 1, 6675, 6875, 6878, 6879, 6979, 8878, 8979
+config 2, 673, 875, 2752
+config 3, 3065
+
+-X=8
+config 0, 6870, 8670
+config 1, 3976, 6675, 6878, 6879, 6979, 8878
+config 2, 673, 875, 2752, 3872
+config 3, 3065
+
+-X=10
+config 0, 6870, 8670
+config 1, 673, 674, 676, 2752, 3673, 3976
+config 2, 3065
+config 3, 6675, 6878, 6879, 6979, 8878

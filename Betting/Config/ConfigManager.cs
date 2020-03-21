@@ -216,6 +216,17 @@ namespace Betting.Config
             return Int32.Parse(GetData("useexpanded")) == 1;
         }
 
+        public void SetCoeficientWeight(int value)
+        {
+            SetData("coeficientweight", value.ToString());
+        }
+
+        public int GetCoeficientWeight()
+        {
+            return Int32.Parse(GetData("coeficientweight"));
+        }
+        
+
 
         private ConfigManager()
         {

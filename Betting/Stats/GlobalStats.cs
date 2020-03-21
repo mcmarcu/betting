@@ -134,7 +134,7 @@ namespace Betting.Stats
             {
                 computedResult = "X2";
             }
-            else if (computedResult == "X" || computedResult == "")
+            else if (computedResult == "X" /*|| computedResult == ""*/)
             {
                 int count1 = aggregateResult.Count(f => f == '1');
                 int count2 = aggregateResult.Count(f => f == '2');

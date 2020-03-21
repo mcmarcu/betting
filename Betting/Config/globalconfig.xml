@@ -17,6 +17,7 @@
   <filtertopprofit>20</filtertopprofit>
   <betstyle>3</betstyle><!-- all max-->
   <useexpanded>0</useexpanded>
+  <coeficientweight>3</coeficientweight>
   
 
   <loglevel>LOG_INFO</loglevel><!-- LOG_DEBUG, LOG_INFO, LOG_RESULT -->

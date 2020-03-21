@@ -210,7 +210,12 @@ namespace Betting.Stats
                         }
 
                         if (newFixture.odds.Count != 3)
-                            throw new Exception("could not get odds for fixture");
+                        {
+                            newFixture.odds.Add("1", 1);
+                            newFixture.odds.Add("X", 1);
+                            newFixture.odds.Add("2", 1);
+                            //throw new Exception("could not get odds for fixture");
+                        }
 
                         newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
                         newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
