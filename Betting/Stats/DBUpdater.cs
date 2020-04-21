@@ -187,6 +187,7 @@ namespace Betting.Stats
             }
         }
 
+        //as described in https://www.football-data.co.uk/ratings.pdf
         public static void GenerateRatingsForYear(int year, int width, bool writeHeader, string outputRatingsFilePath)
         {
             int GoalsDiferenceMetricD = 6;

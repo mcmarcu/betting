@@ -104,6 +104,7 @@ namespace Betting
             int GoalsScoredMetricD = (i / 10) % 10;
             int GoalsConcededMetricD = (i / 100) % 10;
             int HomeAdvantageMetricD = (i / 1000) % 10;
+            int GoalsDifferenceMetricD = (i / 10000) % 10;
 
             if (LastGamesMetricD != 0)
             {
@@ -123,10 +124,9 @@ namespace Betting
             {
                 Logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
             }
-
-            if (i / 10000 > 0)
+            if (GoalsDifferenceMetricD != 0)
             {
-                PrintMetricList(i / 10000);
+                Logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
             }
 
         }
@@ -139,6 +139,7 @@ namespace Betting
             int GoalsScoredMetricD = (i / 10) % 10;
             int GoalsConcededMetricD = (i / 100) % 10;
             int HomeAdvantageMetricD = (i / 1000) % 10;
+            int GoalsDifferenceMetricD = (i / 10000) % 10;
 
             if (LastGamesMetricD != 0)
             { 
@@ -180,9 +181,14 @@ namespace Betting
                 metricConfigs.Add(homeAdvantageMetric);
             }
 
-            if (i / 10000 > 0)
+            if (GoalsDifferenceMetricD != 0)
             {
-                metricConfigs.AddRange(GetMetricList(i / 10000));
+                MetricConfig goalsDifferenceMetric = new MetricConfig
+                {
+                    name = "GoalsDifferenceMetric",
+                    depth = GoalsDifferenceMetricD
+                };
+                metricConfigs.Add(goalsDifferenceMetric);
             }
 
             return metricConfigs;
@@ -200,7 +206,6 @@ namespace Betting
             var executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
             var inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
             var predictResults = app.Option("-w|--predictResults", "predict results", CommandOptionType.NoValue);
-            var valueStats = app.Option("-z|--valueStats <optionvalue>", "get value stats for metric", CommandOptionType.SingleValue);
             var dbUpdate = app.Option("-u|--dbUpdate", "Create enhanced csv files", CommandOptionType.NoValue);
 
             var leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
@@ -281,15 +286,6 @@ namespace Betting
                 {
                     DBUpdater.AddPoints();
                 }
-                else if (valueStats.HasValue())
-                {
-                    int metricConfigId = Int32.Parse(valueStats.Value());
-                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                    PrintMetricList(metricConfigId);
-                    Logger.LogResultSuccess("\n Value Stats: \n");
-                    ValueStats vs = new ValueStats(metricConfigs);
-                    vs.GetAllYearsData();
-                }
                 else if (predictResults.HasValue())
                 {
                     int metricConfigId = Int32.Parse(inspectMetric.Value());
@@ -309,9 +305,9 @@ namespace Betting
                     gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
 
                     if(success)
-                        Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2} \n", success, rate, averageProfit);
+                        Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                     else
-                        Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2} \n", success, rate, averageProfit);
+                        Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                 }
                 else if (executeMetrics.HasValue())
                 {   
@@ -351,10 +347,10 @@ namespace Betting
                                 }
                             }
 
-                            Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
+                            Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
                         }
                         else
-                            Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
+                            Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
 
                                                 
                         lock (topByProfit)
@@ -382,9 +378,9 @@ namespace Betting
                         foreach (RunOutput t in topByProfit.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
@@ -395,9 +391,9 @@ namespace Betting
                         foreach (RunOutput t in topByRate.Values)
                         {
                             if(t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
@@ -408,9 +404,9 @@ namespace Betting
                         foreach (RunOutput t in successRuns.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
