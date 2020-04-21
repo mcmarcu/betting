@@ -63,7 +63,10 @@ namespace Betting.Stats
 
             for (int i = 0; i < reverseDays; ++i)
             {
+                //GetMatchdayDataFairOdds(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
                 GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
+                
+                
 
                 Logger.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
 
@@ -187,7 +190,7 @@ namespace Betting.Stats
 
         public void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
         {
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, matchDay, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, year);
 
             List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, matchDay);
 
@@ -209,8 +212,25 @@ namespace Betting.Stats
                         totalMetricsWithData++;
                     }
                     actualResult = fixture.result;
-
                 }
+
+                /*float oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
+                if (oddDiff1 > 0 && oddDiff1 < 1 
+                    && fixture.odds["1"] <= ConfigManager.Instance.GetMaxOdds()
+                    && fixture.odds["1"] >= ConfigManager.Instance.GetMinOdds())
+                {
+                    aggregateResult += "1 ";
+                    totalMetricsWithData++;
+                }
+                
+                float oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
+                if (oddDiffX > 0 && oddDiffX < 1
+                    && fixture.odds["X"] <= ConfigManager.Instance.GetMaxOdds()
+                    && fixture.odds["X"] >= ConfigManager.Instance.GetMinOdds())
+                {
+                    aggregateResult += "X ";
+                    totalMetricsWithData++;
+                }*/
 
                 string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
                 
@@ -255,9 +275,54 @@ namespace Betting.Stats
             currentProfit = GetMatchdayProfit(matchdayOdds, year);
         }
 
+        public void GetMatchdayDataFairOdds(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
+        {
+            List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, matchDay);
+
+            correctFixturesWithData = 0;
+            totalFixturesWithData = 0;
+            List<float> matchdayOdds = new List<float>();
+
+            foreach (Fixture fixture in thisRoundFixtures)
+            {
+                string actualResult = fixture.result;
+
+                string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
+                float oddDiff = fixture.odds["1"] - fixture.fairOdds["1"];
+                if (oddDiff > 0 && oddDiff < 1 
+                    && fixture.odds["1"] <= ConfigManager.Instance.GetMaxOdds()
+                    && fixture.odds["1"] >= ConfigManager.Instance.GetMinOdds())
+                {
+                    bool metricSuccess = actualResult=="1";
+
+                    totalFixturesWithData++;
+                    if (metricSuccess)
+                        correctFixturesWithData++;
+
+                    if (metricSuccess)
+                    {
+                        Logger.LogDebugSuccess("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                        matchdayOdds.Add(fixture.odds["1"]);
+                    }
+                    else
+                    {
+                        Logger.LogDebugFail("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                        matchdayOdds.Add(0);
+                    }
+                }
+                else
+                {
+                    Logger.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                }
+
+            }
+
+            currentProfit = GetMatchdayProfit(matchdayOdds, year);
+        }
+
         public void ProcessUpcomingFixtures()
         {
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, ConfigManager.Instance.GetMatchDay(), ConfigManager.Instance.GetYear());
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, ConfigManager.Instance.GetYear());
 
             List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(ConfigManager.Instance.GetYear(), ConfigManager.Instance.GetMatchDay());
 

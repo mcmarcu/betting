@@ -14,10 +14,9 @@ namespace Betting.Metrics
     {
         abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
 
-        public MetricInterface(MetricConfig config, int matchDay, int year)
+        public MetricInterface(MetricConfig config, int year)
         {
             this.config = config;
-            this.matchDay = matchDay;
             this.year = year;
         }
 
@@ -67,7 +66,6 @@ namespace Betting.Metrics
         }
 
         public MetricConfig config;
-        public int matchDay;
         public int year;
     }
 }

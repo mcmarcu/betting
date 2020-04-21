@@ -309,9 +309,9 @@ namespace Betting
                     gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
 
                     if(success)
-                        Logger.LogResultSuccess("Result {0}, Rate {1}, avgProfit {2} \n", success, rate, averageProfit);
+                        Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2} \n", success, rate, averageProfit);
                     else
-                        Logger.LogResultFail("Result {0}, Rate {1}, avgProfit {2} \n", success, rate, averageProfit);
+                        Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2} \n", success, rate, averageProfit);
                 }
                 else if (executeMetrics.HasValue())
                 {   
@@ -351,10 +351,10 @@ namespace Betting
                                 }
                             }
 
-                            Logger.LogResultSuccess("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
+                            Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
                         }
                         else
-                            Logger.LogResultFail("Result {0}, Rate {1}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
+                            Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2}, cfg {3} \n", success, rate, averageProfit, i);
 
                                                 
                         lock (topByProfit)
@@ -382,9 +382,9 @@ namespace Betting
                         foreach (RunOutput t in topByProfit.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
@@ -395,9 +395,9 @@ namespace Betting
                         foreach (RunOutput t in topByRate.Values)
                         {
                             if(t.success)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }
@@ -408,9 +408,9 @@ namespace Betting
                         foreach (RunOutput t in successRuns.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0}, avgProfit {1}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
                             PrintMetricList(t.metricId);
                             Logger.LogResult("\n ---------------- \n");
                         }

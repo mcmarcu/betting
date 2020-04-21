@@ -39,6 +39,7 @@ namespace Betting.DataModel
         public Score finalScore;
         public Score halfScore;
         public Dictionary<string, float> odds;
+        public Dictionary<string, float> fairOdds;
         public Points points;
         public GamesPlayed gamesPlayed;
         public Coeficient coeficient;

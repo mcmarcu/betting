@@ -12,7 +12,7 @@ namespace Betting.Metrics
     class GoalsScoredMetric : MetricInterface
     {
 
-        public GoalsScoredMetric(MetricConfig config, int matchDay, int year) : base(config, matchDay, year)
+        public GoalsScoredMetric(MetricConfig config, int year) : base(config, year)
         {
         }
 

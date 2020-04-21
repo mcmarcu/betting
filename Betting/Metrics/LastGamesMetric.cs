@@ -12,7 +12,7 @@ namespace Betting.Metrics
     class LastGamesMetric : MetricInterface
     {
 
-        public LastGamesMetric(MetricConfig config, int matchDay, int year) : base(config, matchDay, year)
+        public LastGamesMetric(MetricConfig config, int year) : base(config, year)
         {
         }
 

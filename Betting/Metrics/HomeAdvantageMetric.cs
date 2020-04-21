@@ -12,7 +12,7 @@ namespace Betting.Metrics
     class HomeAdvantageMetric : MetricInterface
     {
 
-        public HomeAdvantageMetric(MetricConfig config, int matchDay, int year) : base(config, matchDay, year)
+        public HomeAdvantageMetric(MetricConfig config, int year) : base(config, year)
         {
         }
 

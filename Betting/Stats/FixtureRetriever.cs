@@ -176,6 +176,9 @@ namespace Betting.Stats
                     int idxAPTS = -1;
                     int idxHPL = -1;
                     int idxAPL = -1;
+                    int idxFOH = -1;
+                    int idxFOD = -1;
+                    int idxFOA = -1;
 
 
                     if (ConfigManager.Instance.GetUseExpanded())
@@ -184,8 +187,10 @@ namespace Betting.Stats
                         idxAPTS = Array.FindIndex(fields, item => item == "APTS");
                         idxHPL = Array.FindIndex(fields, item => item == "HPL");
                         idxAPL = Array.FindIndex(fields, item => item == "APL");
+                        idxFOH = Array.FindIndex(fields, item => item == "FOH");
+                        idxFOD = Array.FindIndex(fields, item => item == "FOD");
+                        idxFOA = Array.FindIndex(fields, item => item == "FOA");
                     }
-
                     
 
                     while (!parser.EndOfData)
@@ -203,7 +208,8 @@ namespace Betting.Stats
                         newFixture.date = DateTime.Parse(fields[idxDate]);
 
                         newFixture.odds = new Dictionary<string, float>();
-                        foreach(string oddProvider in oddProviders)
+                        newFixture.fairOdds = new Dictionary<string, float>();
+                        foreach (string oddProvider in oddProviders)
                         {
                             if (tryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
                                 break;
@@ -230,6 +236,10 @@ namespace Betting.Stats
                             newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
                             newFixture.gamesPlayed.homeTeamGamesPlayed = Int32.Parse(fields[idxHPL]);
                             newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
+                            newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
+                            newFixture.fairOdds.Add("1", float.Parse(fields[idxFOH]));
+                            newFixture.fairOdds.Add("X", float.Parse(fields[idxFOD]));
+                            newFixture.fairOdds.Add("2", float.Parse(fields[idxFOA]));
                         }
                         newFixture.init();
 
