@@ -65,8 +65,6 @@ namespace Betting.Stats
             {
                 //GetMatchdayDataFairOdds(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
                 GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
-                
-                
 
                 Logger.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
 
@@ -288,32 +286,40 @@ namespace Betting.Stats
                 string actualResult = fixture.result;
 
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
-                float oddDiff = fixture.odds["1"] - fixture.fairOdds["1"];
-                if (oddDiff > 0 && oddDiff < 1 
-                    && fixture.odds["1"] <= ConfigManager.Instance.GetMaxOdds()
-                    && fixture.odds["1"] >= ConfigManager.Instance.GetMinOdds())
+
+                bool success = false;
+                string[] resultsToAccount = { "1", "X" };
+                foreach(string result in resultsToAccount)
                 {
-                    bool metricSuccess = actualResult=="1";
-
-                    totalFixturesWithData++;
-                    if (metricSuccess)
-                        correctFixturesWithData++;
-
-                    if (metricSuccess)
+                    if (fixture.fairOdds[result] <= ConfigManager.Instance.GetMaxOdds()
+                    && fixture.fairOdds[result] >= ConfigManager.Instance.GetMinOdds())
                     {
-                        Logger.LogDebugSuccess("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
-                        matchdayOdds.Add(fixture.odds["1"]);
+                        bool metricSuccess = actualResult == result;
+
+                        totalFixturesWithData++;
+                        if (metricSuccess)
+                            correctFixturesWithData++;
+
+                        if (metricSuccess)
+                        {
+                            Logger.LogDebugSuccess("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                            matchdayOdds.Add(fixture.odds[result]);
+                        }
+                        else
+                        {
+                            Logger.LogDebugFail("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                            matchdayOdds.Add(0);
+                        }
+                        success = true;
+                        break;
                     }
-                    else
-                    {
-                        Logger.LogDebugFail("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
-                        matchdayOdds.Add(0);
-                    }
+
                 }
-                else
+                if(!success)
                 {
                     Logger.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                 }
+                
 
             }
 
@@ -359,7 +365,6 @@ namespace Betting.Stats
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
                 if (totalMetricsWithData == metrics.Count && computedResult != String.Empty)
                 {
-
                     Logger.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
                     matchdayOdds.Add(fixture.odds[computedResult]);
                 }

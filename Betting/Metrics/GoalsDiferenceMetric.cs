@@ -27,7 +27,7 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
-        public /*override*/ void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
+        public override void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
             float pctTeam1 = 0;
             float pctTeam2 = 0;

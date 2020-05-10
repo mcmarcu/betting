@@ -64,6 +64,11 @@ Options:
 -x=1 -X --league=PremierLeague --year=2018 --matchday=38 --mreverse=12 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 
 
+
+-u --league=Championship -y=2018 -r=9
+-x=9855 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --maxodds=3.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
+
+
 -e -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
 config 0, 6778, 6876, 6877, 6878, 6879,
 config 0, 6668, 6778, 6879, 6878, 6876, 6877
@@ -131,3 +136,56 @@ config 0, 6870, 8670
 config 1, 673, 674, 676, 2752, 3673, 3976
 config 2, 3065
 config 3, 6675, 6878, 6879, 6979, 8878
+
+
+
+-e -X=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --maxodds=2.5 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+config 0, 56907, 57907, 66906, 66907, 67906
+config 1, 97038, 97048, 97049
+config 2, 8988, 8989, 9988, 9989
+config 3, 87838, 88958, 88959, 89838, 89958, 89959
+config 4, 66960
+config 5, 78367, 85267, 85268, 95267, 95268
+config 6, 67080, 85260, 97060, 97080
+config 7, 30362
+config 8, 8038, 9038
+config 9, 79968, 88967, 88968, 88969, 89967, 89968, 98988, 99967
+config 10, 65366, 65368
+config 11, 87966, 88956, 88957, 88966, 89956, 89957
+config 12, 20990, 30990
+config 13, 35365, 36365
+config 14, 7905, 9905, 9906
+config 15, 25863, 36863, 36995
+config 16, 66900, 77900
+config 17, 87026, 87033, 87034, 87035, 87036, 97036
+config 18, 47230, 48230
+config 19, 84838
+config 20, 7949, 8949
+config 21, 66066
+config 22, 96068, 97068, 97069
+config 23, 35242, 45241, 45242, 45252, 45262
+config 24, 77215, 86216, 87216
+config 25, 77210
+config 26, 99066
+config 27, 75808, 75906, 85805, 85806, 85807
+config 28, 35376, 35377, 45177
+config 29, 5190, 33280
+config 30, 27116, 37216
+config 31, 86858, 86868, 86869, 86948, 86956, 86958, 86959, 86966, 86967, 86968, 86969, 87958, 87967, 87968, 87969
+config 32, 80968
+config 33, 86038, 87039
+config 34, 38369
+config 35, 8929, 9928, 9929
+config 36, 25868, 26866
+config 37, 25247, 45247, 45249
+config 38, 37187, 37198, 47197, 47198
+config 39, 97089
+config 40, 35360
+config 41, 86722, 86800
+config 42, 85242, 86033, 95242
+config 43, 85269
+config 44, 86067, 96066, 96067, 97065
+config 45, 87806, 88906, 96806, 98905
+config 46, 37387
+config 47, 86860, 88950
+config 48, 47232, 47252, 47262

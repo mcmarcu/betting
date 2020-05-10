@@ -12,6 +12,7 @@ namespace Betting.Metrics
 
     abstract class MetricInterface
     {
+        abstract public void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
         abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
 
         public MetricInterface(MetricConfig config, int year)

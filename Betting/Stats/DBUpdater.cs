@@ -23,7 +23,21 @@ namespace Betting.Stats
     class DBUpdater
     {
 
-        private static PolynomialRegression GenerateRegressionFitting(SortedDictionary<double, double> values)
+        public DBUpdater(List<MetricConfig> metricConfigs)
+        {
+            metricConfigs_ = metricConfigs;
+            metricD_ = 0;
+            foreach (MetricConfig m in metricConfigs_)
+            {
+                if (m.depth > metricD_)
+                {
+                    metricD_ = m.depth;
+                }
+            }
+            r2Values_ = new Dictionary<char, double>();
+        }
+
+        private PolynomialRegression GenerateRegressionFitting(SortedDictionary<double, double> values, char result)
         {
             // Extract inputs and outputs
             double[] inputs = values.Keys.ToArray();
@@ -50,6 +64,9 @@ namespace Betting.Stats
             double[] prediction = poly.Transform(inputs);
 
             double r2 = new RSquaredLoss(outputs.Length, outputs).Loss(prediction); // should be > 0.85 (close to 1 is ok)
+            //LastGamesMetric:   0.77 0.81 0.08
+            //GoalsScoredMetric: 0.75 0.85 0.02
+            r2Values_.Add(result, r2);
 
             return poly;
         }
@@ -71,7 +88,7 @@ namespace Betting.Stats
                 dict[key] += value;
         }
 
-        public static void AddPoints()
+        public void AddPoints()
         {
             string leagueName = ConfigManager.Instance.GetLeagueName();
             int year = ConfigManager.Instance.GetYear();
@@ -102,7 +119,7 @@ namespace Betting.Stats
             }
         }
 
-        public static PolynomialRegression GenerateEquation(string ratingsFilePath, int width, char result)
+        public PolynomialRegression GenerateEquation(string ratingsFilePath, int width, char result)
         {
             string prefix = "GDM6";
             SortedDictionary<double, double> points = new SortedDictionary<double, double>();
@@ -130,10 +147,10 @@ namespace Betting.Stats
                 }
             }
 
-            return GenerateRegressionFitting(points);
+            return GenerateRegressionFitting(points, result);
         }
 
-        public static void AggregateTotalRatings(string outputRatingsFilePath)
+        public void AggregateTotalRatings(string outputRatingsFilePath)
         {
             double[] result = null;
             using (TextFieldParser parser = new TextFieldParser(outputRatingsFilePath))
@@ -188,16 +205,8 @@ namespace Betting.Stats
         }
 
         //as described in https://www.football-data.co.uk/ratings.pdf
-        public static void GenerateRatingsForYear(int year, int width, bool writeHeader, string outputRatingsFilePath)
+        public void GenerateRatingsForYear(int year, int width, bool writeHeader, string outputRatingsFilePath)
         {
-            int GoalsDiferenceMetricD = 6;
-            MetricConfig goalsDiferenceMetric = new MetricConfig
-            {
-                name = "GoalsDiferenceMetric",
-                depth = GoalsDiferenceMetricD
-            };
-            GoalsDiferenceMetric m = new GoalsDiferenceMetric(goalsDiferenceMetric, year);
-
             int matchdays = FixtureRetriever.GetNumberOfMatchDays(year);
             SortedDictionary<double, double> homeWinDiff = new SortedDictionary<double, double>();
             SortedDictionary<double, double> awayWinDiff = new SortedDictionary<double, double>();
@@ -212,15 +221,20 @@ namespace Betting.Stats
                 AddToDict(ref totalOnDiff, i, 0);
             }
 
-            for (int i= matchdays;i>GoalsDiferenceMetricD;--i)
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year);
+            for (int i= matchdays;i>metricD_;--i)
             {
-                
                 List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, i);
 
                 foreach (Fixture fixture in thisRoundFixtures)
                 {
-                    m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
-                    int diff = pctTeam1 - pctTeam2;
+                    int diff = 0;
+                    foreach (MetricInterface m in metrics)
+                    {
+                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
+                        diff += pctTeam1;
+                        diff -= pctTeam2;
+                    }
 
                     if (diff < -width || diff > width)
                         continue;
@@ -276,7 +290,7 @@ namespace Betting.Stats
             }
         }
 
-        public static void GenerateStatsForYear(int year, bool writeHeader, string outputStatsFilePath)
+        public void GenerateStatsForYear(int year, bool writeHeader, string outputStatsFilePath)
         {
             using (FileStream fileStream = new FileStream(outputStatsFilePath, FileMode.Append, FileAccess.Write))
             using (var outputFile = new StreamWriter(fileStream))
@@ -370,20 +384,14 @@ namespace Betting.Stats
         }
 
 
-        public static void AddFairOddsForYear(int year, PolynomialRegression r1, PolynomialRegression rx, PolynomialRegression r2)
+        public void AddFairOddsForYear(int year, PolynomialRegression r1, PolynomialRegression rx, PolynomialRegression r2)
         {
             string leagueName = ConfigManager.Instance.GetLeagueName();
             string inputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + "_ex.csv";
             File.Delete(outputFilePath);
 
-            int GoalsDiferenceMetricD = 6;
-            MetricConfig goalsDiferenceMetric = new MetricConfig
-            {
-                name = "GoalsDiferenceMetric",
-                depth = GoalsDiferenceMetricD
-            };
-            GoalsDiferenceMetric m = new GoalsDiferenceMetric(goalsDiferenceMetric, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year);
 
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
@@ -395,12 +403,16 @@ namespace Betting.Stats
 
                     List<Fixture> fixtures = FixtureRetriever.GetAllFixtures(year);
                     int index = 0;
-
                     while (!parser.EndOfData)
                     {
                         Fixture fixture = fixtures[index];
-                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
-                        double diff = pctTeam1 - pctTeam2;
+                        int diff = 0;
+                        foreach (MetricInterface m in metrics)
+                        {
+                            m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
+                            diff += pctTeam1;
+                            diff -= pctTeam2;
+                        }
 
                         outputLine = parser.ReadLine() + ',' + (100/r1.Transform(diff)).ToString("0.00") + ',' + (100/rx.Transform(diff)).ToString("0.00") + ',' + (100/r2.Transform(diff)).ToString("0.00");
                         outputFile.WriteLine(outputLine);
@@ -414,5 +426,9 @@ namespace Betting.Stats
             File.Copy(outputFilePath, inputFilePath);
             File.Delete(outputFilePath);
         }
+
+        private List<MetricConfig> metricConfigs_;
+        private int metricD_;
+        public Dictionary<char, double> r2Values_;
     }
 }

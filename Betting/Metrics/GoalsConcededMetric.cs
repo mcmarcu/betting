@@ -16,7 +16,7 @@ namespace Betting.Metrics
         {
         }
 
-        public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
+        public override void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
             float pctTeam1 = 0;
             float pctTeam2 = 0;
@@ -35,9 +35,23 @@ namespace Betting.Metrics
             }
 
             //reverse
-            pTeam1 = (int)((float)pctTeam2/((float)pctTeam1 + (float)pctTeam2)*100);
+            pTeam1 = (int)pctTeam2;
+            pTeam2 = (int)pctTeam1;
+        }
+
+
+        public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
+        {
+            int pctTeam1;
+            int pctTeam2;
+
+            GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
+
+            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
+
+        
 
         public int GetGoals(Fixture fixture, string teamName)
         {

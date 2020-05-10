@@ -23,7 +23,7 @@ namespace Betting.Metrics
                     result.Add(new GoalsConcededMetric(config, year));
                 if (config.name == "HomeAdvantageMetric")
                     result.Add(new HomeAdvantageMetric(config, year));
-                if (config.name == "GoalsDiferenceMetric")
+                if (config.name == "GoalsDifferenceMetric")
                     result.Add(new GoalsDiferenceMetric(config, year));
             }
             return result;

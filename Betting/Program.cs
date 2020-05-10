@@ -101,14 +101,20 @@ namespace Betting
         public static void PrintMetricList(int i)
         {
             int LastGamesMetricD = i % 10;
-            int GoalsScoredMetricD = (i / 10) % 10;
-            int GoalsConcededMetricD = (i / 100) % 10;
-            int HomeAdvantageMetricD = (i / 1000) % 10;
-            int GoalsDifferenceMetricD = (i / 10000) % 10;
+            int GoalsConcededMetricD = (i / 10) % 10;
+            int GoalsDifferenceMetricD = (i / 100) % 10;
+            int GoalsScoredMetricD = (i / 1000) % 10;
+            int HomeAdvantageMetricD = (i / 10000) % 10;
+
 
             if (LastGamesMetricD != 0)
             {
                 Logger.LogResult(" LastGames ({0}); ", LastGamesMetricD);
+            }
+
+            if (GoalsDifferenceMetricD != 0)
+            {
+                Logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
             }
 
             if (GoalsScoredMetricD != 0)
@@ -120,13 +126,10 @@ namespace Betting
             {
                 Logger.LogResult(" GoalsConceded ({0}); ", GoalsConcededMetricD);
             }
+
             if (HomeAdvantageMetricD != 0)
             {
                 Logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
-            }
-            if (GoalsDifferenceMetricD != 0)
-            {
-                Logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
             }
 
         }
@@ -136,10 +139,11 @@ namespace Betting
             List<MetricConfig> metricConfigs = new List<MetricConfig>();
 
             int LastGamesMetricD = i % 10;
-            int GoalsScoredMetricD = (i / 10) % 10;
-            int GoalsConcededMetricD = (i / 100) % 10;
-            int HomeAdvantageMetricD = (i / 1000) % 10;
-            int GoalsDifferenceMetricD = (i / 10000) % 10;
+            int GoalsConcededMetricD = (i / 10) % 10;
+            int GoalsDifferenceMetricD = (i / 100) % 10;
+            int GoalsScoredMetricD = (i / 1000) % 10;
+            int HomeAdvantageMetricD = (i / 10000) % 10;
+           
 
             if (LastGamesMetricD != 0)
             { 
@@ -149,6 +153,16 @@ namespace Betting
                     depth = LastGamesMetricD
                 };
                 metricConfigs.Add(lastGamesMetric);
+            }
+
+            if (GoalsDifferenceMetricD != 0)
+            {
+                MetricConfig goalsDifferenceMetric = new MetricConfig
+                {
+                    name = "GoalsDifferenceMetric",
+                    depth = GoalsDifferenceMetricD
+                };
+                metricConfigs.Add(goalsDifferenceMetric);
             }
 
             if (GoalsScoredMetricD != 0)
@@ -179,16 +193,6 @@ namespace Betting
                     depth = HomeAdvantageMetricD
                 };
                 metricConfigs.Add(homeAdvantageMetric);
-            }
-
-            if (GoalsDifferenceMetricD != 0)
-            {
-                MetricConfig goalsDifferenceMetric = new MetricConfig
-                {
-                    name = "GoalsDifferenceMetric",
-                    depth = GoalsDifferenceMetricD
-                };
-                metricConfigs.Add(goalsDifferenceMetric);
             }
 
             return metricConfigs;
@@ -229,7 +233,6 @@ namespace Betting
 
             app.OnExecute(() =>
             {
-                //ClusterPrint();
 
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
@@ -284,7 +287,50 @@ namespace Betting
 
                 if (dbUpdate.HasValue())
                 {
-                    DBUpdater.AddPoints();
+                    if (executeMetrics.HasValue())
+                    {
+                        SortedDictionary<double, KeyValuePair<char, int>> sortedAvg =
+                        new SortedDictionary<double, KeyValuePair<char, int>>();
+
+                        int numMetrics = 4;
+                        int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
+                        for (int i = 0; i < maxI; ++i)
+                        {
+                            List<MetricConfig> metricConfigs = GetMetricList(i);
+
+                            if (metricConfigs.Count == 0)
+                                continue;
+
+                            if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
+                                PrintMetricList(i);
+
+                            DBUpdater db = new DBUpdater(metricConfigs);
+                            db.AddPoints();
+                            Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} metric {3} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2'], i);
+
+                            foreach (KeyValuePair<char, double> kv in db.r2Values_)
+                            {
+                                if (kv.Value == 1)
+                                    continue;
+                                if (kv.Key != '1')
+                                    continue;
+                                if (!sortedAvg.ContainsKey(kv.Value))
+                                    sortedAvg.Add(kv.Value, new KeyValuePair<char, int>(kv.Key, i));
+                                if (sortedAvg.Count > ConfigManager.Instance.GetFilterTopProfit())
+                                    sortedAvg.Remove(sortedAvg.Keys.First());
+                            }
+                        }
+                        
+                    }
+                    else
+                    {
+                        int metricConfigId = Int32.Parse(inspectMetric.Value());
+                        List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
+                        PrintMetricList(metricConfigId);
+                        DBUpdater db = new DBUpdater(metricConfigs);
+                        db.AddPoints();
+                        Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2']);
+                    }
                 }
                 else if (predictResults.HasValue())
                 {
@@ -318,7 +364,7 @@ namespace Betting
                     SortedDictionary<float, RunOutput> successRuns =
                         new SortedDictionary<float, RunOutput>();
 
-                    int numMetrics = 4;
+                    int numMetrics = 5;
                     int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
                     Parallel.For(0, maxI, (i, state) =>
                     {
