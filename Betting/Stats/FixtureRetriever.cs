@@ -14,7 +14,20 @@ using System.Threading;
 
 namespace Betting.Stats
 {
-    class FixtureRetriever
+    public abstract class FixtureRetrieverInterface
+    {
+        public abstract List<Fixture> GetAllFixtures(int year, string team);
+    }
+
+    public class FixtureRetrieverHandle : FixtureRetrieverInterface
+    {
+        public override List<Fixture> GetAllFixtures(int year, string team)
+        {
+            return FixtureRetriever.GetAllFixtures(year, team);
+        }
+    }
+
+    public class FixtureRetriever
     {
         public static int GetNumberOfMatchDays(int year)
         {

@@ -7,31 +7,31 @@ using System.Threading.Tasks;
 
 namespace Betting.DataModel
 {
-    struct Score
+    public struct Score
     {
         public int homeTeamGoals;
         public int awayTeamGoals;
     }
 
-    struct Points
+    public struct Points
     {
         public int homeTeamPoints;
         public int awayTeamPoints;
     }
 
-    struct GamesPlayed
+    public struct GamesPlayed
     {
         public int homeTeamGamesPlayed;
         public int awayTeamGamesPlayed;
     }
 
-    struct Coeficient
+    public struct Coeficient
     {
         public float homeTeam;
         public float awayTeam;
     }
 
-    class Fixture
+    public class Fixture
     {
         public string homeTeamName;
         public string awayTeamName;
@@ -64,7 +64,7 @@ namespace Betting.DataModel
         private void SetCoeficients()
         {
             int weight = ConfigManager.Instance.GetCoeficientWeight();
-            if (ConfigManager.Instance.GetUseExpanded())
+            if (ConfigManager.Instance.GetUseExpanded() && weight != 0)
             {
                 coeficient.homeTeam = (float)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
                 coeficient.awayTeam = (float)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);

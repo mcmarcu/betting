@@ -305,13 +305,11 @@ namespace Betting
                                 PrintMetricList(i);
 
                             DBUpdater db = new DBUpdater(metricConfigs);
-                            db.AddPoints();
+                            db.AddPoints(false);
                             Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} metric {3} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2'], i);
 
                             foreach (KeyValuePair<char, double> kv in db.r2Values_)
                             {
-                                if (kv.Value == 1)
-                                    continue;
                                 if (kv.Key != '1')
                                     continue;
                                 if (!sortedAvg.ContainsKey(kv.Value))
@@ -319,6 +317,11 @@ namespace Betting
                                 if (sortedAvg.Count > ConfigManager.Instance.GetFilterTopProfit())
                                     sortedAvg.Remove(sortedAvg.Keys.First());
                             }
+                        }
+
+                        foreach(var x in sortedAvg)
+                        {
+                            Logger.LogResult("\nR2 metric {0:0.00}, value {1:0.00}\n", x.Value.Value, x.Key);
                         }
                         
                     }
@@ -328,7 +331,7 @@ namespace Betting
                         List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
                         PrintMetricList(metricConfigId);
                         DBUpdater db = new DBUpdater(metricConfigs);
-                        db.AddPoints();
+                        db.AddPoints(true);
                         Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2']);
                     }
                 }

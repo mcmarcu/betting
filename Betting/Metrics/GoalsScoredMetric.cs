@@ -9,11 +9,17 @@ using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
-    class GoalsScoredMetric : MetricInterface
+    public class GoalsScoredMetric : MetricInterface
     {
 
         public GoalsScoredMetric(MetricConfig config, int year) : base(config, year)
         {
+            fixtureRetriever_ = new FixtureRetrieverHandle();
+        }
+
+        public GoalsScoredMetric(MetricConfig config, int year, FixtureRetrieverInterface fixtureRetriever) : base(config, year)
+        {
+            fixtureRetriever_ = fixtureRetriever;
         }
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
@@ -23,7 +29,10 @@ namespace Betting.Metrics
 
             GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
 
-            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
+            if (pctTeam1 == 0 && pctTeam2 == 0)
+                pTeam1 = 50;
+            else
+                pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 
@@ -32,13 +41,13 @@ namespace Betting.Metrics
             float pctTeam1 = 0;
             float pctTeam2 = 0;
 
-            List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
+            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
                 pctTeam1 += GetGoals(fix, teamName1) * GetCoeficient(fix, teamName1);
             }
-            List<Fixture> allT2 = FixtureRetriever.GetAllFixtures(year, teamName2);
+            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamName2);
             List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam2)
             {
@@ -64,6 +73,8 @@ namespace Betting.Metrics
             else 
                 return fixture.finalScore.awayTeamGoals;
         }
+
+        FixtureRetrieverInterface fixtureRetriever_;
 
 
     }

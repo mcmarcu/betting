@@ -1,20 +1,12 @@
 ﻿using System; 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Betting.DataModel;
-using System.Net;
 using System.IO;
 using Betting.Config;
-using System.Web.Script.Serialization;
-using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
-using System.Threading;
 using Betting.Metrics;
 using Accord.Math;
-using Accord.Statistics.Models.Regression.Fitting;
-using Accord.Math.Optimization;
 using Accord.Statistics.Models.Regression.Linear;
 using Accord.Math.Optimization.Losses;
 
@@ -66,6 +58,8 @@ namespace Betting.Stats
             double r2 = new RSquaredLoss(outputs.Length, outputs).Loss(prediction); // should be > 0.85 (close to 1 is ok)
             //LastGamesMetric:   0.77 0.81 0.08
             //GoalsScoredMetric: 0.75 0.85 0.02
+            if (r2 == 1.0)
+                r2 = 0.0;
             r2Values_.Add(result, r2);
 
             return poly;
@@ -88,43 +82,45 @@ namespace Betting.Stats
                 dict[key] += value;
         }
 
-        public void AddPoints()
+
+        public void AddPoints(bool writeToFile)
         {
             string leagueName = ConfigManager.Instance.GetLeagueName();
             int year = ConfigManager.Instance.GetYear();
             int reverseYears = ConfigManager.Instance.GetReverseYears();
-            string outputStatsFilePath = "..\\..\\DBEX\\" + leagueName + "_stats.csv";
-            string outputRatingsFilePath = "..\\..\\DBEX\\" + leagueName + "_ratings.csv";
-            File.Delete(outputStatsFilePath);
-            File.Delete(outputRatingsFilePath);
+            MemoryStream statsMemoryStream = new MemoryStream(1024);
+            MemoryStream ratingsMemoryStream = new MemoryStream(1024);
 
 
             int width = 12;
             for (int i = 0; i< reverseYears;++i)
             {
                 AddPointsForYear(year - i);
-                GenerateStatsForYear(year - i, i==0, outputStatsFilePath);
-                GenerateRatingsForYear(year - i, width, i == 0, outputRatingsFilePath);
+                GenerateStatsForYear(year - i, i==0, ref statsMemoryStream);
+                GenerateRatingsForYear(year - i, width, i == 0, ref ratingsMemoryStream);
             }
-
             
-            AggregateTotalRatings(outputRatingsFilePath);
-            PolynomialRegression r1 = GenerateEquation(outputRatingsFilePath, width, '1');
-            PolynomialRegression rx = GenerateEquation(outputRatingsFilePath, width, 'X');
-            PolynomialRegression r2 = GenerateEquation(outputRatingsFilePath, width, '2');
+            AggregateTotalRatings(ref ratingsMemoryStream);
+            PolynomialRegression r1 = GenerateEquation(ratingsMemoryStream, width, '1');
+            PolynomialRegression rx = GenerateEquation(ratingsMemoryStream, width, 'X');
+            PolynomialRegression r2 = GenerateEquation(ratingsMemoryStream, width, '2');
 
-            for (int i = 0; i < reverseYears; ++i)
+            if (writeToFile)
             {
-                AddFairOddsForYear(year - i, r1, rx, r2);
+                for (int i = 0; i < reverseYears; ++i)
+                {
+                    AddFairOddsForYear(year - i, r1, rx, r2);
+                }
             }
         }
 
-        public PolynomialRegression GenerateEquation(string ratingsFilePath, int width, char result)
+        public PolynomialRegression GenerateEquation(MemoryStream ratingsSteam, int width, char result)
         {
             string prefix = "GDM6";
             SortedDictionary<double, double> points = new SortedDictionary<double, double>();
-            using (TextFieldParser parser = new TextFieldParser(ratingsFilePath))
             {
+                ratingsSteam.Seek(0, SeekOrigin.Begin);
+                TextFieldParser parser = new TextFieldParser(ratingsSteam);
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
 
@@ -150,11 +146,12 @@ namespace Betting.Stats
             return GenerateRegressionFitting(points, result);
         }
 
-        public void AggregateTotalRatings(string outputRatingsFilePath)
+        public void AggregateTotalRatings(ref MemoryStream ratingsMemoryStream)
         {
             double[] result = null;
-            using (TextFieldParser parser = new TextFieldParser(outputRatingsFilePath))
             {
+                ratingsMemoryStream.Seek(0, SeekOrigin.Begin);
+                TextFieldParser parser = new TextFieldParser(ratingsMemoryStream);
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
 
@@ -178,9 +175,9 @@ namespace Betting.Stats
             }
 
             result[0] = 0;
-            using (FileStream fileStream = new FileStream(outputRatingsFilePath, FileMode.Append, FileAccess.Write))
-            using (var outputFile = new StreamWriter(fileStream))
             {
+                ratingsMemoryStream.Seek(0, SeekOrigin.End);
+                var outputFile = new StreamWriter(ratingsMemoryStream);
                 string outputLine = "SUM"+',';
                 for(int i=1; i<result.Length;++i)
                 {
@@ -201,11 +198,12 @@ namespace Betting.Stats
                         outputLine += ',';
                 }
                 outputFile.WriteLine(outputLine);
+                outputFile.Flush();
             }
         }
 
         //as described in https://www.football-data.co.uk/ratings.pdf
-        public void GenerateRatingsForYear(int year, int width, bool writeHeader, string outputRatingsFilePath)
+        public void GenerateRatingsForYear(int year, int width, bool writeHeader, ref MemoryStream ratingsMemorySteam)
         {
             int matchdays = FixtureRetriever.GetNumberOfMatchDays(year);
             SortedDictionary<double, double> homeWinDiff = new SortedDictionary<double, double>();
@@ -268,9 +266,8 @@ namespace Betting.Stats
                     outputLine += ',';
             }
 
-            using (FileStream fileStream = new FileStream(outputRatingsFilePath, FileMode.Append, FileAccess.Write))
-            using (var outputFile = new StreamWriter(fileStream))
             {
+                var outputFile = new StreamWriter(ratingsMemorySteam);
                 if (writeHeader)
                 {
                     outputFile.WriteLine(outputLine);
@@ -287,14 +284,14 @@ namespace Betting.Stats
                         outputLine += ',';
                 }
                 outputFile.WriteLine(outputLine);
+                outputFile.Flush();
             }
         }
 
-        public void GenerateStatsForYear(int year, bool writeHeader, string outputStatsFilePath)
+        public void GenerateStatsForYear(int year, bool writeHeader, ref MemoryStream memoryStream)
         {
-            using (FileStream fileStream = new FileStream(outputStatsFilePath, FileMode.Append, FileAccess.Write))
-            using (var outputFile = new StreamWriter(fileStream))
             {
+                var outputFile = new StreamWriter(memoryStream);
                 string outputLine;
                 if (writeHeader)
                 {
@@ -325,6 +322,7 @@ namespace Betting.Stats
 
                 outputLine = year.ToString() + ',' + (HWIN / totalFixtures).ToString("0.00") + ',' + (AWIN / totalFixtures).ToString("0.00") + ',' + (DRAWS / totalFixtures).ToString("0.00");
                 outputFile.WriteLine(outputLine);
+                outputFile.Flush();
             }
         }
 
@@ -335,10 +333,13 @@ namespace Betting.Stats
             string leagueName = ConfigManager.Instance.GetLeagueName();
             string inputFilePath = "..\\..\\DB\\" + leagueName + year + ".csv";
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
-            File.Delete(outputFilePath);
+
+            if (File.Exists(outputFilePath))
+                return;
+
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
-                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Append, FileAccess.Write))
+                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
                 using (var outputFile = new StreamWriter(fileStream))
                 {
                     string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
@@ -389,13 +390,12 @@ namespace Betting.Stats
             string leagueName = ConfigManager.Instance.GetLeagueName();
             string inputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + "_ex.csv";
-            File.Delete(outputFilePath);
 
             List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year);
 
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
-                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Append, FileAccess.Write))
+                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
                 using (var outputFile = new StreamWriter(fileStream))
                 {
                     string outputLine = parser.ReadLine() + ',' + "FOH" + ',' + "FOD" + ',' + "FOA";
@@ -423,8 +423,7 @@ namespace Betting.Stats
             }
 
             File.Delete(inputFilePath);
-            File.Copy(outputFilePath, inputFilePath);
-            File.Delete(outputFilePath);
+            File.Move(outputFilePath, inputFilePath);
         }
 
         private List<MetricConfig> metricConfigs_;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Betting.DataModel
 {
-    struct MetricConfig
+    public struct MetricConfig
     {
         public string name;
         public int depth;

@@ -212,7 +212,7 @@ namespace Betting.Stats
                     actualResult = fixture.result;
                 }
 
-                /*float oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
+                float oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
                 if (oddDiff1 > 0 && oddDiff1 < 1 
                     && fixture.odds["1"] <= ConfigManager.Instance.GetMaxOdds()
                     && fixture.odds["1"] >= ConfigManager.Instance.GetMinOdds())
@@ -220,8 +220,8 @@ namespace Betting.Stats
                     aggregateResult += "1 ";
                     totalMetricsWithData++;
                 }
-                
-                float oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
+
+                /*float oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
                 if (oddDiffX > 0 && oddDiffX < 1
                     && fixture.odds["X"] <= ConfigManager.Instance.GetMaxOdds()
                     && fixture.odds["X"] >= ConfigManager.Instance.GetMinOdds())
@@ -289,7 +289,7 @@ namespace Betting.Stats
 
                 bool success = false;
                 string[] resultsToAccount = { "1", "X" };
-                foreach(string result in resultsToAccount)
+                foreach (string result in resultsToAccount)
                 {
                     if (fixture.fairOdds[result] <= ConfigManager.Instance.GetMaxOdds()
                     && fixture.fairOdds[result] >= ConfigManager.Instance.GetMinOdds())

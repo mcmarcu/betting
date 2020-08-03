@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Betting", "Betting\Betting.csproj", "{8B53C6CD-E271-4DD0-BBB9-D5995DE82C3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BettingTest", "BettingTest\BettingTest.csproj", "{586DA6B5-1D46-4DE6-AAC7-BEB9F36D9BFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{8B53C6CD-E271-4DD0-BBB9-D5995DE82C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B53C6CD-E271-4DD0-BBB9-D5995DE82C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B53C6CD-E271-4DD0-BBB9-D5995DE82C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{586DA6B5-1D46-4DE6-AAC7-BEB9F36D9BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{586DA6B5-1D46-4DE6-AAC7-BEB9F36D9BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{586DA6B5-1D46-4DE6-AAC7-BEB9F36D9BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{586DA6B5-1D46-4DE6-AAC7-BEB9F36D9BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89DEA0A2-6BD4-4256-9007-727037FBDAF8}
 	EndGlobalSection
 EndGlobal

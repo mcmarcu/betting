@@ -81,6 +81,7 @@ config 2, 4978, 6875, 6979, 8979
 -x=6778 -X --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 
 -w -x=6876 -X --league=Championship --year=2019 --matchday=37 --minodds=1.0 --maxodds=4.0 --loglevel=LOG_INFO
+-e -x=39000 --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 
 
 after X improvement in GlobalStats:
@@ -138,54 +139,77 @@ config 2, 3065
 config 3, 6675, 6878, 6879, 6979, 8878
 
 
+-u -x=71 --league=Championship -y=2018 -r=9
+-x=49988 -X=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --maxodds=2.5 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_INFO
 
 -e -X=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --maxodds=2.5 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
-config 0, 56907, 57907, 66906, 66907, 67906
-config 1, 97038, 97048, 97049
-config 2, 8988, 8989, 9988, 9989
-config 3, 87838, 88958, 88959, 89838, 89958, 89959
-config 4, 66960
-config 5, 78367, 85267, 85268, 95267, 95268
-config 6, 67080, 85260, 97060, 97080
-config 7, 30362
-config 8, 8038, 9038
-config 9, 79968, 88967, 88968, 88969, 89967, 89968, 98988, 99967
-config 10, 65366, 65368
-config 11, 87966, 88956, 88957, 88966, 89956, 89957
-config 12, 20990, 30990
-config 13, 35365, 36365
-config 14, 7905, 9905, 9906
-config 15, 25863, 36863, 36995
-config 16, 66900, 77900
-config 17, 87026, 87033, 87034, 87035, 87036, 97036
-config 18, 47230, 48230
-config 19, 84838
-config 20, 7949, 8949
-config 21, 66066
-config 22, 96068, 97068, 97069
-config 23, 35242, 45241, 45242, 45252, 45262
-config 24, 77215, 86216, 87216
-config 25, 77210
-config 26, 99066
-config 27, 75808, 75906, 85805, 85806, 85807
-config 28, 35376, 35377, 45177
-config 29, 5190, 33280
-config 30, 27116, 37216
-config 31, 86858, 86868, 86869, 86948, 86956, 86958, 86959, 86966, 86967, 86968, 86969, 87958, 87967, 87968, 87969
-config 32, 80968
-config 33, 86038, 87039
-config 34, 38369
-config 35, 8929, 9928, 9929
-config 36, 25868, 26866
-config 37, 25247, 45247, 45249
-config 38, 37187, 37198, 47197, 47198
-config 39, 97089
-config 40, 35360
-config 41, 86722, 86800
-config 42, 85242, 86033, 95242
-config 43, 85269
-config 44, 86067, 96066, 96067, 97065
-config 45, 87806, 88906, 96806, 98905
-config 46, 37387
-config 47, 86860, 88950
-config 48, 47232, 47252, 47262
+-e -X=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --maxodds=2.5 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+
+config 0, 49988, 59978, 59988, 59989
+config 1, 38809, 39805, 39806, 47909, 48909, 49808, 49909, 59808, 59809, 59908
+config 2, 47209, 67209
+config 3, 89980, 89990
+config 4, 55272, 55282, 65272, 65282
+config 5, 38240, 39240
+config 6, 66078, 66079, 66089, 67079, 87079
+config 7, 5868, 5886, 6886
+config 8, 5067
+config 9, 65865, 65866, 65886
+config 10, 89978, 89988, 89989, 89998
+config 11, 65860, 65870, 65880, 75880
+config 12, 65808
+config 13, 90846
+config 14, 9106
+config 15, 65879, 75889
+config 16, 29908, 29909
+config 17, 37006
+config 18, 5960, 6880, 15940
+config 19, 28249, 37247, 38146, 38246, 38247, 38248, 38249, 39246, 39247
+config 20, 69808, 89909
+config 21, 36083, 66075
+config 22, 75007, 86208, 96107
+config 23, 91343
+config 24, 45246, 45247, 45248, 45249, 55248, 65246, 65247, 65248, 65249, 65347, 75337
+config 25, 37240, 57240
+config 26, 65036, 77054
+config 27, 65306, 65307
+config 28, 47249, 67249, 69347
+config 29, 45240, 55242
+config 30, 59976, 59986, 59987
+config 31, 65356, 65357, 65366, 65367, 67377
+config 32, 65868, 65869, 65978
+config 33, 87070
+config 34, 49980, 58970, 59970, 59980, 59990
+config 35, 47208
+config 36, 5243, 29243
+config 37, 59979, 69979
+
+
+-e --league=Championship --year=2018 --matchday=44 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=123 --loglevel=LOG_RESULT
+config 0, 6805, 28905, 29905
+config 1, 59178, 67076, 67088, 68089
+config 2, 922, 1805, 3805, 3935
+config 3, 38506, 38507, 39505, 39507
+config 4, 56980, 76970, 78970
+config 5, 34909, 35908, 35909, 36908, 46908, 46909
+config 6, 9160, 67080
+config 7, 2748, 3948, 4978, 6868
+config 8, 27200, 39000
+config 9, 78978, 93978, 93979
+config 10, 39188
+config 11, 22905, 23805
+config 12, 9167, 9174, 9177
+config 13, 3885, 3895, 5865, 6865, 6885, 7885
+config 14, 28208, 39008, 39009
+config 15, 53342, 68332, 73243
+config 16, 46902, 66900, 66901
+config 17, 36007, 37005
+config 18, 46905, 65905
+config 19, 23277, 23278, 23288
+config 20, 3105, 23208
+config 21, 34507, 37507
+config 22, 9205, 38005, 38006, 39004, 39006
+config 23, 73047, 95385, 98148
+config 24, 4970, 43972
+
+RunTime 33:48.85
