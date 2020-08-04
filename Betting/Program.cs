@@ -73,11 +73,8 @@ namespace Betting
             }
         }
 
-        public static void PrintClusterInfo(SortedDictionary<float, RunOutput> dict)
+        public static void PrintClusterInfo(Logger logger, SortedDictionary<float, RunOutput> dict)
         {
-            if (ConfigManager.Instance.GetLogLevel() > ConfigManager.LogLevel.LOG_RESULT)
-                return;
-
             SortedDictionary<int, SortedSet<int>> clusteredOutput = new SortedDictionary<int, SortedSet<int>>();
 
             foreach(RunOutput t in dict.Values)
@@ -90,15 +87,15 @@ namespace Betting
 
             foreach(int k in clusteredOutput.Keys)
             {
-                Logger.LogResult("config {0}", k);
+                logger.LogResult("config {0}", k);
                 foreach(int t in clusteredOutput[k])
-                    Logger.LogResult(", {0}", t);
-                Logger.LogResult("\n");
+                    logger.LogResult(", {0}", t);
+                logger.LogResult("\n");
             }
 
         }
 
-        public static void PrintMetricList(int i)
+        public static void PrintMetricList(Logger logger, int i)
         {
             int LastGamesMetricD = i % 10;
             int GoalsConcededMetricD = (i / 10) % 10;
@@ -109,27 +106,27 @@ namespace Betting
 
             if (LastGamesMetricD != 0)
             {
-                Logger.LogResult(" LastGames ({0}); ", LastGamesMetricD);
+                logger.LogResult(" LastGames ({0}); ", LastGamesMetricD);
             }
 
             if (GoalsDifferenceMetricD != 0)
             {
-                Logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
+                logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
             }
 
             if (GoalsScoredMetricD != 0)
             {
-                Logger.LogResult(" GoalsScored ({0}); ", GoalsScoredMetricD);
+                logger.LogResult(" GoalsScored ({0}); ", GoalsScoredMetricD);
             }
 
             if (GoalsConcededMetricD != 0)
             {
-                Logger.LogResult(" GoalsConceded ({0}); ", GoalsConcededMetricD);
+                logger.LogResult(" GoalsConceded ({0}); ", GoalsConcededMetricD);
             }
 
             if (HomeAdvantageMetricD != 0)
             {
-                Logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
+                logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
             }
 
         }
@@ -230,58 +227,64 @@ namespace Betting
             var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
             var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
 
+            
+            
 
             app.OnExecute(() =>
             {
-
+                ConfigManager configManager = new ConfigManager();
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
                 if (leagueOption.HasValue())
-                    ConfigManager.Instance.SetLeagueName(leagueOption.Value());
+                    configManager.SetLeagueName(leagueOption.Value());
                 if (yearOption.HasValue())
-                    ConfigManager.Instance.SetYear(yearOption.Value());
+                    configManager.SetYear(yearOption.Value());
                 if (yReverseOption.HasValue())
-                    ConfigManager.Instance.SetReverseYears(yReverseOption.Value());
+                    configManager.SetReverseYears(yReverseOption.Value());
+                if (mReverseOption.HasValue())
+                    configManager.SetReverseDays(mReverseOption.Value());
+                if (drawMarginOption.HasValue())
+                    configManager.SetDrawMargin(drawMarginOption.Value());
+                if (drawMixedMarginOption.HasValue())
+                    configManager.SetDrawMixedMargin(drawMixedMarginOption.Value());
+                if (maxOddsOption.HasValue())
+                    configManager.SetMaxOdds(maxOddsOption.Value());
+                if (minOddsOption.HasValue())
+                    configManager.SetMinOdds(minOddsOption.Value());
+                if (minMetricCorrectOption.HasValue())
+                    configManager.SetMinMetricCorrect(minMetricCorrectOption.Value());
+                if (minYearProfitOption.HasValue())
+                    configManager.SetMinYearProfit(minYearProfitOption.Value());
+                if (logLevelOption.HasValue())
+                    configManager.SetLogLevel(logLevelOption.Value());
+                if (successRateOption.HasValue())
+                    configManager.SetSuccessRate(successRateOption.Value());
+                if (filterTopRate.HasValue())
+                    configManager.SetSuccessRate(filterTopRate.Value());
+                if (filterTopProfit.HasValue())
+                    configManager.SetSuccessRate(filterTopProfit.Value());
+                if (betStyleOption.HasValue())
+                    configManager.SetBetStyle(betStyleOption.Value());
+                if (useExpanded.HasValue())
+                {
+                    configManager.SetUseExpanded(true);
+                    configManager.SetCoeficientWeight(Int32.Parse(useExpanded.Value()));
+                }
+
+                FixtureRetriever fixtureRetriever = new FixtureRetriever(configManager);
+                Logger logger = new Logger(configManager.GetLogLevel());
+
                 if (matchdayOption.HasValue())
                 {
                     if (matchdayOption.Value().Contains("max"))
                     {
-                        string expression = matchdayOption.Value().Replace("max", FixtureRetriever.GetNumberOfMatchDays(ConfigManager.Instance.GetYear()).ToString());
+                        string expression = matchdayOption.Value().Replace("max", fixtureRetriever.GetNumberOfMatchDays(configManager.GetYear()).ToString());
                         DataTable dt = new DataTable();
-                        ConfigManager.Instance.SetMatchDay(dt.Compute(expression, "").ToString());
+                        configManager.SetMatchDay(dt.Compute(expression, "").ToString());
                     }
                     else
-                        ConfigManager.Instance.SetMatchDay(matchdayOption.Value());
-                }
-                if (mReverseOption.HasValue())
-                    ConfigManager.Instance.SetReverseDays(mReverseOption.Value());
-                if (drawMarginOption.HasValue())
-                    ConfigManager.Instance.SetDrawMargin(drawMarginOption.Value());
-                if (drawMixedMarginOption.HasValue())
-                    ConfigManager.Instance.SetDrawMixedMargin(drawMixedMarginOption.Value());
-                if (maxOddsOption.HasValue())
-                    ConfigManager.Instance.SetMaxOdds(maxOddsOption.Value());
-                if (minOddsOption.HasValue())
-                    ConfigManager.Instance.SetMinOdds(minOddsOption.Value());
-                if (minMetricCorrectOption.HasValue())
-                    ConfigManager.Instance.SetMinMetricCorrect(minMetricCorrectOption.Value());
-                if (minYearProfitOption.HasValue())
-                    ConfigManager.Instance.SetMinYearProfit(minYearProfitOption.Value());
-                if (logLevelOption.HasValue())
-                    ConfigManager.Instance.SetLogLevel(logLevelOption.Value());
-                if (successRateOption.HasValue())
-                    ConfigManager.Instance.SetSuccessRate(successRateOption.Value());
-                if (filterTopRate.HasValue())
-                    ConfigManager.Instance.SetSuccessRate(filterTopRate.Value());
-                if (filterTopProfit.HasValue())
-                    ConfigManager.Instance.SetSuccessRate(filterTopProfit.Value());
-                if (betStyleOption.HasValue())
-                    ConfigManager.Instance.SetBetStyle(betStyleOption.Value());
-                if (useExpanded.HasValue())
-                {
-                    ConfigManager.Instance.SetUseExpanded(true);
-                    ConfigManager.Instance.SetCoeficientWeight(Int32.Parse(useExpanded.Value()));
+                        configManager.SetMatchDay(matchdayOption.Value());
                 }
 
 
@@ -301,12 +304,12 @@ namespace Betting
                             if (metricConfigs.Count == 0)
                                 continue;
 
-                            if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
-                                PrintMetricList(i);
+                            if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
+                                PrintMetricList(logger, i);
 
-                            DBUpdater db = new DBUpdater(metricConfigs);
+                            DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
                             db.AddPoints(false);
-                            Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} metric {3} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2'], i);
+                            logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} metric {3} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2'], i);
 
                             foreach (KeyValuePair<char, double> kv in db.r2Values_)
                             {
@@ -314,14 +317,14 @@ namespace Betting
                                     continue;
                                 if (!sortedAvg.ContainsKey(kv.Value))
                                     sortedAvg.Add(kv.Value, new KeyValuePair<char, int>(kv.Key, i));
-                                if (sortedAvg.Count > ConfigManager.Instance.GetFilterTopProfit())
+                                if (sortedAvg.Count > configManager.GetFilterTopProfit())
                                     sortedAvg.Remove(sortedAvg.Keys.First());
                             }
                         }
 
                         foreach(var x in sortedAvg)
                         {
-                            Logger.LogResult("\nR2 metric {0:0.00}, value {1:0.00}\n", x.Value.Value, x.Key);
+                            logger.LogResult("\nR2 metric {0:0.00}, value {1:0.00}\n", x.Value.Value, x.Key);
                         }
                         
                     }
@@ -329,34 +332,34 @@ namespace Betting
                     {
                         int metricConfigId = Int32.Parse(inspectMetric.Value());
                         List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                        PrintMetricList(metricConfigId);
-                        DBUpdater db = new DBUpdater(metricConfigs);
+                        PrintMetricList(logger, metricConfigId);
+                        DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
                         db.AddPoints(true);
-                        Logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2']);
+                        logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2']);
                     }
                 }
                 else if (predictResults.HasValue())
                 {
                     int metricConfigId = Int32.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                    PrintMetricList(metricConfigId);
-                    Logger.LogResultSuccess("\n Results: \n");
-                    GlobalStats gs = new GlobalStats(metricConfigs);
+                    PrintMetricList(logger, metricConfigId);
+                    logger.LogResultSuccess("\n Results: \n");
+                    GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                     gs.ProcessUpcomingFixtures();
                 }
                 else if (inspectMetric.HasValue())
                 {
                     int metricConfigId = Int32.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                    PrintMetricList(metricConfigId);
+                    PrintMetricList(logger, metricConfigId);
 
-                    GlobalStats gs = new GlobalStats(metricConfigs);
+                    GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                     gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
 
                     if(success)
-                        Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
+                        logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                     else
-                        Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
+                        logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                 }
                 else if (executeMetrics.HasValue())
                 {   
@@ -376,10 +379,10 @@ namespace Betting
                         if (metricConfigs.Count == 0)
                             return;
 
-                        if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
-                            PrintMetricList(i);
+                        if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
+                            PrintMetricList(logger, i);
 
-                        GlobalStats gs = new GlobalStats(metricConfigs);
+                        GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                         gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
 
                         if (success)
@@ -396,17 +399,17 @@ namespace Betting
                                 }
                             }
 
-                            Logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
+                            logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
                         }
                         else
-                            Logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
+                            logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
 
                                                 
                         lock (topByProfit)
                         {
                             if (!topByProfit.ContainsKey(averageProfit))
                                 topByProfit.Add(averageProfit, new RunOutput(success, rate, averageProfit, i, maxI));
-                            if (topByProfit.Count > ConfigManager.Instance.GetFilterTopProfit())
+                            if (topByProfit.Count > configManager.GetFilterTopProfit())
                                 topByProfit.Remove(topByProfit.Keys.First());
                         }
 
@@ -414,52 +417,53 @@ namespace Betting
                         {
                             if (!topByRate.ContainsKey(rate))
                                 topByRate.Add(rate, new RunOutput(success, rate, averageProfit, i, maxI));
-                            if (topByRate.Count > ConfigManager.Instance.GetFilterTopRate())
+                            if (topByRate.Count > configManager.GetFilterTopRate())
                                 topByRate.Remove(topByRate.Keys.First());
                         }
                     });
 
-                    if (ConfigManager.Instance.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
+                    if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_RESULT)
                     {
-                        Logger.LogResult("TopByProfit {0}: \n\n", ConfigManager.Instance.GetFilterTopProfit());
+                        logger.LogResult("TopByProfit {0}: \n\n", configManager.GetFilterTopProfit());
 
                         AddClusterInfo(ref topByProfit);
                         foreach (RunOutput t in topByProfit.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(t.metricId);
-                            Logger.LogResult("\n ---------------- \n");
+                                logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(logger, t.metricId);
+                            logger.LogResult("\n ---------------- \n");
                         }
 
-                        Logger.LogResult("TopByRate {0}: \n\n", ConfigManager.Instance.GetFilterTopRate());
+                        logger.LogResult("TopByRate {0}: \n\n", configManager.GetFilterTopRate());
 
                         AddClusterInfo(ref topByRate);
                         foreach (RunOutput t in topByRate.Values)
                         {
                             if(t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(t.metricId);
-                            Logger.LogResult("\n ---------------- \n");
+                                logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(logger, t.metricId);
+                            logger.LogResult("\n ---------------- \n");
                         }
 
-                        Logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
+                        logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
 
                         AddClusterInfo(ref successRuns);
                         foreach (RunOutput t in successRuns.Values)
                         {
                             if (t.success)
-                                Logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                                logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
-                                Logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(t.metricId);
-                            Logger.LogResult("\n ---------------- \n");
+                                logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            PrintMetricList(logger, t.metricId);
+                            logger.LogResult("\n ---------------- \n");
                         }
-                        PrintClusterInfo(successRuns);
+                        if (configManager.GetLogLevel() > ConfigManager.LogLevel.LOG_RESULT)
+                            PrintClusterInfo(logger, successRuns);
                     }
                 }
 

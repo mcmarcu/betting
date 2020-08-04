@@ -10,10 +10,12 @@ namespace Betting.Metrics
 {
     class ResultChecker
     {
-        public ResultChecker(MetricInterface metric, Fixture fixture)
+        public ResultChecker(MetricInterface metric, Fixture fixture, ConfigManagerInterface configManager, Logger logger)
         {
+            this.configManager = configManager;
             this.fixture = fixture;
             this.dataAvailable = true;
+            this.logger = logger;
             try
             {
                 metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName, fixture);
@@ -27,8 +29,8 @@ namespace Betting.Metrics
 
         public string GetExpectedResult()
         {
-            int drawMargin = ConfigManager.Instance.GetDrawMargin();
-            int drawMixedMargin = ConfigManager.Instance.GetDrawMixedMargin();
+            int drawMargin = configManager.GetDrawMargin();
+            int drawMixedMargin = configManager.GetDrawMixedMargin();
             if (Math.Abs(pct1 - pct2) < drawMargin*2)
                 return "X";
 
@@ -48,12 +50,12 @@ namespace Betting.Metrics
 
             try
             {
-                Logger.LogDebug("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
-                Logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, fixture.result);
+                logger.LogDebug("{0} vs {1}\t\tchances -- {2} : {3} ({4})", fixture.homeTeamName, fixture.awayTeamName, pct1, pct2, GetExpectedResult());
+                logger.LogDebug(" ---- Final score {0} vs {1} ({2})\n", fixture.finalScore.homeTeamGoals, fixture.finalScore.awayTeamGoals, fixture.result);
             }
             catch (Exception)
             {
-                Logger.LogDebug("{0} vs {1} \t not enough data\n", fixture.homeTeamName, fixture.awayTeamName);
+                logger.LogDebug("{0} vs {1} \t not enough data\n", fixture.homeTeamName, fixture.awayTeamName);
             }
         }
 
@@ -85,6 +87,8 @@ namespace Betting.Metrics
             }
         }
 
+        private ConfigManagerInterface configManager;
+        private Logger logger;
         private Fixture fixture;
         public int pct1;
         public int pct2;

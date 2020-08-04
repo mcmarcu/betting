@@ -1,35 +1,11 @@
-﻿using Betting.DataModel;
-using Betting.Stats;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Betting.Config
 {
-    class ConfigManager
+    public class ConfigManager : ConfigManagerInterface
     {
-        public enum LogLevel
-        {
-            LOG_DEBUG,
-            LOG_INFO,
-            LOG_RESULT
-        }
-
-        public static ConfigManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new ConfigManager();
-                }
-                return instance;
-            }
-        }
-
         private void SetData(string id, string value)
         {
             cache[id] = value;
@@ -50,7 +26,7 @@ namespace Betting.Config
             SetData("league", value);
         }
 
-        public string GetLeagueName()
+        public override string GetLeagueName()
         {
             return GetData("league");
         }
@@ -60,7 +36,7 @@ namespace Betting.Config
             SetData("year", value);
         }
 
-        public int GetYear()
+        public override int GetYear()
         {
             return Int32.Parse(GetData("year"));
         }
@@ -70,7 +46,7 @@ namespace Betting.Config
             SetData("yreverse", value);
         }
 
-        public int GetReverseYears()
+        public override int GetReverseYears()
         {
             return Int32.Parse(GetData("yreverse"));
         }
@@ -80,7 +56,7 @@ namespace Betting.Config
             SetData("loglevel", value);
         }
 
-        public LogLevel GetLogLevel()
+        public override LogLevel GetLogLevel()
         {
             return (LogLevel)Enum.Parse(typeof(LogLevel), GetData("loglevel"));
         }
@@ -90,7 +66,7 @@ namespace Betting.Config
             SetData("drawmargin", value);
         }
 
-        public int GetDrawMargin()
+        public override int GetDrawMargin()
         {
             return Int32.Parse(GetData("drawmargin"));
         }
@@ -100,7 +76,7 @@ namespace Betting.Config
             SetData("drawmixedmargin", value);
         }
 
-        public int GetDrawMixedMargin()
+        public override int GetDrawMixedMargin()
         {
             return Int32.Parse(GetData("drawmixedmargin"));
         }
@@ -110,7 +86,7 @@ namespace Betting.Config
             SetData("matchday", value);
         }
 
-        public int GetMatchDay()
+        public override int GetMatchDay()
         {
             return Int32.Parse(GetData("matchday"));
         }
@@ -120,7 +96,7 @@ namespace Betting.Config
             SetData("mreverse", value);
         }
 
-        public int GetReverseDays()
+        public override int GetReverseDays()
         {
             return Int32.Parse(GetData("mreverse"));
         }
@@ -130,7 +106,7 @@ namespace Betting.Config
             SetData("maxodds", value);
         }
 
-        public float GetMinOdds()
+        public override float GetMinOdds()
         {
             return float.Parse(GetData("minodds"));
         }
@@ -140,7 +116,7 @@ namespace Betting.Config
             SetData("minodds", value);
         }
 
-        public float GetMaxOdds()
+        public override float GetMaxOdds()
         {
             return float.Parse(GetData("maxodds"));
         }
@@ -150,7 +126,7 @@ namespace Betting.Config
             SetData("minmetriccorrect", value);
         }
 
-        public float GetMinMetricCorrect()
+        public override float GetMinMetricCorrect()
         {
             return float.Parse(GetData("minmetriccorrect"));
         }
@@ -160,7 +136,7 @@ namespace Betting.Config
             SetData("minyearprofit", value);
         }
 
-        public float GetMinYearProfit()
+        public override float GetMinYearProfit()
         {
             return float.Parse(GetData("minyearprofit"));
         }
@@ -170,7 +146,7 @@ namespace Betting.Config
             SetData("successrate", value);
         }
 
-        public float GetSuccessRate()
+        public override float GetSuccessRate()
         {
             return float.Parse(GetData("successrate"));
         }
@@ -180,7 +156,7 @@ namespace Betting.Config
             SetData("filtertoprate", value);
         }
 
-        public int GetFilterTopRate()
+        public override int GetFilterTopRate()
         {
             return Int32.Parse(GetData("filtertoprate"));
         }
@@ -190,7 +166,7 @@ namespace Betting.Config
             SetData("filtertopprofit", value);
         }
 
-        public int GetFilterTopProfit()
+        public override int GetFilterTopProfit()
         {
             return Int32.Parse(GetData("filtertopprofit"));
         }
@@ -201,7 +177,7 @@ namespace Betting.Config
             SetData("betstyle", value);
         }
 
-        public string GetBetStyle()
+        public override string GetBetStyle()
         {
             return GetData("betstyle");
         }
@@ -211,7 +187,7 @@ namespace Betting.Config
             SetData("useexpanded", value ? "1" : "0");
         }
 
-        public bool GetUseExpanded()
+        public override bool GetUseExpanded()
         {
             return Int32.Parse(GetData("useexpanded")) == 1;
         }
@@ -221,19 +197,16 @@ namespace Betting.Config
             SetData("coeficientweight", value.ToString());
         }
 
-        public int GetCoeficientWeight()
+        public override int GetCoeficientWeight()
         {
             return Int32.Parse(GetData("coeficientweight"));
         }
-        
 
-
-        private ConfigManager()
+        public ConfigManager()
         {
             configDocument_ = new XmlDocument();
             configDocument_.Load("..\\..\\Config\\globalconfig.xml");
         }
-        private static ConfigManager instance;
         private XmlDocument configDocument_;
         private Dictionary<string, string> cache = new Dictionary<string, string>();
     }

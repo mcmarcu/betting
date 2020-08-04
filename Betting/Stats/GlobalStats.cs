@@ -11,21 +11,24 @@ namespace Betting.Stats
 {
     class GlobalStats
     {
-        public GlobalStats(List<MetricConfig> metricConfigs)
+        public GlobalStats(List<MetricConfig> metricConfigs, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever, Logger logger)
         {
-            this.metricConfigs = metricConfigs;
+            metricConfigs_ = metricConfigs;
+            configManager_ = configManager;
+            fixtureRetriever_ = fixtureRetriever;
+            logger_ = logger;
         }
 
         public void GetAllYearsData(out bool success, out float rate, out float averageProfit)
         {
-            int year = ConfigManager.Instance.GetYear();
-            int reverseYears = ConfigManager.Instance.GetReverseYears();
+            int year = configManager_.GetYear();
+            int reverseYears = configManager_.GetReverseYears();
      
             float laverageProfit = 0;
             bool lsuccess = true;
             float lrate = 0;
 
-            int maxThreads = ConfigManager.Instance.GetLogLevel() == ConfigManager.LogLevel.LOG_DEBUG ? 1 : 8;
+            int maxThreads = configManager_.GetLogLevel() == ConfigManager.LogLevel.LOG_DEBUG ? 1 : 8;
 
             Parallel.For(0, reverseYears, new ParallelOptions { MaxDegreeOfParallelism = maxThreads }, (i, state) =>
             {
@@ -37,9 +40,9 @@ namespace Betting.Stats
                 float yearRate = (yearTotal != 0) ? ((float)yearCorrect / (float)yearTotal) * 100 : 100;
                 lrate += yearRate;
 
-                Logger.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
+                logger_.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
 
-                if (yearProfit < ConfigManager.Instance.GetMinYearProfit())
+                if (yearProfit < configManager_.GetMinYearProfit())
                     lsuccess = false;
 
                 laverageProfit += yearProfit;
@@ -52,8 +55,8 @@ namespace Betting.Stats
 
         public void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int year)
         {
-            int matchDay = ConfigManager.Instance.GetMatchDay();
-            int reverseDays = ConfigManager.Instance.GetReverseDays();
+            int matchDay = configManager_.GetMatchDay();
+            int reverseDays = configManager_.GetReverseDays();
             int totalFixtures = 0;
             int correctFixtures = 0;
             correctFixturesWithData = 0;
@@ -66,12 +69,12 @@ namespace Betting.Stats
                 //GetMatchdayDataFairOdds(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
                 GetMatchdayData(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
 
-                Logger.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
+                logger_.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((float)correctFixtures / (float)totalFixtures) * 100, matchdayProfit);
 
                 correctFixturesWithData += correctFixtures;
                 totalFixturesWithData += totalFixtures;
                 currentProfit += matchdayProfit;
-                FixtureRetriever.GetPrevRound(out year, out matchDay, year, matchDay);
+                fixtureRetriever_.GetPrevRound(out year, out matchDay, year, matchDay);
             }
         }
 
@@ -114,7 +117,7 @@ namespace Betting.Stats
         private string ComputeExpectedResult(string aggregateResult, int totalMetricsWithData)
         {
             string computedResult = String.Empty;
-            int goodMetricsCount = (int)(ConfigManager.Instance.GetMinMetricCorrect() * (float)totalMetricsWithData);
+            int goodMetricsCount = (int)(configManager_.GetMinMetricCorrect() * (float)totalMetricsWithData);
             //int goodMetricsCount = 1;//(totalMetricsWithData+1) / 2;//ceil
             string possibleResults = "1X2";
             foreach (char result in possibleResults)
@@ -158,7 +161,7 @@ namespace Betting.Stats
         public float GetMatchdayProfit(List<float> matchdayOdds, int year)
         {
             int maxGames = matchdayOdds.Count;
-            string betStyle = ConfigManager.Instance.GetBetStyle();
+            string betStyle = configManager_.GetBetStyle();
 
             int betStyleMask = 0;
 
@@ -188,9 +191,9 @@ namespace Betting.Stats
 
         public void GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
         {
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year, configManager_, fixtureRetriever_);
 
-            List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, matchDay);
+            List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(year, matchDay);
 
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
@@ -203,7 +206,7 @@ namespace Betting.Stats
                 string actualResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
-                    ResultChecker checker = new ResultChecker(metric, fixture);
+                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_, logger_);
                     if (checker.dataAvailable)
                     {
                         aggregateResult += checker.GetExpectedResult() + " ";
@@ -214,8 +217,8 @@ namespace Betting.Stats
 
                 float oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
                 if (oddDiff1 > 0 && oddDiff1 < 1 
-                    && fixture.odds["1"] <= ConfigManager.Instance.GetMaxOdds()
-                    && fixture.odds["1"] >= ConfigManager.Instance.GetMinOdds())
+                    && fixture.odds["1"] <= configManager_.GetMaxOdds()
+                    && fixture.odds["1"] >= configManager_.GetMinOdds())
                 {
                     aggregateResult += "1 ";
                     totalMetricsWithData++;
@@ -223,8 +226,8 @@ namespace Betting.Stats
 
                 /*float oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
                 if (oddDiffX > 0 && oddDiffX < 1
-                    && fixture.odds["X"] <= ConfigManager.Instance.GetMaxOdds()
-                    && fixture.odds["X"] >= ConfigManager.Instance.GetMinOdds())
+                    && fixture.odds["X"] <= configManager_.GetMaxOdds()
+                    && fixture.odds["X"] >= configManager_.GetMinOdds())
                 {
                     aggregateResult += "X ";
                     totalMetricsWithData++;
@@ -236,8 +239,8 @@ namespace Betting.Stats
                 {
                     totalMetricsWithData = 0;
                 }
-                else if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() ||
-                    fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
+                else if (fixture.odds[computedResult] > configManager_.GetMaxOdds() ||
+                    fixture.odds[computedResult] < configManager_.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
                 }
@@ -254,18 +257,18 @@ namespace Betting.Stats
 
                     if (metricSuccess)
                     {
-                        Logger.LogDebugSuccess("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
+                        logger_.LogDebugSuccess("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
                         matchdayOdds.Add(fixture.odds[computedResult]);
                     }
                     else
                     {
-                        Logger.LogDebugFail("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
+                        logger_.LogDebugFail("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
                         matchdayOdds.Add(0);
                     }
                 }
                 else
                 {
-                    Logger.LogDebug("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
+                    logger_.LogDebug("{0} - {1},{2} result {3}({4}), \t odds {5:0.00} \t aggregate {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, actualResult, fixture.odds[computedResult], aggregateResult);
                 }
 
             }
@@ -275,7 +278,7 @@ namespace Betting.Stats
 
         public void GetMatchdayDataFairOdds(out int correctFixturesWithData, out int totalFixturesWithData, out float currentProfit, int matchDay, int year)
         {
-            List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, matchDay);
+            List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(year, matchDay);
 
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
@@ -291,8 +294,8 @@ namespace Betting.Stats
                 string[] resultsToAccount = { "1", "X" };
                 foreach (string result in resultsToAccount)
                 {
-                    if (fixture.fairOdds[result] <= ConfigManager.Instance.GetMaxOdds()
-                    && fixture.fairOdds[result] >= ConfigManager.Instance.GetMinOdds())
+                    if (fixture.fairOdds[result] <= configManager_.GetMaxOdds()
+                    && fixture.fairOdds[result] >= configManager_.GetMinOdds())
                     {
                         bool metricSuccess = actualResult == result;
 
@@ -302,12 +305,12 @@ namespace Betting.Stats
 
                         if (metricSuccess)
                         {
-                            Logger.LogDebugSuccess("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                            logger_.LogDebugSuccess("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                             matchdayOdds.Add(fixture.odds[result]);
                         }
                         else
                         {
-                            Logger.LogDebugFail("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                            logger_.LogDebugFail("{0} - {1},{2} result {3} \n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                             matchdayOdds.Add(0);
                         }
                         success = true;
@@ -317,7 +320,7 @@ namespace Betting.Stats
                 }
                 if(!success)
                 {
-                    Logger.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
+                    logger_.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                 }
                 
 
@@ -328,9 +331,9 @@ namespace Betting.Stats
 
         public void ProcessUpcomingFixtures()
         {
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs, ConfigManager.Instance.GetYear());
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, configManager_.GetYear(), configManager_, fixtureRetriever_);
 
-            List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(ConfigManager.Instance.GetYear(), ConfigManager.Instance.GetMatchDay());
+            List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(configManager_.GetYear(), configManager_.GetMatchDay());
 
             List<float> matchdayOdds = new List<float>();
 
@@ -340,7 +343,7 @@ namespace Betting.Stats
                 string aggregateResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
-                    ResultChecker checker = new ResultChecker(metric, fixture);
+                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_, logger_);
                     if (checker.dataAvailable)
                     {
                         aggregateResult += checker.GetExpectedResult() + " ";
@@ -355,8 +358,8 @@ namespace Betting.Stats
                 {
                     totalMetricsWithData = 0;
                 }
-                else if (fixture.odds[computedResult] > ConfigManager.Instance.GetMaxOdds() &&
-                    fixture.odds[computedResult] < ConfigManager.Instance.GetMinOdds())
+                else if (fixture.odds[computedResult] > configManager_.GetMaxOdds() &&
+                    fixture.odds[computedResult] < configManager_.GetMinOdds())
                 {
                     totalMetricsWithData = 0;
                 }
@@ -365,19 +368,22 @@ namespace Betting.Stats
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
                 if (totalMetricsWithData == metrics.Count && computedResult != String.Empty)
                 {
-                    Logger.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
+                    logger_.LogInfo("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
                     matchdayOdds.Add(fixture.odds[computedResult]);
                 }
                 else
                 {
-                    Logger.LogInfoFail("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
+                    logger_.LogInfoFail("{0} - {1},{2} result {3}, \t odds {4:0.00} \t aggregate {5} \t date {6} \n", fixture.homeTeamName, fixture.awayTeamName, padding, computedResult, fixture.odds[computedResult], aggregateResult, fixture.date);
                 }
 
             }
 
-            Logger.LogInfo("Profit: {0}", GetMatchdayProfit(matchdayOdds, ConfigManager.Instance.GetYear()));
+            logger_.LogInfo("Profit: {0}", GetMatchdayProfit(matchdayOdds, configManager_.GetYear()));
         }
 
-        private List<MetricConfig> metricConfigs;
+        private List<MetricConfig> metricConfigs_;
+        private ConfigManagerInterface configManager_;
+        private FixtureRetrieverInterface fixtureRetriever_;
+        private Logger logger_;
     }
 }

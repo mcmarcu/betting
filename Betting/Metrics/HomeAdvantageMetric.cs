@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
-    class HomeAdvantageMetric : MetricInterface
+    public class HomeAdvantageMetric : MetricInterface
     {
-
-        public HomeAdvantageMetric(MetricConfig config, int year) : base(config, year)
+        public HomeAdvantageMetric(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever) : base(config, year, configManager, fixtureRetriever)
         {
         }
 
@@ -32,7 +31,7 @@ namespace Betting.Metrics
             float pctTeam1 = 0;
             float pctTeam2 = 0;
 
-            List<Fixture> allT1 = FixtureRetriever.GetAllFixtures(year, teamName1);
+            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth * 2);
             foreach (Fixture fix in fixturesTeam1)
             {
@@ -40,7 +39,7 @@ namespace Betting.Metrics
                     pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix, teamName1);
             }
 
-            List<Fixture> allT2 = FixtureRetriever.GetAllFixtures(year, teamName2);
+            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamName2);
             List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth * 2);
             foreach (Fixture fix in fixturesTeam2)
             {

@@ -45,10 +45,10 @@ namespace Betting.DataModel
         public Coeficient coeficient;
         public string result;
 
-        public void init()
+        public void init(ConfigManagerInterface configManager)
         {
             SetResult();
-            SetCoeficients();
+            SetCoeficients(configManager);
         }
 
         private void SetResult()
@@ -61,10 +61,10 @@ namespace Betting.DataModel
                 result = "2";
         }
 
-        private void SetCoeficients()
+        private void SetCoeficients(ConfigManagerInterface configManager)
         {
-            int weight = ConfigManager.Instance.GetCoeficientWeight();
-            if (ConfigManager.Instance.GetUseExpanded() && weight != 0)
+            int weight = configManager.GetCoeficientWeight();
+            if (configManager.GetUseExpanded() && weight != 0)
             {
                 coeficient.homeTeam = (float)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
                 coeficient.awayTeam = (float)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);

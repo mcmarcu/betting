@@ -1,5 +1,6 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
+using Betting.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +14,17 @@ namespace Betting.Metrics
         abstract public void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
         abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
 
-        public MetricInterface(MetricConfig config, int year)
+        public MetricInterface(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
             this.config = config;
             this.year = year;
+            fixtureRetriever_ = fixtureRetriever;
+            configManager_ = configManager;
         }
 
         public float GetTeamCoeficient(string teamName, Fixture fixture)
         {
-            if (ConfigManager.Instance.GetUseExpanded())
+            if (configManager_.GetUseExpanded())
             {
                 float homeTeamCoeficient = fixture.gamesPlayed.homeTeamGamesPlayed > 0 ? (float)fixture.points.homeTeamPoints / (float)fixture.gamesPlayed.homeTeamGamesPlayed : 0;
                 float awayTeamCoeficient = fixture.gamesPlayed.awayTeamGamesPlayed > 0 ? (float)fixture.points.awayTeamPoints / (float)fixture.gamesPlayed.awayTeamGamesPlayed : 0;
@@ -66,6 +69,8 @@ namespace Betting.Metrics
 
         public MetricConfig config;
         public int year;
+        public ConfigManagerInterface configManager_;
+        public FixtureRetrieverInterface fixtureRetriever_;
     }
 }
 

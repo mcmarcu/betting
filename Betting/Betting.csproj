@@ -92,6 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ConfigManagerInterface.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\Logger.cs" />
     <Compile Include="DataModel\MetricConfig.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stats\DBUpdater.cs" />
+    <Compile Include="Stats\FixtureRetrieverInterface.cs" />
     <Compile Include="Stats\FixtureRetriever.cs" />
     <Compile Include="Stats\GlobalStats.cs" />
   </ItemGroup>

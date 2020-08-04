@@ -14,9 +14,10 @@ namespace Betting.Stats
 {
     class DBUpdater
     {
-
-        public DBUpdater(List<MetricConfig> metricConfigs)
+        public DBUpdater(List<MetricConfig> metricConfigs, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
+            fixtureRetriever_ = fixtureRetriever;
+            configManager_ = configManager;
             metricConfigs_ = metricConfigs;
             metricD_ = 0;
             foreach (MetricConfig m in metricConfigs_)
@@ -66,7 +67,7 @@ namespace Betting.Stats
         }
 
 
-        private static void AddToDict(ref Dictionary<string, int> dict, string key, int value)
+        private void AddToDict(ref Dictionary<string, int> dict, string key, int value)
         {
             if (!dict.ContainsKey(key))
                 dict.Add(key, value);
@@ -74,7 +75,7 @@ namespace Betting.Stats
                 dict[key] += value;
         }
 
-        private static void AddToDict(ref SortedDictionary<double, double> dict, int key, int value)
+        private void AddToDict(ref SortedDictionary<double, double> dict, int key, int value)
         {
             if (!dict.ContainsKey(key))
                 dict.Add(key, value);
@@ -85,9 +86,8 @@ namespace Betting.Stats
 
         public void AddPoints(bool writeToFile)
         {
-            string leagueName = ConfigManager.Instance.GetLeagueName();
-            int year = ConfigManager.Instance.GetYear();
-            int reverseYears = ConfigManager.Instance.GetReverseYears();
+            int year = configManager_.GetYear();
+            int reverseYears = configManager_.GetReverseYears();
             MemoryStream statsMemoryStream = new MemoryStream(1024);
             MemoryStream ratingsMemoryStream = new MemoryStream(1024);
 
@@ -205,7 +205,7 @@ namespace Betting.Stats
         //as described in https://www.football-data.co.uk/ratings.pdf
         public void GenerateRatingsForYear(int year, int width, bool writeHeader, ref MemoryStream ratingsMemorySteam)
         {
-            int matchdays = FixtureRetriever.GetNumberOfMatchDays(year);
+            int matchdays = fixtureRetriever_.GetNumberOfMatchDays(year);
             SortedDictionary<double, double> homeWinDiff = new SortedDictionary<double, double>();
             SortedDictionary<double, double> awayWinDiff = new SortedDictionary<double, double>();
             SortedDictionary<double, double> drawDiff = new SortedDictionary<double, double>();
@@ -219,10 +219,10 @@ namespace Betting.Stats
                 AddToDict(ref totalOnDiff, i, 0);
             }
 
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year, configManager_, fixtureRetriever_);
             for (int i= matchdays;i>metricD_;--i)
             {
-                List<Fixture> thisRoundFixtures = FixtureRetriever.GetRound(year, i);
+                List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(year, i);
 
                 foreach (Fixture fixture in thisRoundFixtures)
                 {
@@ -299,7 +299,7 @@ namespace Betting.Stats
                     outputFile.WriteLine(outputLine);
                 }
 
-                List<Fixture> fixtures = FixtureRetriever.GetAllFixtures(year);
+                List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
                 float HWIN = 0;
                 float AWIN = 0;
                 float DRAWS = 0;
@@ -326,11 +326,11 @@ namespace Betting.Stats
             }
         }
 
-        public static void AddPointsForYear(int year)
+        public void AddPointsForYear(int year)
         {
             Dictionary<string, int> currentPoints = new Dictionary<string, int>();
             Dictionary<string, int> currentPlayed = new Dictionary<string, int>();
-            string leagueName = ConfigManager.Instance.GetLeagueName();
+            string leagueName = configManager_.GetLeagueName();
             string inputFilePath = "..\\..\\DB\\" + leagueName + year + ".csv";
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
 
@@ -345,7 +345,7 @@ namespace Betting.Stats
                     string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
                     outputFile.WriteLine(outputLine);
 
-                    List<Fixture> fixtures = FixtureRetriever.GetAllFixtures(year);
+                    List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
                     int index = 0;
 
                     while (!parser.EndOfData)
@@ -387,11 +387,11 @@ namespace Betting.Stats
 
         public void AddFairOddsForYear(int year, PolynomialRegression r1, PolynomialRegression rx, PolynomialRegression r2)
         {
-            string leagueName = ConfigManager.Instance.GetLeagueName();
+            string leagueName = configManager_.GetLeagueName();
             string inputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + "_ex.csv";
 
-            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year);
+            List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year, configManager_, fixtureRetriever_);
 
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
@@ -401,7 +401,7 @@ namespace Betting.Stats
                     string outputLine = parser.ReadLine() + ',' + "FOH" + ',' + "FOD" + ',' + "FOA";
                     outputFile.WriteLine(outputLine);
 
-                    List<Fixture> fixtures = FixtureRetriever.GetAllFixtures(year);
+                    List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
                     int index = 0;
                     while (!parser.EndOfData)
                     {
@@ -429,5 +429,8 @@ namespace Betting.Stats
         private List<MetricConfig> metricConfigs_;
         private int metricD_;
         public Dictionary<char, double> r2Values_;
+        private ConfigManagerInterface configManager_;
+        private FixtureRetrieverInterface fixtureRetriever_;
+
     }
 }

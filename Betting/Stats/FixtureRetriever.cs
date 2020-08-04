@@ -1,41 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Betting.DataModel;
-using System.Net;
-using System.IO;
 using Betting.Config;
-using System.Web.Script.Serialization;
-using System.Data.SqlClient;
 using Microsoft.VisualBasic.FileIO;
 using System.Threading;
 
 namespace Betting.Stats
 {
-    public abstract class FixtureRetrieverInterface
-    {
-        public abstract List<Fixture> GetAllFixtures(int year, string team);
-    }
 
-    public class FixtureRetrieverHandle : FixtureRetrieverInterface
+    public class FixtureRetriever : FixtureRetrieverInterface
     {
-        public override List<Fixture> GetAllFixtures(int year, string team)
+        public FixtureRetriever(ConfigManagerInterface configManager)
         {
-            return FixtureRetriever.GetAllFixtures(year, team);
+            configManager_ = configManager;
         }
-    }
-
-    public class FixtureRetriever
-    {
-        public static int GetNumberOfMatchDays(int year)
+        public override int GetNumberOfMatchDays(int year)
         {
             int teams = GetNumberOfTeams(year);
             return (teams - 1) * 2;
         }
 
-        private static int GetNumberOfTeams(int year)
+        private int GetNumberOfTeams(int year)
         {
             lock (numberOfTeamsCache)
             {
@@ -43,7 +28,7 @@ namespace Betting.Stats
                 {
                     return numberOfTeamsCache[year];
                 }
-                string leagueName = ConfigManager.Instance.GetLeagueName();
+                string leagueName = configManager_.GetLeagueName();
                 HashSet<string> teams = new HashSet<string>();
                 using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
                 {
@@ -66,17 +51,17 @@ namespace Betting.Stats
             }
 
         }
-        private static int GetNumberOfMatchdays(int year)
+        private int GetNumberOfMatchdays(int year)
         {
             return (GetNumberOfTeams(year) - 1) * 2;
         }
 
-        public static int GetGamesPerMatchDay(int year)
+        public override int GetGamesPerMatchDay(int year)
         {
             return GetNumberOfTeams(year) / 2;
         }
 
-        public static List<Fixture> GetAllFixtures(int year, string team)
+        public override List<Fixture> GetAllFixtures(int year, string team)
         {
             Tuple<int, string> t = Tuple.Create(year, team);
 
@@ -122,7 +107,7 @@ namespace Betting.Stats
             }
         }
 
-        public static List<Fixture> GetAllFixtures(int year)
+        public override List<Fixture> GetAllFixtures(int year)
         {
             fixturesCacheLock.EnterReadLock();
             try
@@ -144,11 +129,11 @@ namespace Betting.Stats
                 {
                     return fixturesCache[year];
                 }
-                string leagueName = ConfigManager.Instance.GetLeagueName();
+                string leagueName = configManager_.GetLeagueName();
                 int gamesPerMatchDay = GetGamesPerMatchDay(year);
                 List<Fixture> result = new List<Fixture>();
                 string fileName;
-                if (ConfigManager.Instance.GetUseExpanded())
+                if (configManager_.GetUseExpanded())
                 {
                     fileName = "..\\..\\DBEX\\" + leagueName + year + ".csv";
                 }
@@ -194,7 +179,7 @@ namespace Betting.Stats
                     int idxFOA = -1;
 
 
-                    if (ConfigManager.Instance.GetUseExpanded())
+                    if (configManager_.GetUseExpanded())
                     {
                         idxHPTS = Array.FindIndex(fields, item => item == "HPTS");
                         idxAPTS = Array.FindIndex(fields, item => item == "APTS");
@@ -243,7 +228,7 @@ namespace Betting.Stats
                         newFixture.odds.Add("", 0);
 
 
-                        if (ConfigManager.Instance.GetUseExpanded())
+                        if (configManager_.GetUseExpanded())
                         {
                             newFixture.points.homeTeamPoints = Int32.Parse(fields[idxHPTS]);
                             newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
@@ -254,7 +239,7 @@ namespace Betting.Stats
                             newFixture.fairOdds.Add("X", float.Parse(fields[idxFOD]));
                             newFixture.fairOdds.Add("2", float.Parse(fields[idxFOA]));
                         }
-                        newFixture.init();
+                        newFixture.init(configManager_);
 
                         result.Add(newFixture);
                     }
@@ -269,7 +254,7 @@ namespace Betting.Stats
             }
         }
 
-        private static bool tryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
+        private bool tryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
         {
             string idH = oddProvider + "H";
             string idD = oddProvider + "D";
@@ -288,7 +273,7 @@ namespace Betting.Stats
             return true;
         }
 
-        public static List<Fixture> GetRound(int year, int matchDay)
+        public override List<Fixture> GetRound(int year, int matchDay)
         {
             Tuple<int, int> t = Tuple.Create(year, matchDay);
 
@@ -328,7 +313,7 @@ namespace Betting.Stats
             }
         }
 
-        public static void GetPrevRound(out int outYear, out int outDay, int currentYear, int currentDay)
+        public override void GetPrevRound(out int outYear, out int outDay, int currentYear, int currentDay)
         {
             if (currentDay == 1)
             {
@@ -342,16 +327,17 @@ namespace Betting.Stats
             }  
         }
 
-        private static Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
-        private static ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
+        private Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
+        private ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
 
-        private static Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
-        private static ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
+        private Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
+        private ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
 
-        private static Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
-        private static ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
+        private Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+        private ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
 
-        private static Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
+        private Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
 
+        private ConfigManagerInterface configManager_;
     }
 }

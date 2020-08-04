@@ -11,15 +11,8 @@ namespace Betting.Metrics
 {
     public class GoalsScoredMetric : MetricInterface
     {
-
-        public GoalsScoredMetric(MetricConfig config, int year) : base(config, year)
+        public GoalsScoredMetric(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever) : base(config, year, configManager, fixtureRetriever)
         {
-            fixtureRetriever_ = new FixtureRetrieverHandle();
-        }
-
-        public GoalsScoredMetric(MetricConfig config, int year, FixtureRetrieverInterface fixtureRetriever) : base(config, year)
-        {
-            fixtureRetriever_ = fixtureRetriever;
         }
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
@@ -70,12 +63,9 @@ namespace Betting.Metrics
         {
             if (teamName == fixture.homeTeamName)
                 return fixture.finalScore.homeTeamGoals;
-            else 
+            else
                 return fixture.finalScore.awayTeamGoals;
         }
-
-        FixtureRetrieverInterface fixtureRetriever_;
-
 
     }
 }
