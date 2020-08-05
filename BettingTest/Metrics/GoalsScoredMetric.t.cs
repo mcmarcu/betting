@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Betting.Metrics;
 using Betting.DataModel;
 using Betting.Stats;
@@ -10,7 +9,7 @@ using Betting.Config;
 
 namespace BettingTest
 {
-    public class MetricTest
+    public class GoalsScoredMetricTest
     {
         private Mock<ConfigManagerInterface> configManagerMock;
         private Mock<FixtureRetrieverInterface> fixtureRetrieverMock;
@@ -72,8 +71,8 @@ namespace BettingTest
             actualFixture = new Fixture();
             actualFixture.homeTeamName = team1;
             actualFixture.awayTeamName = team2;
-            actualFixture.finalScore.homeTeamGoals = 0;
-            actualFixture.finalScore.awayTeamGoals = 0;
+            actualFixture.finalScore.homeTeamGoals = 1;
+            actualFixture.finalScore.awayTeamGoals = 2;
             actualFixture.coeficient.homeTeam = 1;
             actualFixture.coeficient.awayTeam = 1;
 
@@ -89,7 +88,7 @@ namespace BettingTest
         }
 
         [Test]
-        public void GoalsScoredMetric_GetPointsDepth1()
+        public void GetPointsDepth1()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
@@ -108,7 +107,7 @@ namespace BettingTest
         }
 
         [Test]
-        public void GoalsScoredMetric_GetPointsDepth2()
+        public void GetPointsDepth2()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
@@ -127,7 +126,7 @@ namespace BettingTest
         }
 
         [Test]
-        public void GoalsScoredMetric_GetPercentageDepth1()
+        public void GetPercentageDepth1()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
@@ -146,7 +145,7 @@ namespace BettingTest
         }
 
         [Test]
-        public void GoalsScoredMetric_GetPercentageDepth2()
+        public void GetPercentageDepth2()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
@@ -165,22 +164,23 @@ namespace BettingTest
         }
 
         [Test]
-        public void GoalsConcededMetric_GetPointsDepth1()
+        public void GetGoals()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsConcededMetric",
-                depth = 1
+                name = "GoalsScoredMetric",
+                depth = 2
             };
-            GoalsConcededMetric metric = new GoalsConcededMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            GoalsScoredMetric metric = new GoalsScoredMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
+            int goalsConcededTeam1 = metric.GetGoals(actualFixture, team1);
+            int goalsConcededTeam2 = metric.GetGoals(actualFixture, team2);
 
             // Assert
-            Assert.AreEqual(pTeam1, 0);
-            Assert.AreEqual(pTeam2, 0);
+            Assert.AreEqual(goalsConcededTeam1, actualFixture.finalScore.homeTeamGoals);
+            Assert.AreEqual(goalsConcededTeam2, actualFixture.finalScore.awayTeamGoals);
         }
     }
 }

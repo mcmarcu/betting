@@ -21,7 +21,7 @@ namespace Betting.Metrics
                 if (config.name == "HomeAdvantageMetric")
                     result.Add(new HomeAdvantageMetric(config, year, configManager, fixtureRetriver));
                 if (config.name == "GoalsDifferenceMetric")
-                    result.Add(new GoalsDiferenceMetric(config, year, configManager, fixtureRetriver));
+                    result.Add(new GoalsDifferenceMetric(config, year, configManager, fixtureRetriver));
             }
             return result;
         }

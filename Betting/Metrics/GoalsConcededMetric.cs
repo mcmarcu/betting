@@ -46,11 +46,12 @@ namespace Betting.Metrics
 
             GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
 
-            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
+            if (pctTeam1 == 0 && pctTeam2 == 0)
+                pTeam1 = 50;
+            else
+                pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
-
-        
 
         public int GetGoals(Fixture fixture, string teamName)
         {

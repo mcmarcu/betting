@@ -206,7 +206,7 @@ namespace Betting.Stats
                 string actualResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
-                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_, logger_);
+                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_);
                     if (checker.dataAvailable)
                     {
                         aggregateResult += checker.GetExpectedResult() + " ";
@@ -343,7 +343,7 @@ namespace Betting.Stats
                 string aggregateResult = String.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
-                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_, logger_);
+                    ResultChecker checker = new ResultChecker(metric, fixture, configManager_);
                     if (checker.dataAvailable)
                     {
                         aggregateResult += checker.GetExpectedResult() + " ";

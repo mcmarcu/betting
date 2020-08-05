@@ -66,11 +66,6 @@ namespace Betting.Metrics
         public float GetCoeficient(Fixture fixture, string teamName)
         {
             return 1;
-
-            if (teamName == fixture.homeTeamName)
-                return fixture.coeficient.awayTeam;
-            else
-                return fixture.coeficient.homeTeam;
         }
     }
 }

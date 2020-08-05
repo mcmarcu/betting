@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
-    public class GoalsDiferenceMetric : MetricInterface
+    public class GoalsDifferenceMetric : MetricInterface
     {
-        public GoalsDiferenceMetric(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever) : base(config, year, configManager, fixtureRetriever)
+        public GoalsDifferenceMetric(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever) : base(config, year, configManager, fixtureRetriever)
         {
         }
 
@@ -22,7 +22,10 @@ namespace Betting.Metrics
 
             GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
 
-            pTeam1 = (int)((float)pctTeam1/((float)pctTeam1 + (float)pctTeam2)*100);
+            if (pctTeam1 == 0 && pctTeam2 == 0)
+                pTeam1 = 50;
+            else
+                pTeam1 = (int)((float)pctTeam1/((float)pctTeam1 + (float)pctTeam2)*100);
             pTeam2 = 100 - pTeam1;
         }
 

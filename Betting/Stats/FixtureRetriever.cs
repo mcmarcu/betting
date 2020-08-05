@@ -234,12 +234,11 @@ namespace Betting.Stats
                             newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
                             newFixture.gamesPlayed.homeTeamGamesPlayed = Int32.Parse(fields[idxHPL]);
                             newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
-                            newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
                             newFixture.fairOdds.Add("1", float.Parse(fields[idxFOH]));
                             newFixture.fairOdds.Add("X", float.Parse(fields[idxFOD]));
                             newFixture.fairOdds.Add("2", float.Parse(fields[idxFOA]));
                         }
-                        newFixture.init(configManager_);
+                        newFixture.Init(configManager_);
 
                         result.Add(newFixture);
                     }

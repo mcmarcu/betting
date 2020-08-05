@@ -45,7 +45,7 @@ namespace Betting.DataModel
         public Coeficient coeficient;
         public string result;
 
-        public void init(ConfigManagerInterface configManager)
+        public void Init(ConfigManagerInterface configManager)
         {
             SetResult();
             SetCoeficients(configManager);
@@ -76,6 +76,4 @@ namespace Betting.DataModel
             }
         }
     }
-
-    
 }

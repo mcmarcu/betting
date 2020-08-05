@@ -14,30 +14,16 @@ namespace Betting.Metrics
         abstract public void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
         abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
 
+        //For mocking/testing
+        public MetricInterface()
+        {}
+
         public MetricInterface(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
             this.config = config;
             this.year = year;
             fixtureRetriever_ = fixtureRetriever;
             configManager_ = configManager;
-        }
-
-        public float GetTeamCoeficient(string teamName, Fixture fixture)
-        {
-            if (configManager_.GetUseExpanded())
-            {
-                float homeTeamCoeficient = fixture.gamesPlayed.homeTeamGamesPlayed > 0 ? (float)fixture.points.homeTeamPoints / (float)fixture.gamesPlayed.homeTeamGamesPlayed : 0;
-                float awayTeamCoeficient = fixture.gamesPlayed.awayTeamGamesPlayed > 0 ? (float)fixture.points.awayTeamPoints / (float)fixture.gamesPlayed.awayTeamGamesPlayed : 0;
-
-                if (teamName == fixture.homeTeamName)
-                    return awayTeamCoeficient;
-                else
-                    return homeTeamCoeficient;
-            }
-            else
-            {
-                return 1;
-            }
         }
 
         // Find <depth> fixtures with <thisTeam> starting from <fixture>
@@ -73,10 +59,3 @@ namespace Betting.Metrics
         public FixtureRetrieverInterface fixtureRetriever_;
     }
 }
-
-// constructor with string teamName1 string teamName2
-// a global data of results 
-
-//DefenceMetric
-//OffenceMetric
-//DirectGamesMetric

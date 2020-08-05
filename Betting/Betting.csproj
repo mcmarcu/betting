@@ -98,7 +98,7 @@
     <Compile Include="DataModel\MetricConfig.cs" />
     <Compile Include="DataModel\Fixture.cs" />
     <Compile Include="Metrics\GoalsConcededMetric.cs" />
-    <Compile Include="Metrics\GoalsDiferenceMetric.cs" />
+    <Compile Include="Metrics\GoalsDifferenceMetric.cs" />
     <Compile Include="Metrics\GoalsScoredMetric.cs" />
     <Compile Include="Metrics\HomeAdvantageMetric.cs" />
     <Compile Include="Metrics\LastGamesMetric.cs" />
