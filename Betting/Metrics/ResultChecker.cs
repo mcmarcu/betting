@@ -13,14 +13,14 @@ namespace Betting.Metrics
         public ResultChecker(MetricInterface metric, Fixture fixture, ConfigManagerInterface configManager)
         {
             this.configManager = configManager;
-            this.dataAvailable = true;
+            dataAvailable = true;
             try
             {
                 metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName, fixture);
             }
             catch(Exception)
             {
-                this.dataAvailable = false;
+                dataAvailable = false;
             }
         }
 

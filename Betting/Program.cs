@@ -19,13 +19,13 @@ namespace Betting
         public class RunOutput
         {
             public bool  success;
-            public float rate;
-            public float averageProfit;
+            public double rate;
+            public double averageProfit;
             public int metricId;
             public List<double> metricDepths;
             public int cluster;
 
-            public RunOutput(bool success_, float rate_, float averageProfit_, int i, int maxI)
+            public RunOutput(bool success_, double rate_, double averageProfit_, int i, int maxI)
             {
                 success = success_;
                 rate = rate_;
@@ -43,7 +43,7 @@ namespace Betting
             }
         }
 
-        public static void AddClusterInfo(ref SortedDictionary<float, RunOutput> dict)
+        public static void AddClusterInfo(ref SortedDictionary<double, RunOutput> dict)
         {
             if (dict.Count <= 3)
                 return;
@@ -73,7 +73,7 @@ namespace Betting
             }
         }
 
-        public static void PrintClusterInfo(Logger logger, SortedDictionary<float, RunOutput> dict)
+        public static void PrintClusterInfo(Logger logger, SortedDictionary<double, RunOutput> dict)
         {
             SortedDictionary<int, SortedSet<int>> clusteredOutput = new SortedDictionary<int, SortedSet<int>>();
 
@@ -198,9 +198,11 @@ namespace Betting
         static void Main(string[] args)
         {
 
-            var app = new CommandLineApplication();
-            app.Name = "Betting";
-            app.Description = "Betting console app with argument parsing.";
+            var app = new CommandLineApplication
+            {
+                Name = "Betting",
+                Description = "Betting console app with argument parsing."
+            };
 
             app.HelpOption("-?|-h|--help");
 
@@ -269,7 +271,7 @@ namespace Betting
                 if (useExpanded.HasValue())
                 {
                     configManager.SetUseExpanded(true);
-                    configManager.SetCoeficientWeight(Int32.Parse(useExpanded.Value()));
+                    configManager.SetCoeficientWeight(int.Parse(useExpanded.Value()));
                 }
 
                 FixtureRetriever fixtureRetriever = new FixtureRetriever(configManager);
@@ -330,7 +332,7 @@ namespace Betting
                     }
                     else
                     {
-                        int metricConfigId = Int32.Parse(inspectMetric.Value());
+                        int metricConfigId = int.Parse(inspectMetric.Value());
                         List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
                         PrintMetricList(logger, metricConfigId);
                         DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
@@ -340,7 +342,7 @@ namespace Betting
                 }
                 else if (predictResults.HasValue())
                 {
-                    int metricConfigId = Int32.Parse(inspectMetric.Value());
+                    int metricConfigId = int.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
                     PrintMetricList(logger, metricConfigId);
                     logger.LogResultSuccess("\n Results: \n");
@@ -349,12 +351,12 @@ namespace Betting
                 }
                 else if (inspectMetric.HasValue())
                 {
-                    int metricConfigId = Int32.Parse(inspectMetric.Value());
+                    int metricConfigId = int.Parse(inspectMetric.Value());
                     List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
                     PrintMetricList(logger, metricConfigId);
 
                     GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
-                    gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
+                    gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
 
                     if(success)
                         logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
@@ -363,12 +365,12 @@ namespace Betting
                 }
                 else if (executeMetrics.HasValue())
                 {   
-                    SortedDictionary<float, RunOutput> topByProfit =
-                        new SortedDictionary<float, RunOutput>();
-                    SortedDictionary<float, RunOutput> topByRate =
-                        new SortedDictionary<float, RunOutput>();
-                    SortedDictionary<float, RunOutput> successRuns =
-                        new SortedDictionary<float, RunOutput>();
+                    SortedDictionary<double, RunOutput> topByProfit =
+                        new SortedDictionary<double, RunOutput>();
+                    SortedDictionary<double, RunOutput> topByRate =
+                        new SortedDictionary<double, RunOutput>();
+                    SortedDictionary<double, RunOutput> successRuns =
+                        new SortedDictionary<double, RunOutput>();
 
                     int numMetrics = 5;
                     int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
@@ -383,7 +385,7 @@ namespace Betting
                             PrintMetricList(logger, i);
 
                         GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
-                        gs.GetAllYearsData(out bool success, out float rate, out float averageProfit);
+                        gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
 
                         if (success)
                         {
@@ -469,7 +471,7 @@ namespace Betting
 
                 stopWatch.Stop();
                 TimeSpan ts = stopWatch.Elapsed;
-                string elapsedTime = String.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+                string elapsedTime = string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
                 Console.WriteLine("\nRunTime " + elapsedTime);
                 Console.ReadLine();
 

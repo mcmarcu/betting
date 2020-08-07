@@ -9,7 +9,7 @@ using Betting.Config;
 
 namespace BettingTest
 {
-    public class GoalsDifferenceMetricTest
+    public class LastGamesMetricTest
     {
         private Mock<ConfigManagerInterface> configManagerMock;
         private Mock<FixtureRetrieverInterface> fixtureRetrieverMock;
@@ -33,7 +33,7 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = ""
             };
-            fixTeam11.finalScore.homeTeamGoals = 4;
+            fixTeam11.finalScore.homeTeamGoals = 1;
             fixTeam11.finalScore.awayTeamGoals = 2;
             fixTeam11.coeficient.homeTeam = 1;
             fixTeam11.coeficient.awayTeam = 1;
@@ -57,8 +57,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team2
             };
-            fixTeam21.finalScore.homeTeamGoals = 2;
-            fixTeam21.finalScore.awayTeamGoals = 1;
+            fixTeam21.finalScore.homeTeamGoals = 0;
+            fixTeam21.finalScore.awayTeamGoals = 2;
             fixTeam21.coeficient.homeTeam = 1;
             fixTeam21.coeficient.awayTeam = 1;
 
@@ -103,17 +103,17 @@ namespace BettingTest
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsDifferenceMetric",
+                name = "LastGamesMetric",
                 depth = 1
             };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
             metric.GetPoints(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
 
             // Assert
-            Assert.AreEqual(pTeam1, 0);
-            Assert.AreEqual(pTeam2, 0);
+            Assert.AreEqual(pTeam1, 1);
+            Assert.AreEqual(pTeam2, 1);
         }
 
         [Test]
@@ -122,17 +122,17 @@ namespace BettingTest
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsDifferenceMetric",
+                name = "LastGamesMetric",
                 depth = 2
             };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
             metric.GetPoints(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
 
             // Assert
-            Assert.AreEqual(pTeam1, 2);
-            Assert.AreEqual(pTeam2, -1);
+            Assert.AreEqual(pTeam1, 1);
+            Assert.AreEqual(pTeam2, 4);
         }
 
         [Test]
@@ -141,10 +141,10 @@ namespace BettingTest
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsDifferenceMetric",
+                name = "LastGamesMetric",
                 depth = 1
             };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
             metric.GetPercentage(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
@@ -160,58 +160,37 @@ namespace BettingTest
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsDifferenceMetric",
+                name = "LastGamesMetric",
                 depth = 2
             };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
             metric.GetPercentage(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
 
             // Assert
-            Assert.AreEqual(pTeam1, 200);
-            Assert.AreEqual(pTeam2, -100);
+            Assert.AreEqual(pTeam1, 20);
+            Assert.AreEqual(pTeam2, 80);
         }
 
         [Test]
-        public void GetScoredGoals()
+        public void GetPoints()
         {
             // Arrange
             MetricConfig metricConfig = new MetricConfig
             {
-                name = "GoalsDifferenceMetric",
+                name = "LastGamesMetric",
                 depth = 2
             };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
+            LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            int goalsScoredTeam1 = metric.GetScoredGoals(actualFixture, team1);
-            int goalsScoredTeam2 = metric.GetScoredGoals(actualFixture, team2);
+            int pointsTeam1 = metric.GetPoints(actualFixture, team1);
+            int pointsTeam2 = metric.GetPoints(actualFixture, team2);
 
             // Assert
-            Assert.AreEqual(goalsScoredTeam1, actualFixture.finalScore.homeTeamGoals);
-            Assert.AreEqual(goalsScoredTeam2, actualFixture.finalScore.awayTeamGoals);
+            Assert.AreEqual(pointsTeam1, 0);
+            Assert.AreEqual(pointsTeam2, 3);
         }
-
-        [Test]
-        public void GetConcededGoals()
-        {
-            // Arrange
-            MetricConfig metricConfig = new MetricConfig
-            {
-                name = "GoalsDifferenceMetric",
-                depth = 2
-            };
-            GoalsDifferenceMetric metric = new GoalsDifferenceMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
-
-            // Act
-            int goalsConcededTeam1 = metric.GetConcededGoals(actualFixture, team1);
-            int goalsConcededTeam2 = metric.GetConcededGoals(actualFixture, team2);
-
-            // Assert
-            Assert.AreEqual(goalsConcededTeam1, actualFixture.finalScore.awayTeamGoals);
-            Assert.AreEqual(goalsConcededTeam2, actualFixture.finalScore.homeTeamGoals);
-        }
-
     }
 }

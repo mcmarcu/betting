@@ -26,7 +26,7 @@ namespace Betting.Metrics
             configManager_ = configManager;
         }
 
-        // Find <depth> fixtures with <thisTeam> starting from <fixture>
+        // Find <depth> fixtures with starting from <fixture>
         public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, int depth)
         {
             List<Fixture> result = new List<Fixture>();
@@ -48,6 +48,11 @@ namespace Betting.Metrics
                 {
                     break;
                 }
+            }
+
+            if(result.Count != depth)
+            {
+                throw new ArgumentException("Not enough fixtures to satisfy metric depth");
             }
 
             return result;

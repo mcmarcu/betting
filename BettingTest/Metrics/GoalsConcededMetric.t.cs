@@ -13,8 +13,8 @@ namespace BettingTest
     {
         private Mock<ConfigManagerInterface> configManagerMock;
         private Mock<FixtureRetrieverInterface> fixtureRetrieverMock;
-        private String team1;
-        private String team2;
+        private string team1;
+        private string team2;
         private int year;
         private Fixture actualFixture;
 
@@ -28,9 +28,11 @@ namespace BettingTest
             List<Fixture> fixturesTeam1 = new List<Fixture>();
             List<Fixture> fixturesTeam2 = new List<Fixture>();
 
-            Fixture fixTeam11 = new Fixture();
-            fixTeam11.homeTeamName = team1;
-            fixTeam11.awayTeamName = "";
+            Fixture fixTeam11 = new Fixture
+            {
+                homeTeamName = team1,
+                awayTeamName = ""
+            };
             fixTeam11.finalScore.homeTeamGoals = 0;
             fixTeam11.finalScore.awayTeamGoals = 1;
             fixTeam11.coeficient.homeTeam = 1;
@@ -38,9 +40,11 @@ namespace BettingTest
 
             fixturesTeam1.Add(fixTeam11);
 
-            Fixture fixTeam12 = new Fixture();
-            fixTeam12.homeTeamName = team1;
-            fixTeam12.awayTeamName = "";
+            Fixture fixTeam12 = new Fixture
+            {
+                homeTeamName = team1,
+                awayTeamName = ""
+            };
             fixTeam12.finalScore.homeTeamGoals = 0;
             fixTeam12.finalScore.awayTeamGoals = 0;
             fixTeam12.coeficient.homeTeam = 1;
@@ -48,9 +52,11 @@ namespace BettingTest
 
             fixturesTeam1.Add(fixTeam12);
 
-            Fixture fixTeam21 = new Fixture();
-            fixTeam21.homeTeamName = "";
-            fixTeam21.awayTeamName = team2;
+            Fixture fixTeam21 = new Fixture
+            {
+                homeTeamName = "",
+                awayTeamName = team2
+            };
             fixTeam21.finalScore.homeTeamGoals = 2;
             fixTeam21.finalScore.awayTeamGoals = 0;
             fixTeam21.coeficient.homeTeam = 1;
@@ -58,9 +64,11 @@ namespace BettingTest
 
             fixturesTeam2.Add(fixTeam21);
 
-            Fixture fixTeam22 = new Fixture();
-            fixTeam22.homeTeamName = "";
-            fixTeam22.awayTeamName = team2;
+            Fixture fixTeam22 = new Fixture
+            {
+                homeTeamName = "",
+                awayTeamName = team2
+            };
             fixTeam22.finalScore.homeTeamGoals = 0;
             fixTeam22.finalScore.awayTeamGoals = 0;
             fixTeam22.coeficient.homeTeam = 1;
@@ -68,9 +76,11 @@ namespace BettingTest
 
             fixturesTeam2.Add(fixTeam22);
 
-            actualFixture = new Fixture();
-            actualFixture.homeTeamName = team1;
-            actualFixture.awayTeamName = team2;
+            actualFixture = new Fixture
+            {
+                homeTeamName = team1,
+                awayTeamName = team2
+            };
             actualFixture.finalScore.homeTeamGoals = 1;
             actualFixture.finalScore.awayTeamGoals = 2;
             actualFixture.coeficient.homeTeam = 1;

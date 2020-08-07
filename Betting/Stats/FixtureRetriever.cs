@@ -196,20 +196,22 @@ namespace Betting.Stats
                         fields = parser.ReadFields();
                         if (fields[2] == "")
                             break;
-                        Fixture newFixture = new Fixture();
-                        newFixture.homeTeamName = fields[idxHomeTeam];
-                        newFixture.awayTeamName = fields[idxAwayTeam];
-                        Int32.TryParse(fields[idxFTHG], out newFixture.finalScore.homeTeamGoals);
-                        Int32.TryParse(fields[idxFTAG], out newFixture.finalScore.awayTeamGoals);
-                        Int32.TryParse(fields[idxHTHG], out newFixture.halfScore.homeTeamGoals);
-                        Int32.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
+                        Fixture newFixture = new Fixture
+                        {
+                            homeTeamName = fields[idxHomeTeam],
+                            awayTeamName = fields[idxAwayTeam]
+                        };
+                        int.TryParse(fields[idxFTHG], out newFixture.finalScore.homeTeamGoals);
+                        int.TryParse(fields[idxFTAG], out newFixture.finalScore.awayTeamGoals);
+                        int.TryParse(fields[idxHTHG], out newFixture.halfScore.homeTeamGoals);
+                        int.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
                         newFixture.date = DateTime.Parse(fields[idxDate]);
 
                         newFixture.odds = new Dictionary<string, float>();
                         newFixture.fairOdds = new Dictionary<string, float>();
                         foreach (string oddProvider in oddProviders)
                         {
-                            if (tryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
+                            if (TryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
                                 break;
                         }
 
@@ -230,10 +232,10 @@ namespace Betting.Stats
 
                         if (configManager_.GetUseExpanded())
                         {
-                            newFixture.points.homeTeamPoints = Int32.Parse(fields[idxHPTS]);
-                            newFixture.points.awayTeamPoints = Int32.Parse(fields[idxAPTS]);
-                            newFixture.gamesPlayed.homeTeamGamesPlayed = Int32.Parse(fields[idxHPL]);
-                            newFixture.gamesPlayed.awayTeamGamesPlayed = Int32.Parse(fields[idxAPL]);
+                            newFixture.points.homeTeamPoints = int.Parse(fields[idxHPTS]);
+                            newFixture.points.awayTeamPoints = int.Parse(fields[idxAPTS]);
+                            newFixture.gamesPlayed.homeTeamGamesPlayed = int.Parse(fields[idxHPL]);
+                            newFixture.gamesPlayed.awayTeamGamesPlayed = int.Parse(fields[idxAPL]);
                             newFixture.fairOdds.Add("1", float.Parse(fields[idxFOH]));
                             newFixture.fairOdds.Add("X", float.Parse(fields[idxFOD]));
                             newFixture.fairOdds.Add("2", float.Parse(fields[idxFOA]));
@@ -253,7 +255,7 @@ namespace Betting.Stats
             }
         }
 
-        private bool tryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
+        private bool TryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
         {
             string idH = oddProvider + "H";
             string idD = oddProvider + "D";
@@ -326,17 +328,17 @@ namespace Betting.Stats
             }  
         }
 
-        private Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
-        private ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
+        private readonly Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
+        private readonly ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
 
-        private Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
-        private ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
+        private readonly Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
+        private readonly ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
 
-        private Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
-        private ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
+        private readonly Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+        private readonly ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
 
-        private Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
 
-        private ConfigManagerInterface configManager_;
+        private readonly ConfigManagerInterface configManager_;
     }
 }

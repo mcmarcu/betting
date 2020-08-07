@@ -1,10 +1,8 @@
 ﻿using System;
 using Betting.Metrics;
 using Betting.DataModel;
-using Betting.Stats;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
 using Betting.Config;
 
 namespace BettingTest
@@ -13,8 +11,8 @@ namespace BettingTest
     {
         private Mock<ConfigManagerInterface> configManagerMock;
         private Mock<MetricInterface> metricInterfaceMock;
-        private String team1;
-        private String team2;
+        private string team1;
+        private string team2;
         private Fixture actualFixture;
 
         [SetUp]
@@ -23,9 +21,11 @@ namespace BettingTest
             team1 = "team1";
             team2 = "team2";
 
-            actualFixture = new Fixture();
-            actualFixture.homeTeamName = team1;
-            actualFixture.awayTeamName = team2;
+            actualFixture = new Fixture
+            {
+                homeTeamName = team1,
+                awayTeamName = team2
+            };
             actualFixture.finalScore.homeTeamGoals = 1;
             actualFixture.finalScore.awayTeamGoals = 2;
             actualFixture.coeficient.homeTeam = 1;

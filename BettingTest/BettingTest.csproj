@@ -69,10 +69,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Metrics\GoalsDifferenceMetric.t.cs" />
+    <Compile Include="Metrics\MetricInterface.t.cs" />
+    <Compile Include="Metrics\MetricFactory.t.cs" />
+    <Compile Include="Metrics\LastGamesMetric.t.cs" />
+    <Compile Include="Metrics\HomeAdvantageMetric.t.cs" />
     <Compile Include="Metrics\ResultChecker.t.cs" />
     <Compile Include="Metrics\GoalsScoredMetric.t.cs" />
     <Compile Include="Metrics\GoalsConcededMetric.t.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stats\GlobalStats.t.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

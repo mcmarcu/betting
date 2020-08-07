@@ -38,7 +38,7 @@ namespace Betting.Config
 
         public override int GetYear()
         {
-            return Int32.Parse(GetData("year"));
+            return int.Parse(GetData("year"));
         }
 
         public void SetReverseYears(string value)
@@ -48,7 +48,7 @@ namespace Betting.Config
 
         public override int GetReverseYears()
         {
-            return Int32.Parse(GetData("yreverse"));
+            return int.Parse(GetData("yreverse"));
         }
 
         public void SetLogLevel(string value)
@@ -68,7 +68,7 @@ namespace Betting.Config
 
         public override int GetDrawMargin()
         {
-            return Int32.Parse(GetData("drawmargin"));
+            return int.Parse(GetData("drawmargin"));
         }
 
         public void SetDrawMixedMargin(string value)
@@ -78,7 +78,7 @@ namespace Betting.Config
 
         public override int GetDrawMixedMargin()
         {
-            return Int32.Parse(GetData("drawmixedmargin"));
+            return int.Parse(GetData("drawmixedmargin"));
         }
 
         public void SetMatchDay(string value)
@@ -88,7 +88,7 @@ namespace Betting.Config
 
         public override int GetMatchDay()
         {
-            return Int32.Parse(GetData("matchday"));
+            return int.Parse(GetData("matchday"));
         }
 
         public void SetReverseDays(string value)
@@ -98,7 +98,7 @@ namespace Betting.Config
 
         public override int GetReverseDays()
         {
-            return Int32.Parse(GetData("mreverse"));
+            return int.Parse(GetData("mreverse"));
         }
 
         public void SetMaxOdds(string value)
@@ -106,9 +106,9 @@ namespace Betting.Config
             SetData("maxodds", value);
         }
 
-        public override float GetMinOdds()
+        public override double GetMinOdds()
         {
-            return float.Parse(GetData("minodds"));
+            return double.Parse(GetData("minodds"));
         }
 
         public void SetMinOdds(string value)
@@ -116,9 +116,9 @@ namespace Betting.Config
             SetData("minodds", value);
         }
 
-        public override float GetMaxOdds()
+        public override double GetMaxOdds()
         {
-            return float.Parse(GetData("maxodds"));
+            return double.Parse(GetData("maxodds"));
         }
 
         public void SetMinMetricCorrect(string value)
@@ -126,9 +126,9 @@ namespace Betting.Config
             SetData("minmetriccorrect", value);
         }
 
-        public override float GetMinMetricCorrect()
+        public override double GetMinMetricCorrect()
         {
-            return float.Parse(GetData("minmetriccorrect"));
+            return double.Parse(GetData("minmetriccorrect"));
         }
 
         public void SetMinYearProfit(string value)
@@ -136,9 +136,9 @@ namespace Betting.Config
             SetData("minyearprofit", value);
         }
 
-        public override float GetMinYearProfit()
+        public override double GetMinYearProfit()
         {
-            return float.Parse(GetData("minyearprofit"));
+            return double.Parse(GetData("minyearprofit"));
         }
 
         public void SetSuccessRate(string value)
@@ -146,9 +146,9 @@ namespace Betting.Config
             SetData("successrate", value);
         }
 
-        public override float GetSuccessRate()
+        public override double GetSuccessRate()
         {
-            return float.Parse(GetData("successrate"));
+            return double.Parse(GetData("successrate"));
         }
 
         public void SetFilterTopRate(string value)
@@ -158,7 +158,7 @@ namespace Betting.Config
 
         public override int GetFilterTopRate()
         {
-            return Int32.Parse(GetData("filtertoprate"));
+            return int.Parse(GetData("filtertoprate"));
         }
 
         public void SetFilterTopProfit(string value)
@@ -168,7 +168,7 @@ namespace Betting.Config
 
         public override int GetFilterTopProfit()
         {
-            return Int32.Parse(GetData("filtertopprofit"));
+            return int.Parse(GetData("filtertopprofit"));
         }
 
 
@@ -189,7 +189,7 @@ namespace Betting.Config
 
         public override bool GetUseExpanded()
         {
-            return Int32.Parse(GetData("useexpanded")) == 1;
+            return int.Parse(GetData("useexpanded")) == 1;
         }
 
         public void SetCoeficientWeight(int value)
@@ -199,7 +199,7 @@ namespace Betting.Config
 
         public override int GetCoeficientWeight()
         {
-            return Int32.Parse(GetData("coeficientweight"));
+            return int.Parse(GetData("coeficientweight"));
         }
 
         public ConfigManager()
@@ -207,7 +207,7 @@ namespace Betting.Config
             configDocument_ = new XmlDocument();
             configDocument_.Load("..\\..\\Config\\globalconfig.xml");
         }
-        private XmlDocument configDocument_;
-        private Dictionary<string, string> cache = new Dictionary<string, string>();
+        private readonly XmlDocument configDocument_;
+        private readonly Dictionary<string, string> cache = new Dictionary<string, string>();
     }
 }

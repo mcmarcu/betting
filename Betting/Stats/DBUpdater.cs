@@ -46,11 +46,13 @@ namespace Betting.Stats
             PolynomialRegression poly = ls.Learn(inputs, outputs);
 
             // The learned polynomial will be given by
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
             string str = poly.ToString("N1"); // "y(x) = 1.0x^2 + 0.0x^1 + 0.0"
 
             // Where its weights can be accessed using
             double[] weights = poly.Weights;   // { 1.0000000000000024, -1.2407665029287351E-13 }
             double intercept = poly.Intercept; // 1.5652369518855253E-12
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
             // Finally, we can use this polynomial
             // to predict values for the input data
@@ -120,8 +122,10 @@ namespace Betting.Stats
             SortedDictionary<double, double> points = new SortedDictionary<double, double>();
             {
                 ratingsSteam.Seek(0, SeekOrigin.Begin);
-                TextFieldParser parser = new TextFieldParser(ratingsSteam);
-                parser.TextFieldType = FieldType.Delimited;
+                TextFieldParser parser = new TextFieldParser(ratingsSteam)
+                {
+                    TextFieldType = FieldType.Delimited
+                };
                 parser.SetDelimiters(",");
 
                 string[] fields = parser.ReadFields();
@@ -151,8 +155,10 @@ namespace Betting.Stats
             double[] result = null;
             {
                 ratingsMemoryStream.Seek(0, SeekOrigin.Begin);
-                TextFieldParser parser = new TextFieldParser(ratingsMemoryStream);
-                parser.TextFieldType = FieldType.Delimited;
+                TextFieldParser parser = new TextFieldParser(ratingsMemoryStream)
+                {
+                    TextFieldType = FieldType.Delimited
+                };
                 parser.SetDelimiters(",");
 
                 parser.ReadFields();
@@ -426,11 +432,11 @@ namespace Betting.Stats
             File.Move(outputFilePath, inputFilePath);
         }
 
-        private List<MetricConfig> metricConfigs_;
-        private int metricD_;
+        private readonly List<MetricConfig> metricConfigs_;
+        private readonly int metricD_;
         public Dictionary<char, double> r2Values_;
-        private ConfigManagerInterface configManager_;
-        private FixtureRetrieverInterface fixtureRetriever_;
+        private readonly ConfigManagerInterface configManager_;
+        private readonly FixtureRetrieverInterface fixtureRetriever_;
 
     }
 }

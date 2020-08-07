@@ -22,7 +22,10 @@ namespace Betting.Metrics
 
             GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
 
-            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
+            if (pctTeam1 == 0 && pctTeam2 == 0)
+                pTeam1 = 50;
+            else
+                pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 
@@ -50,11 +53,11 @@ namespace Betting.Metrics
 
         public int GetPoints(Fixture fixture, string teamName)
         {
-            if (fixture.result == "X")
+            if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
                 return 1;
-            else if (teamName == fixture.homeTeamName && fixture.result == "1")
+            else if (teamName == fixture.homeTeamName && fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
                 return 3;
-            else if (teamName == fixture.awayTeamName && fixture.result == "2")
+            else if (teamName == fixture.awayTeamName && fixture.finalScore.homeTeamGoals < fixture.finalScore.awayTeamGoals)
                 return 3;
             else
                 return 0;

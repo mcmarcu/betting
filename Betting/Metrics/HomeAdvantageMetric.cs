@@ -17,12 +17,12 @@ namespace Betting.Metrics
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
-            int pctTeam1;
-            int pctTeam2;
+            GetPoints(out int pctTeam1, out int pctTeam2, teamName1, teamName2, fixture);
 
-            GetPoints(out pctTeam1, out pctTeam2, teamName1, teamName2, fixture);
-
-            pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
+            if (pctTeam1 == 0 && pctTeam2 == 0)
+                pTeam1 = 50;
+            else
+                pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 
@@ -33,18 +33,28 @@ namespace Betting.Metrics
 
             List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth * 2);
+            int homeFoundFixtures = 0;
             foreach (Fixture fix in fixturesTeam1)
             {
                 if (fix.homeTeamName == teamName1)
-                    pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix, teamName1);
+                {
+                    pctTeam1 += GetPoints(fix, teamName1);// * GetCoeficient(fix, teamName1);
+                    if (++homeFoundFixtures == config.depth)
+                        break;
+                }
             }
 
             List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamName2);
             List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth * 2);
+            int awayFoundFixtures = 0;
             foreach (Fixture fix in fixturesTeam2)
             {
                 if (fix.awayTeamName == teamName2)
-                    pctTeam2 += GetPoints(fix, teamName2) * GetCoeficient(fix, teamName2);
+                {
+                    pctTeam2 += GetPoints(fix, teamName2);// * GetCoeficient(fix, teamName2);
+                    if (++awayFoundFixtures == config.depth)
+                        break;
+                }
             }
 
             pTeam1 = (int)pctTeam1;
@@ -61,11 +71,6 @@ namespace Betting.Metrics
                 return 3;
             else
                 return 0;
-        }
-
-        public float GetCoeficient(Fixture fixture, string teamName)
-        {
-            return 1;
         }
     }
 }
