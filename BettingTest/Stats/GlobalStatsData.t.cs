@@ -29,10 +29,12 @@ namespace BettingTest
             string team3 = "team3";
             string team4 = "team4";
 
-            commonOdds = new Dictionary<string, double>();
-            commonOdds.Add("1", 1.5);
-            commonOdds.Add("X", 4);
-            commonOdds.Add("2", 6.7);
+            commonOdds = new Dictionary<string, double>
+            {
+                { "1", 1.5 },
+                { "X", 4 },
+                { "2", 6.7 }
+            };
 
 
             List<Fixture> fixturesTeam1 = new List<Fixture>();
