@@ -27,8 +27,8 @@ namespace Betting.DataModel
 
     public struct Coeficient
     {
-        public float homeTeam;
-        public float awayTeam;
+        public double homeTeam;
+        public double awayTeam;
     }
 
     public class Fixture
@@ -38,8 +38,8 @@ namespace Betting.DataModel
         public DateTime date;
         public Score finalScore;
         public Score halfScore;
-        public Dictionary<string, float> odds;
-        public Dictionary<string, float> fairOdds;
+        public Dictionary<string, double> odds = new Dictionary<string, double>();
+        public Dictionary<string, double> fairOdds = new Dictionary<string, double>();
         public Points points;
         public GamesPlayed gamesPlayed;
         public Coeficient coeficient;
@@ -49,6 +49,7 @@ namespace Betting.DataModel
         {
             SetResult();
             SetCoeficients(configManager);
+            AddDoubleOdds();
         }
 
         private void SetResult()
@@ -66,14 +67,48 @@ namespace Betting.DataModel
             int weight = configManager.GetCoeficientWeight();
             if (configManager.GetUseExpanded() && weight != 0)
             {
-                coeficient.homeTeam = (float)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
-                coeficient.awayTeam = (float)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);
+                coeficient.homeTeam = (double)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
+                coeficient.awayTeam = (double)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);
             }
             else
             {
                 coeficient.homeTeam = 1;
                 coeficient.awayTeam = 1;
             }
+        }
+
+        private void AddDoubleOdds()
+        {
+            // https://www.reddit.com/r/SoccerBetting/comments/90fd4d/how_to_calculate_double_chance/ 
+            /*double prob1 = 1 / odds["1"];
+            double probX = 1 / odds["X"];
+            double prob2 = 1 / odds["2"];
+            odds.Add("1X", 1 / (prob1 + probX));
+            odds.Add("X2", 1 / (probX + prob2));
+            odds.Add("12", 1 / (prob1 + prob2));*/
+
+            odds.Add("1X", (odds["1"] * odds["X"]) / (odds["1"] + odds["X"]));
+            odds.Add("X2", (odds["X"] * odds["2"]) / (odds["X"] + odds["2"]));
+            odds.Add("12", (odds["1"] * odds["2"]) / (odds["1"] + odds["2"]));
+
+            // normalization of commision
+            if (odds["1X"] < 1 && odds["1X"] > 0.90)
+                odds["1X"] = 1;
+            if (odds["X2"] < 1 && odds["X2"] > 0.90)
+                odds["X2"] = 1;
+            if (odds["12"] < 1 && odds["12"] > 0.90)
+                odds["12"] = 1;
+
+            // checking odds
+            if (odds["1X"] < 1)
+                throw new ArgumentOutOfRangeException("Failed to get odds 1X >= 1");
+            if (odds["X2"] < 1)
+                throw new ArgumentOutOfRangeException("Failed to get odds X2 >= 1");
+            if (odds["12"] < 1)
+                throw new ArgumentOutOfRangeException("Failed to get odds 12 >= 1");
+
+            odds.Add("1X2", 0);
+            odds.Add("", 0);
         }
     }
 }

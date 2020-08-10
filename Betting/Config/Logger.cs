@@ -12,7 +12,7 @@ namespace Betting.Config
         {
             this.logLevel = logLevel;
         }
-        public object[] split(params object[] list)
+        public object[] Split(params object[] list)
         {
             object[] result = new object[list.Count() - 1];
             for (int i = 1; i < list.Count(); ++i)
@@ -29,7 +29,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                 }
         }
 
@@ -39,7 +39,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
@@ -50,7 +50,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
         }
@@ -61,7 +61,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                 }
         }
 
@@ -71,7 +71,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
         }
@@ -82,7 +82,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
         }
@@ -93,7 +93,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                 }
         }
 
@@ -103,7 +103,7 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
         }
@@ -114,13 +114,13 @@ namespace Betting.Config
                 lock (loggerLock)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(list[0].ToString(), split(list));
+                    Console.Write(list[0].ToString(), Split(list));
                     Console.ForegroundColor = ConsoleColor.White;
                 }
         }
 
-        private object loggerLock = new object();
-        private ConfigManager.LogLevel logLevel;
+        private readonly object loggerLock = new object();
+        private readonly ConfigManager.LogLevel logLevel;
 
     }
 }

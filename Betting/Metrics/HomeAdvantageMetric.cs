@@ -22,14 +22,14 @@ namespace Betting.Metrics
             if (pctTeam1 == 0 && pctTeam2 == 0)
                 pTeam1 = 50;
             else
-                pTeam1 = (int)((float)pctTeam1 / ((float)pctTeam1 + (float)pctTeam2) * 100);
+                pTeam1 = (int)((double)pctTeam1 / ((double)pctTeam1 + (double)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 
         public override void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
         {
-            float pctTeam1 = 0;
-            float pctTeam2 = 0;
+            double pctTeam1 = 0;
+            double pctTeam2 = 0;
 
             List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamName1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth * 2);

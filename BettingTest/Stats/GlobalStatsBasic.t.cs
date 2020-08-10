@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace BettingTest
 {
-    public class GlobalStatsTest
+    public class GlobalStatsBasicTest
     {
         private Mock<ConfigManagerInterface> configManagerMock;
         private Mock<FixtureRetrieverInterface> fixtureRetrieverMock;
@@ -250,6 +250,5 @@ namespace BettingTest
                 (oddGame1 * oddGame2 - 1) + (oddGame2 * oddGame3 - 1) + (oddGame3 * oddGame1 - 1) +
                 (oddGame1 * oddGame2 * oddGame3 - 1));
         }
-
     }
 }

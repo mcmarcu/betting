@@ -236,7 +236,6 @@ namespace Betting.Stats
                     totalMetricsWithData = 0;
                 }
 
-
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
                 if (totalMetricsWithData == metrics.Count && computedResult != string.Empty && actualResult != string.Empty)
                 {

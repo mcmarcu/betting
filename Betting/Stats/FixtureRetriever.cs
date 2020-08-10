@@ -107,6 +107,8 @@ namespace Betting.Stats
             }
         }
 
+        //TODO: test fixture creation including 1X
+        //refactor in separate method
         public override List<Fixture> GetAllFixtures(int year)
         {
             fixturesCacheLock.EnterReadLock();
@@ -207,8 +209,6 @@ namespace Betting.Stats
                         int.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
                         newFixture.date = DateTime.Parse(fields[idxDate]);
 
-                        newFixture.odds = new Dictionary<string, float>();
-                        newFixture.fairOdds = new Dictionary<string, float>();
                         foreach (string oddProvider in oddProviders)
                         {
                             if (TryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
@@ -217,18 +217,11 @@ namespace Betting.Stats
 
                         if (newFixture.odds.Count != 3)
                         {
-                            newFixture.odds.Add("1", 1);
-                            newFixture.odds.Add("X", 1);
-                            newFixture.odds.Add("2", 1);
-                            //throw new Exception("could not get odds for fixture");
+                            //newFixture.odds.Add("1", 1);
+                            //newFixture.odds.Add("X", 1);
+                            //newFixture.odds.Add("2", 1);
+                            throw new Exception("could not get odds for fixture");
                         }
-
-                        newFixture.odds.Add("1X", (newFixture.odds["1"] * newFixture.odds["X"]) / (newFixture.odds["1"] + newFixture.odds["X"]));
-                        newFixture.odds.Add("X2", (newFixture.odds["X"] * newFixture.odds["2"]) / (newFixture.odds["X"] + newFixture.odds["2"]));
-                        newFixture.odds.Add("12", (newFixture.odds["1"] * newFixture.odds["2"]) / (newFixture.odds["1"] + newFixture.odds["2"]));
-                        newFixture.odds.Add("1X2", 0);
-                        newFixture.odds.Add("", 0);
-
 
                         if (configManager_.GetUseExpanded())
                         {
@@ -263,9 +256,16 @@ namespace Betting.Stats
 
             try
             {
-                fixture.odds.Add("1", float.Parse(fields[oddIdx[idH]]));
-                fixture.odds.Add("X", float.Parse(fields[oddIdx[idD]]));
-                fixture.odds.Add("2", float.Parse(fields[oddIdx[idA]]));
+                double odd1 = double.Parse(fields[oddIdx[idH]]);
+                if (odd1 < 1) return false;
+                double oddD = double.Parse(fields[oddIdx[idD]]);
+                if (oddD < 1) return false;
+                double oddA = double.Parse(fields[oddIdx[idA]]);
+                if (oddA < 1) return false;
+
+                fixture.odds.Add("1", odd1);
+                fixture.odds.Add("X", oddD);
+                fixture.odds.Add("2", oddA);
             }
             catch (Exception)
             {
