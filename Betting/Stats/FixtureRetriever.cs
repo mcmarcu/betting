@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Betting.Config;
 using Betting.DataModel;
-using Betting.Config;
 using Microsoft.VisualBasic.FileIO;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Betting.Stats
@@ -14,6 +14,7 @@ namespace Betting.Stats
         {
             configManager_ = configManager;
         }
+
         public override int GetNumberOfMatchDays(int year)
         {
             int teams = GetNumberOfTeams(year);
@@ -50,10 +51,6 @@ namespace Betting.Stats
                 return teams.Count;
             }
 
-        }
-        private int GetNumberOfMatchdays(int year)
-        {
-            return (GetNumberOfTeams(year) - 1) * 2;
         }
 
         public override int GetGamesPerMatchDay(int year)
@@ -107,8 +104,6 @@ namespace Betting.Stats
             }
         }
 
-        //TODO: test fixture creation including 1X
-        //refactor in separate method
         public override List<Fixture> GetAllFixtures(int year)
         {
             fixturesCacheLock.EnterReadLock();
@@ -158,10 +153,10 @@ namespace Betting.Stats
                     int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
                     int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
 
-                    string []oddProviders = { "B365", "BW", "PS", "VC", "GB" };
+                    string[] oddProviders = { "B365", "BW", "PS", "VC", "GB" };
                     Dictionary<string, int> oddIdx = new Dictionary<string, int>();
 
-                    foreach(string oddProvider in oddProviders)
+                    foreach (string oddProvider in oddProviders)
                     {
                         int idxH = Array.FindIndex(fields, item => item == (oddProvider + "H"));
                         oddIdx.Add((oddProvider + "H"), idxH);
@@ -170,7 +165,7 @@ namespace Betting.Stats
                         int idxA = Array.FindIndex(fields, item => item == (oddProvider + "A"));
                         oddIdx.Add((oddProvider + "A"), idxA);
                     }
-                    
+
 
                     int idxHPTS = -1;
                     int idxAPTS = -1;
@@ -191,7 +186,7 @@ namespace Betting.Stats
                         idxFOD = Array.FindIndex(fields, item => item == "FOD");
                         idxFOA = Array.FindIndex(fields, item => item == "FOA");
                     }
-                    
+
 
                     while (!parser.EndOfData)
                     {
@@ -314,27 +309,13 @@ namespace Betting.Stats
             }
         }
 
-        public override void GetPrevRound(out int outYear, out int outDay, int currentYear, int currentDay)
-        {
-            if (currentDay == 1)
-            {
-                outDay = GetNumberOfMatchdays(currentYear - 1);
-                outYear = currentYear - 1;
-            }
-            else
-            {
-                outDay = currentDay - 1;
-                outYear = currentYear;
-            }  
-        }
-
         private readonly Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
         private readonly ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
 
         private readonly Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
         private readonly ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
 
-        private readonly Dictionary<Tuple<int,string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+        private readonly Dictionary<Tuple<int, string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
         private readonly ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
 
         private readonly Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();

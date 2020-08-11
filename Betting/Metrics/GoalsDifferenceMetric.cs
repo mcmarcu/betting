@@ -1,11 +1,7 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using Betting.Stats;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
@@ -22,7 +18,7 @@ namespace Betting.Metrics
             if (pctTeam1 == 0 && pctTeam2 == 0)
                 pTeam1 = 50;
             else
-                pTeam1 = (int)((double)pctTeam1/((double)pctTeam1 + (double)pctTeam2)*100);
+                pTeam1 = (int)((double)pctTeam1 / ((double)pctTeam1 + (double)pctTeam2) * 100);
             pTeam2 = 100 - pTeam1;
         }
 
@@ -62,7 +58,7 @@ namespace Betting.Metrics
         {
             if (teamName == fixture.homeTeamName)
                 return fixture.finalScore.homeTeamGoals;
-            else 
+            else
                 return fixture.finalScore.awayTeamGoals;
         }
 

@@ -1,10 +1,8 @@
-﻿using System;
-using Betting.Metrics;
+﻿using Betting.Config;
 using Betting.DataModel;
+using Betting.Stats;
 using Moq;
 using NUnit.Framework;
-using Betting.Config;
-using Betting.Stats;
 using System.Collections.Generic;
 
 namespace BettingTest
@@ -67,7 +65,7 @@ namespace BettingTest
             fixturesRound1.Add(fixture);
             allFixtures.Add(fixture);
             fixture.result = "2";
-            fixture.odds = new Dictionary<string,double>(commonOdds);
+            fixture.odds = new Dictionary<string, double>(commonOdds);
             fixture.Init(configManagerMock.Object);
 
             fixture = new Fixture
@@ -213,6 +211,76 @@ namespace BettingTest
             fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(0)).Returns(2);
         }
 
+        [Test]
+        public void GetMatchdayDataNotEnoughData()
+        {
+            // Arrange
+            configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
+            configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
+            configManagerMock.Setup(p => p.GetMaxOdds()).Returns(10);
+            configManagerMock.Setup(p => p.GetMinOdds()).Returns(1);
+            configManagerMock.Setup(p => p.GetDrawMargin()).Returns(10);
+            configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
+            configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
+
+            int matchDay = 1;
+            int year = 0;
+
+            MetricConfig metricConfigLastGames = new MetricConfig
+            {
+                name = "LastGamesMetric",
+                depth = 1
+            };
+
+            List<MetricConfig> configs = new List<MetricConfig>
+            {
+                metricConfigLastGames
+            };
+
+            // Act
+            GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
+            globalStats.GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, matchDay, year);
+
+            // Assert
+            Assert.AreEqual(correctFixturesWithData, 0);
+            Assert.AreEqual(totalFixturesWithData, 0);
+        }
+
+        [Test]
+        public void GetMatchdayDataBadResults()
+        {
+            // Arrange
+            configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
+            configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
+            configManagerMock.Setup(p => p.GetMaxOdds()).Returns(10);
+            configManagerMock.Setup(p => p.GetMinOdds()).Returns(1);
+            configManagerMock.Setup(p => p.GetDrawMargin()).Returns(10);
+            configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
+            configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
+
+            int matchDay = 2;
+            int year = 0;
+
+            MetricConfig metricConfigLastGames = new MetricConfig
+            {
+                name = "LastGamesMetric",
+                depth = 1
+            };
+
+            List<MetricConfig> configs = new List<MetricConfig>
+            {
+                metricConfigLastGames
+            };
+
+            // Act
+            GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
+            globalStats.GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, matchDay, year);
+
+            // Assert
+            Assert.AreEqual(correctFixturesWithData, 0);
+            Assert.AreEqual(totalFixturesWithData, 2);
+            Assert.AreEqual(currentProfit, 0 - 1 - 1);
+        }
 
         [Test]
         public void GetMatchdayDataCorrectResults()
@@ -247,7 +315,7 @@ namespace BettingTest
             // Assert
             Assert.AreEqual(correctFixturesWithData, 2);
             Assert.AreEqual(totalFixturesWithData, 2);
-            Assert.AreEqual(currentProfit, commonOdds["1"]-1 + commonOdds["2"]-1);
+            Assert.AreEqual(currentProfit, commonOdds["1"] - 1 + commonOdds["2"] - 1);
         }
 
 
@@ -288,7 +356,7 @@ namespace BettingTest
         }
 
         [Test]
-        public void GetMatchdayDataBadResults()
+        public void GetMatchdayDataDepth()
         {
             // Arrange
             configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
@@ -299,7 +367,44 @@ namespace BettingTest
             configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
             configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
 
-            int matchDay = 2;
+            int matchDay = 4;
+            int year = 0;
+
+            MetricConfig metricConfigLastGames = new MetricConfig
+            {
+                name = "LastGamesMetric",
+                depth = 3
+            };
+
+            List<MetricConfig> configs = new List<MetricConfig>
+            {
+                metricConfigLastGames
+            };
+
+            // Act
+            GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
+            globalStats.GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, matchDay, year);
+
+            // Assert
+            Assert.AreEqual(correctFixturesWithData, 1);//just one is correct
+            Assert.AreEqual(totalFixturesWithData, 2);
+            Assert.AreEqual(currentProfit, commonOdds["2"] - 1 - 1);
+        }
+
+        [Test]
+        public void GetYearData()
+        {
+            // Arrange
+            configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
+            configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
+            configManagerMock.Setup(p => p.GetMaxOdds()).Returns(10);
+            configManagerMock.Setup(p => p.GetMinOdds()).Returns(1);
+            configManagerMock.Setup(p => p.GetDrawMargin()).Returns(10);
+            configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
+            configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
+            configManagerMock.Setup(p => p.GetMatchDay()).Returns(4);
+            configManagerMock.Setup(p => p.GetReverseDays()).Returns(4);
+
             int year = 0;
 
             MetricConfig metricConfigLastGames = new MetricConfig
@@ -315,12 +420,14 @@ namespace BettingTest
 
             // Act
             GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
-            globalStats.GetMatchdayData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, matchDay, year);
+            globalStats.GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, year);
 
             // Assert
-            Assert.AreEqual(correctFixturesWithData, 0);
-            Assert.AreEqual(totalFixturesWithData, 2);
-            Assert.AreEqual(currentProfit, 0 - 1 - 1);
+            Assert.AreEqual(correctFixturesWithData, 0 + 2 + 1);
+            Assert.AreEqual(totalFixturesWithData, 2 + 2 + 2);
+            Assert.AreEqual(currentProfit, (0 - 1 - 1)
+                                           + (commonOdds["1"] - 1 + commonOdds["2"] - 1) 
+                                           + (commonOdds["2"] - 1 - 1));
         }
 
     }

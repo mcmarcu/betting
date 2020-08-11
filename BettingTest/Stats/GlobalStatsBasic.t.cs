@@ -1,10 +1,8 @@
-﻿using System;
-using Betting.Metrics;
+﻿using Betting.Config;
 using Betting.DataModel;
+using Betting.Stats;
 using Moq;
 using NUnit.Framework;
-using Betting.Config;
-using Betting.Stats;
 using System.Collections.Generic;
 
 namespace BettingTest
@@ -34,7 +32,7 @@ namespace BettingTest
             actualFixture.finalScore.awayTeamGoals = 2;
             actualFixture.coeficient.homeTeam = 1;
             actualFixture.coeficient.awayTeam = 1;
- 
+
             configManagerMock = new Mock<ConfigManagerInterface>();
             fixtureRetrieverMock = new Mock<FixtureRetrieverInterface>();
             logger = new Logger(ConfigManagerInterface.LogLevel.LOG_DEBUG);
@@ -51,7 +49,7 @@ namespace BettingTest
             int totalMetricsWithData = 2;
 
             // Act
-            string result =  globalStats.ComputeExpectedResult(aggregateResult, totalMetricsWithData);
+            string result = globalStats.ComputeExpectedResult(aggregateResult, totalMetricsWithData);
 
             // Assert
             Assert.AreEqual(result, "1X");
@@ -159,7 +157,7 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1)+(oddGame2 - 1)+((oddGame1 * oddGame2) -1));
+            Assert.AreEqual(result, (oddGame1 - 1) + (oddGame2 - 1) + ((oddGame1 * oddGame2) - 1));
         }
 
         [Test]
@@ -201,7 +199,7 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1-1) + (oddGame2 - 1) + (oddGame3 - 1));
+            Assert.AreEqual(result, (oddGame1 - 1) + (oddGame2 - 1) + (oddGame3 - 1));
         }
 
         [Test]

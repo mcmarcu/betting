@@ -1,11 +1,10 @@
-﻿using System;
-using Betting.Metrics;
+﻿using Betting.Config;
 using Betting.DataModel;
+using Betting.Metrics;
 using Betting.Stats;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
-using Betting.Config;
 
 namespace BettingTest
 {

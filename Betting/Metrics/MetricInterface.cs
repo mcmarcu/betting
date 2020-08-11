@@ -3,9 +3,6 @@ using Betting.DataModel;
 using Betting.Stats;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
@@ -16,7 +13,7 @@ namespace Betting.Metrics
 
         //For mocking/testing
         public MetricInterface()
-        {}
+        { }
 
         public MetricInterface(MetricConfig config, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
@@ -31,9 +28,9 @@ namespace Betting.Metrics
         {
             List<Fixture> result = new List<Fixture>();
             int startIdx = 0;
-            for (int i=allFixtures.Count -1; i>=0; --i)
+            for (int i = allFixtures.Count - 1; i >= 0; --i)
             {
-                if( allFixtures[i].homeTeamName == fixture.homeTeamName &&
+                if (allFixtures[i].homeTeamName == fixture.homeTeamName &&
                     allFixtures[i].awayTeamName == fixture.awayTeamName)
                 {
                     startIdx = i;
@@ -50,7 +47,7 @@ namespace Betting.Metrics
                 }
             }
 
-            if(result.Count != depth)
+            if (result.Count != depth)
             {
                 throw new ArgumentException("Not enough fixtures to satisfy metric depth");
             }

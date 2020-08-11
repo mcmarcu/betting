@@ -1,11 +1,7 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using Betting.Stats;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
@@ -35,7 +31,7 @@ namespace Betting.Metrics
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
-                pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix,teamName1);
+                pctTeam1 += GetPoints(fix, teamName1) * GetCoeficient(fix, teamName1);
             }
 
             List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamName2);

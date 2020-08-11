@@ -1,10 +1,6 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betting.Metrics
 {
@@ -18,7 +14,7 @@ namespace Betting.Metrics
             {
                 metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName, fixture);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 dataAvailable = false;
             }

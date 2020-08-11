@@ -1,9 +1,8 @@
-﻿using System;
-using Betting.Metrics;
+﻿using Betting.Config;
 using Betting.DataModel;
+using Betting.Metrics;
 using Moq;
 using NUnit.Framework;
-using Betting.Config;
 
 namespace BettingTest
 {
@@ -30,7 +29,7 @@ namespace BettingTest
             actualFixture.finalScore.awayTeamGoals = 2;
             actualFixture.coeficient.homeTeam = 1;
             actualFixture.coeficient.awayTeam = 1;
- 
+
             configManagerMock = new Mock<ConfigManagerInterface>();
             metricInterfaceMock = new Mock<MetricInterface>();
         }
@@ -41,7 +40,7 @@ namespace BettingTest
             // Arrange
             int pctTeam1 = 55;
             int pctTeam2 = 45;
-            metricInterfaceMock.Setup(p => p.GetPercentage(out pctTeam1, out pctTeam2,team1,team2,actualFixture));
+            metricInterfaceMock.Setup(p => p.GetPercentage(out pctTeam1, out pctTeam2, team1, team2, actualFixture));
             configManagerMock.Setup(p => p.GetDrawMargin()).Returns(20);
             configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(40);
             ResultChecker resultChecker = new ResultChecker(metricInterfaceMock.Object, actualFixture, configManagerMock.Object);

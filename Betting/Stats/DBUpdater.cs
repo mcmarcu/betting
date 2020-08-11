@@ -1,14 +1,14 @@
-﻿using System; 
-using System.Collections.Generic;
-using System.Linq;
-using Betting.DataModel;
-using System.IO;
-using Betting.Config;
-using Microsoft.VisualBasic.FileIO;
-using Betting.Metrics;
-using Accord.Math;
-using Accord.Statistics.Models.Regression.Linear;
+﻿using Accord.Math;
 using Accord.Math.Optimization.Losses;
+using Accord.Statistics.Models.Regression.Linear;
+using Betting.Config;
+using Betting.DataModel;
+using Betting.Metrics;
+using Microsoft.VisualBasic.FileIO;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Betting.Stats
 {
@@ -95,13 +95,13 @@ namespace Betting.Stats
 
 
             int width = 12;
-            for (int i = 0; i< reverseYears;++i)
+            for (int i = 0; i < reverseYears; ++i)
             {
                 AddPointsForYear(year - i);
-                GenerateStatsForYear(year - i, i==0, ref statsMemoryStream);
+                GenerateStatsForYear(year - i, i == 0, ref statsMemoryStream);
                 GenerateRatingsForYear(year - i, width, i == 0, ref ratingsMemoryStream);
             }
-            
+
             AggregateTotalRatings(ref ratingsMemoryStream);
             PolynomialRegression r1 = GenerateEquation(ratingsMemoryStream, width, '1');
             PolynomialRegression rx = GenerateEquation(ratingsMemoryStream, width, 'X');
@@ -129,7 +129,7 @@ namespace Betting.Stats
                 parser.SetDelimiters(",");
 
                 string[] fields = parser.ReadFields();
-                
+
                 while (!parser.EndOfData)
                 {
                     string[] stringFields = parser.ReadFields();
@@ -184,8 +184,8 @@ namespace Betting.Stats
             {
                 ratingsMemoryStream.Seek(0, SeekOrigin.End);
                 var outputFile = new StreamWriter(ratingsMemoryStream);
-                string outputLine = "SUM"+',';
-                for(int i=1; i<result.Length;++i)
+                string outputLine = "SUM" + ',';
+                for (int i = 1; i < result.Length; ++i)
                 {
                     outputLine += result[i].ToString();
                     if (i < result.Length - 1)
@@ -194,11 +194,11 @@ namespace Betting.Stats
                 outputFile.WriteLine(outputLine);
 
                 outputLine = "PCT" + ',';
-                for (int i = 1; i < result.Length; i+=4)
+                for (int i = 1; i < result.Length; i += 4)
                 {
-                    outputLine += (result[i] / result[i + 3]*100).ToString("0.00") + ',';
-                    outputLine += (result[i + 1] / result[i + 3]*100).ToString("0.00") + ',';
-                    outputLine += (result[i + 2] / result[i + 3]*100).ToString("0.00") + ',';
+                    outputLine += (result[i] / result[i + 3] * 100).ToString("0.00") + ',';
+                    outputLine += (result[i + 1] / result[i + 3] * 100).ToString("0.00") + ',';
+                    outputLine += (result[i + 2] / result[i + 3] * 100).ToString("0.00") + ',';
                     outputLine += "0";
                     if (i < result.Length - 4)
                         outputLine += ',';
@@ -226,7 +226,7 @@ namespace Betting.Stats
             }
 
             List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, year, configManager_, fixtureRetriever_);
-            for (int i= matchdays;i>metricD_;--i)
+            for (int i = matchdays; i > metricD_; --i)
             {
                 List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(year, i);
 
@@ -242,7 +242,7 @@ namespace Betting.Stats
 
                     if (diff < -width || diff > width)
                         continue;
- 
+
                     if (fixture.result == "1")
                     {
                         AddToDict(ref homeWinDiff, diff, 1);
@@ -260,8 +260,8 @@ namespace Betting.Stats
             }
 
             string keyPrefix = "GDM6";
-            string outputLine= "YEAR" + ',';
-            for (int i = -width; i<= width; ++i)
+            string outputLine = "YEAR" + ',';
+            for (int i = -width; i <= width; ++i)
             {
                 outputLine += keyPrefix + "1" + i.ToString() + ',';
                 outputLine += keyPrefix + "X" + i.ToString() + ',';
@@ -286,7 +286,7 @@ namespace Betting.Stats
                     outputLine += awayWinDiff[i].ToString() + ',';
                     outputLine += drawDiff[i].ToString() + ',';
                     outputLine += totalOnDiff[i].ToString();
-                    if(i< width)
+                    if (i < width)
                         outputLine += ',';
                 }
                 outputFile.WriteLine(outputLine);
@@ -309,7 +309,7 @@ namespace Betting.Stats
                 float HWIN = 0;
                 float AWIN = 0;
                 float DRAWS = 0;
-                foreach(Fixture fixture in fixtures)
+                foreach (Fixture fixture in fixtures)
                 {
                     if (fixture.result == "1")
                     {
@@ -420,11 +420,11 @@ namespace Betting.Stats
                             diff -= pctTeam2;
                         }
 
-                        outputLine = parser.ReadLine() + ',' + (100/r1.Transform(diff)).ToString("0.00") + ',' + (100/rx.Transform(diff)).ToString("0.00") + ',' + (100/r2.Transform(diff)).ToString("0.00");
+                        outputLine = parser.ReadLine() + ',' + (100 / r1.Transform(diff)).ToString("0.00") + ',' + (100 / rx.Transform(diff)).ToString("0.00") + ',' + (100 / r2.Transform(diff)).ToString("0.00");
                         outputFile.WriteLine(outputLine);
                         index++;
                     }
-                
+
                 }
             }
 

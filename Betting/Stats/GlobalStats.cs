@@ -22,7 +22,7 @@ namespace Betting.Stats
         {
             int year = configManager_.GetYear();
             int reverseYears = configManager_.GetReverseYears();
-     
+
             double laverageProfit = 0;
             bool lsuccess = true;
             double lrate = 0;
@@ -45,8 +45,8 @@ namespace Betting.Stats
             });
 
             success = lsuccess;
-            rate = lrate/reverseYears;
-            averageProfit = laverageProfit/reverseYears;
+            rate = lrate / reverseYears;
+            averageProfit = laverageProfit / reverseYears;
         }
 
         public void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, int year)
@@ -66,7 +66,7 @@ namespace Betting.Stats
                 correctFixturesWithData += correctFixtures;
                 totalFixturesWithData += totalFixtures;
                 currentProfit += matchdayProfit;
-                fixtureRetriever_.GetPrevRound(out year, out matchDay, year, matchDay);
+                fixtureRetriever_.GetPrevRound(ref year, ref matchDay);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Betting.Stats
                 double cProfit = 1;
                 for (int j = 0; j < matchdayOdds.Count; j++)
                 {
-                    if ( ((i >> j) & 1) == 1)
+                    if (((i >> j) & 1) == 1)
                     {
                         cProfit *= matchdayOdds[j];
                     }
@@ -133,9 +133,9 @@ namespace Betting.Stats
             {
                 int count1 = aggregateResult.Count(f => f == '1');
                 int count2 = aggregateResult.Count(f => f == '2');
-                if (count1 >= (goodMetricsCount+1)/2 && !aggregateResult.Contains('2'))
+                if (count1 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('2'))
                     computedResult = "1X";
-                else if (count2 >= (goodMetricsCount+1) / 2 && !aggregateResult.Contains('1'))
+                else if (count2 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('1'))
                     computedResult = "X2";
                 else
                     computedResult = "";
@@ -171,10 +171,10 @@ namespace Betting.Stats
                 betStyle = betStyle.Replace("all", "");
             }
 
-            
-            for(int i=0;i<betStyle.Count();++i)
+
+            for (int i = 0; i < betStyle.Count(); ++i)
             {
-                betStyleMask |= 1 << (betStyle[i] -'0');
+                betStyleMask |= 1 << (betStyle[i] - '0');
             }
 
             return GetCombinationProfit(matchdayOdds, betStyleMask);
@@ -225,7 +225,7 @@ namespace Betting.Stats
                 }*/
 
                 string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
-                
+
                 if (computedResult.Length == 0)
                 {
                     totalMetricsWithData = 0;
@@ -308,11 +308,11 @@ namespace Betting.Stats
                     }
 
                 }
-                if(!success)
+                if (!success)
                 {
                     logger_.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                 }
-                
+
 
             }
 

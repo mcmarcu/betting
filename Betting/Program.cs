@@ -1,16 +1,14 @@
-﻿using Betting.Config;
+﻿using Accord.MachineLearning;
+using Betting.Config;
 using Betting.DataModel;
-using Betting.Metrics;
 using Betting.Stats;
+using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.CommandLineUtils;
-using System.Diagnostics;
-using Accord.MachineLearning;
 using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Betting
 {
@@ -18,7 +16,7 @@ namespace Betting
     {
         public class RunOutput
         {
-            public bool  success;
+            public bool success;
             public double rate;
             public double averageProfit;
             public int metricId;
@@ -33,7 +31,7 @@ namespace Betting
                 metricDepths = new List<double>();
                 metricId = i;
                 maxI /= 10;
-                while (maxI>0)
+                while (maxI > 0)
                 {
                     metricDepths.Add(i % 10);
                     maxI /= 10;
@@ -58,7 +56,7 @@ namespace Betting
             }
 
             // Create a new K-Means algorithm
-            KMeans kmeans = new KMeans(k: dict.Count/3);
+            KMeans kmeans = new KMeans(k: dict.Count / 3);
 
             // Compute and retrieve the data centroids
             var clusters = kmeans.Learn(metrics);
@@ -77,18 +75,18 @@ namespace Betting
         {
             SortedDictionary<int, SortedSet<int>> clusteredOutput = new SortedDictionary<int, SortedSet<int>>();
 
-            foreach(RunOutput t in dict.Values)
+            foreach (RunOutput t in dict.Values)
             {
                 if (!clusteredOutput.ContainsKey(t.cluster))
                     clusteredOutput.Add(t.cluster, new SortedSet<int>());
-           
+
                 clusteredOutput[t.cluster].Add(t.metricId);
             }
 
-            foreach(int k in clusteredOutput.Keys)
+            foreach (int k in clusteredOutput.Keys)
             {
                 logger.LogResult("config {0}", k);
-                foreach(int t in clusteredOutput[k])
+                foreach (int t in clusteredOutput[k])
                     logger.LogResult(", {0}", t);
                 logger.LogResult("\n");
             }
@@ -140,10 +138,10 @@ namespace Betting
             int GoalsDifferenceMetricD = (i / 100) % 10;
             int GoalsScoredMetricD = (i / 1000) % 10;
             int HomeAdvantageMetricD = (i / 10000) % 10;
-           
+
 
             if (LastGamesMetricD != 0)
-            { 
+            {
                 MetricConfig lastGamesMetric = new MetricConfig
                 {
                     name = "LastGamesMetric",
@@ -229,8 +227,8 @@ namespace Betting
             var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
             var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
 
-            
-            
+
+
 
             app.OnExecute(() =>
             {
@@ -324,11 +322,11 @@ namespace Betting
                             }
                         }
 
-                        foreach(var x in sortedAvg)
+                        foreach (var x in sortedAvg)
                         {
                             logger.LogResult("\nR2 metric {0:0.00}, value {1:0.00}\n", x.Value.Value, x.Key);
                         }
-                        
+
                     }
                     else
                     {
@@ -358,13 +356,13 @@ namespace Betting
                     GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                     gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
 
-                    if(success)
+                    if (success)
                         logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                     else
                         logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
                 }
                 else if (executeMetrics.HasValue())
-                {   
+                {
                     SortedDictionary<double, RunOutput> topByProfit =
                         new SortedDictionary<double, RunOutput>();
                     SortedDictionary<double, RunOutput> topByRate =
@@ -389,13 +387,13 @@ namespace Betting
 
                         if (success)
                         {
-                            lock(successRuns)
+                            lock (successRuns)
                             {
                                 try
                                 {
                                     successRuns.Add(averageProfit, new RunOutput(success, rate, averageProfit, i, maxI));
                                 }
-                                catch(Exception)
+                                catch (Exception)
                                 {
 
                                 }
@@ -406,7 +404,7 @@ namespace Betting
                         else
                             logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
 
-                                                
+
                         lock (topByProfit)
                         {
                             if (!topByProfit.ContainsKey(averageProfit))
@@ -444,7 +442,7 @@ namespace Betting
                         AddClusterInfo(ref topByRate);
                         foreach (RunOutput t in topByRate.Values)
                         {
-                            if(t.success)
+                            if (t.success)
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
@@ -479,9 +477,9 @@ namespace Betting
             });
 
             app.Execute(args);
-            
+
         }
 
-        
+
     }
 }

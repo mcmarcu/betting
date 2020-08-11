@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Betting.DataModel;
+﻿using Betting.DataModel;
+using System.Collections.Generic;
 
 namespace Betting.Stats
 {
@@ -10,6 +10,17 @@ namespace Betting.Stats
         public abstract List<Fixture> GetAllFixtures(int year, string team);
         public abstract List<Fixture> GetAllFixtures(int year);
         public abstract List<Fixture> GetRound(int year, int matchDay);
-        public abstract void GetPrevRound(out int outYear, out int outDay, int currentYear, int currentDay);
+        public void GetPrevRound(ref int year, ref int day)
+        {
+            if (day == 1)
+            {
+                day = GetNumberOfMatchDays(year - 1);
+                year--;
+            }
+            else
+            {
+                day--;
+            }
+        }
     }
 }

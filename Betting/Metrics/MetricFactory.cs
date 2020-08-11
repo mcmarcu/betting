@@ -11,7 +11,7 @@ namespace Betting.Metrics
         static public List<MetricInterface> GetMetrics(List<MetricConfig> configs, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
             List<MetricInterface> result = new List<MetricInterface>();
-            foreach(MetricConfig config in configs)
+            foreach (MetricConfig config in configs)
             {
                 if (config.name == "LastGamesMetric")
                     result.Add(new LastGamesMetric(config, year, configManager, fixtureRetriever));
@@ -25,7 +25,7 @@ namespace Betting.Metrics
                     result.Add(new GoalsDifferenceMetric(config, year, configManager, fixtureRetriever));
             }
 
-            if(result.Count != configs.Count)
+            if (result.Count != configs.Count)
             {
                 throw new ArgumentException("Could not create all configs. Check input to MetricFactory.GetMetrics");
             }
