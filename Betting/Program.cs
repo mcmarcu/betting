@@ -345,7 +345,7 @@ namespace Betting
                     PrintMetricList(logger, metricConfigId);
                     logger.LogResultSuccess("\n Results: \n");
                     GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
-                    gs.ProcessUpcomingFixtures();
+                    gs.ProcessUpcomingFixtures(out double profit);
                 }
                 else if (inspectMetric.HasValue())
                 {

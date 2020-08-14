@@ -312,20 +312,17 @@ namespace Betting.Stats
                 {
                     logger_.LogDebug("{0} - {1},{2} result {3}\n", fixture.homeTeamName, fixture.awayTeamName, padding, actualResult);
                 }
-
-
             }
 
             currentProfit = GetMatchdayProfit(matchdayOdds);
         }
 
-        public void ProcessUpcomingFixtures()
+        public void ProcessUpcomingFixtures(out double expectedProfit)
         {
+            List<double>  matchdayOdds = new List<double>();
+
             List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, configManager_.GetYear(), configManager_, fixtureRetriever_);
-
             List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(configManager_.GetYear(), configManager_.GetMatchDay());
-
-            List<double> matchdayOdds = new List<double>();
 
             foreach (Fixture fixture in thisRoundFixtures)
             {
@@ -367,7 +364,8 @@ namespace Betting.Stats
 
             }
 
-            logger_.LogInfo("Profit: {0}", GetMatchdayProfit(matchdayOdds));
+            expectedProfit = GetMatchdayProfit(matchdayOdds);
+            logger_.LogInfo("Profit: {0}", expectedProfit);
         }
 
         private readonly List<MetricConfig> metricConfigs_;

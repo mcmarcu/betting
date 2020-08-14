@@ -212,10 +212,9 @@ namespace Betting.Stats
 
                         if (newFixture.odds.Count != 3)
                         {
-                            //newFixture.odds.Add("1", 1);
-                            //newFixture.odds.Add("X", 1);
-                            //newFixture.odds.Add("2", 1);
-                            throw new Exception("could not get odds for fixture");
+                            newFixture.odds.Add("1", 1);
+                            newFixture.odds.Add("X", 1);
+                            newFixture.odds.Add("2", 1);
                         }
 
                         if (configManager_.GetUseExpanded())
@@ -224,9 +223,9 @@ namespace Betting.Stats
                             newFixture.points.awayTeamPoints = int.Parse(fields[idxAPTS]);
                             newFixture.gamesPlayed.homeTeamGamesPlayed = int.Parse(fields[idxHPL]);
                             newFixture.gamesPlayed.awayTeamGamesPlayed = int.Parse(fields[idxAPL]);
-                            newFixture.fairOdds.Add("1", float.Parse(fields[idxFOH]));
-                            newFixture.fairOdds.Add("X", float.Parse(fields[idxFOD]));
-                            newFixture.fairOdds.Add("2", float.Parse(fields[idxFOA]));
+                            newFixture.fairOdds.Add("1", double.Parse(fields[idxFOH]));
+                            newFixture.fairOdds.Add("X", double.Parse(fields[idxFOD]));
+                            newFixture.fairOdds.Add("2", double.Parse(fields[idxFOA]));
                         }
                         newFixture.Init(configManager_);
 

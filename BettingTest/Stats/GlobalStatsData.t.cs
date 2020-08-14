@@ -430,5 +430,38 @@ namespace BettingTest
                                            + (commonOdds["2"] - 1 - 1));
         }
 
+        [Test]
+        public void ProcessUpcomingFixtures()
+        {
+            // Arrange
+            configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
+            configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
+            configManagerMock.Setup(p => p.GetMaxOdds()).Returns(10);
+            configManagerMock.Setup(p => p.GetMinOdds()).Returns(1);
+            configManagerMock.Setup(p => p.GetDrawMargin()).Returns(10);
+            configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
+            configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
+            configManagerMock.Setup(p => p.GetMatchDay()).Returns(3);
+            configManagerMock.Setup(p => p.GetReverseDays()).Returns(4);
+
+            MetricConfig metricConfigLastGames = new MetricConfig
+            {
+                name = "LastGamesMetric",
+                depth = 1
+            };
+
+            List<MetricConfig> configs = new List<MetricConfig>
+            {
+                metricConfigLastGames
+            };
+
+            // Act
+            GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
+            globalStats.ProcessUpcomingFixtures(out double expectedProfit);
+
+            // Assert
+            Assert.AreEqual(expectedProfit, (commonOdds["1"] - 1)
+                                          + (commonOdds["2"] - 1));
+        }
     }
 }
