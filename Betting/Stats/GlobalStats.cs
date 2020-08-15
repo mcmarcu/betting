@@ -23,9 +23,10 @@ namespace Betting.Stats
             int year = configManager_.GetYear();
             int reverseYears = configManager_.GetReverseYears();
 
-            double laverageProfit = 0;
-            bool lsuccess = true;
-            double lrate = 0;
+            int successYears = 0;
+            double profitSum = 0;
+            int totalGames = 0;
+            int correctGames = 0;
 
             int maxThreads = configManager_.GetLogLevel() == ConfigManager.LogLevel.LOG_DEBUG ? 1 : 8;
 
@@ -33,20 +34,22 @@ namespace Betting.Stats
             {
                 int computeYear = year - i;
                 GetYearData(out int yearCorrect, out int yearTotal, out double yearProfit, computeYear);
-                double yearRate = (yearTotal != 0) ? ((double)yearCorrect / (double)yearTotal) * 100 : 100;
-                lrate += yearRate;
+                
+                totalGames += yearTotal;
+                correctGames += yearCorrect;
 
-                logger_.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yearRate, yearProfit, computeYear);
+                double yrate = (yearTotal != 0) ? ((double)yearCorrect / (double)yearTotal) * 100 : 0;
+                logger_.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yrate, yearProfit, computeYear);
 
-                if (yearProfit < configManager_.GetMinYearProfit())
-                    lsuccess = false;
+                if (yearProfit >= configManager_.GetMinYearProfit())
+                    ++successYears;
 
-                laverageProfit += yearProfit;
+                profitSum += yearProfit;
             });
 
-            success = lsuccess;
-            rate = lrate / reverseYears;
-            averageProfit = laverageProfit / reverseYears;
+            success = successYears == reverseYears;
+            rate = (totalGames != 0) ? ((double)correctGames / (double)totalGames) * 100 : 0;
+            averageProfit = profitSum / reverseYears;
         }
 
         public void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, int year)

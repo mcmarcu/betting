@@ -197,18 +197,22 @@ namespace BettingTest
             fixturesRound4.Add(fixture);
             allFixtures.Add(fixture);
 
-            fixtureRetrieverMock.Setup(p => p.GetRound(0, 1)).Returns(fixturesRound1);
-            fixtureRetrieverMock.Setup(p => p.GetRound(0, 2)).Returns(fixturesRound2);
-            fixtureRetrieverMock.Setup(p => p.GetRound(0, 3)).Returns(fixturesRound3);
-            fixtureRetrieverMock.Setup(p => p.GetRound(0, 4)).Returns(fixturesRound4);
+            int yearsToSetup = 4;
+            for (int i = 0; i > -yearsToSetup; --i)
+            {
+                fixtureRetrieverMock.Setup(p => p.GetRound(i, 1)).Returns(fixturesRound1);
+                fixtureRetrieverMock.Setup(p => p.GetRound(i, 2)).Returns(fixturesRound2);
+                fixtureRetrieverMock.Setup(p => p.GetRound(i, 3)).Returns(fixturesRound3);
+                fixtureRetrieverMock.Setup(p => p.GetRound(i, 4)).Returns(fixturesRound4);
 
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(0, team1)).Returns(fixturesTeam1);
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(0, team2)).Returns(fixturesTeam2);
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(0, team3)).Returns(fixturesTeam3);
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(0, team4)).Returns(fixturesTeam4);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team1)).Returns(fixturesTeam1);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team2)).Returns(fixturesTeam2);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team3)).Returns(fixturesTeam3);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team4)).Returns(fixturesTeam4);
 
-            fixtureRetrieverMock.Setup(p => p.GetNumberOfMatchDays(0)).Returns(4);
-            fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(0)).Returns(2);
+                fixtureRetrieverMock.Setup(p => p.GetNumberOfMatchDays(i)).Returns(4);
+                fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(i)).Returns(2);
+            }
         }
 
         [Test]
@@ -427,6 +431,51 @@ namespace BettingTest
             Assert.AreEqual(totalFixturesWithData, 2 + 2 + 2);
             Assert.AreEqual(currentProfit, (0 - 1 - 1)
                                            + (commonOdds["1"] - 1 + commonOdds["2"] - 1) 
+                                           + (commonOdds["2"] - 1 - 1));
+        }
+
+        [Test]
+        public void GetAllYearsData()
+        {
+            // Arrange
+            configManagerMock.Setup(p => p.GetBetStyle()).Returns("1");
+            configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
+            configManagerMock.Setup(p => p.GetMaxOdds()).Returns(10);
+            configManagerMock.Setup(p => p.GetMinOdds()).Returns(1);
+            configManagerMock.Setup(p => p.GetDrawMargin()).Returns(10);
+            configManagerMock.Setup(p => p.GetDrawMixedMargin()).Returns(20);
+            configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
+            configManagerMock.Setup(p => p.GetMatchDay()).Returns(4);
+            configManagerMock.Setup(p => p.GetReverseDays()).Returns(4);
+            configManagerMock.Setup(p => p.GetYear()).Returns(0);
+            configManagerMock.Setup(p => p.GetReverseYears()).Returns(4);
+            configManagerMock.Setup(p => p.GetLogLevel()).Returns(ConfigManager.LogLevel.LOG_DEBUG);
+            configManagerMock.Setup(p => p.GetMinYearProfit()).Returns(70);
+            
+
+
+            MetricConfig metricConfigLastGames = new MetricConfig
+            {
+                name = "LastGamesMetric",
+                depth = 1
+            };
+
+            List<MetricConfig> configs = new List<MetricConfig>
+            {
+                metricConfigLastGames
+            };
+
+            // Act
+            GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
+            globalStats.GetAllYearsData(out bool success, out double rate, out double averageProfit);
+
+            // Assert
+            double correctFixturesWithDataPerYear = 0 + 2 + 1;
+            double totalFixturesWithDataPerYear = 2 + 2 + 2;
+            Assert.AreEqual(rate, correctFixturesWithDataPerYear/ totalFixturesWithDataPerYear * 100);
+            Assert.AreEqual(success, false);
+            Assert.AreEqual(averageProfit, (0 - 1 - 1)
+                                           + (commonOdds["1"] - 1 + commonOdds["2"] - 1)
                                            + (commonOdds["2"] - 1 - 1));
         }
 

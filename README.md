@@ -5,7 +5,8 @@ __I Basic league workflow__
 ```
 -e --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
 ```
-[output](./OutputData/dataI1.txt)
+* [outputChampionship](./OutputData/dataI1Championship.txt)
+* [output2Bundesliga](./OutputData/dataI12Bundesliga.txt)
 
 2. Update data with one of the metrics (inspectMetric ignored, only required for fair odds)
 ```
@@ -15,7 +16,8 @@ __I Basic league workflow__
 ```
 -e --useExpanded=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
 ```
-[output](./OutputData/dataI3.txt)
+* [outputChampionship](./OutputData/dataI3Championship.txt)
+* [output2Bundesliga](./OutputData/dataI32Bundesliga.txt)
 
 4. Test this metric to get more info
 ```
@@ -35,7 +37,13 @@ __II Fair odds workflow__
 3. Todo
 
 __III Use data to predict__
-1.
+
+1. Predict using plain data
+```
+-w --useExpanded=3 -x=39000 --league=Championship --year=2019 --matchday=37 --minodds=1.0 --maxodds=2.0 --betstyle=all --loglevel=LOG_INFO
+```
+
+2. Predict using expanded CoeficientWeight 3 data
 ```
 -w --useExpanded=3 -x=39000 --league=Championship --year=2019 --matchday=37 --minodds=1.0 --maxodds=2.0 --betstyle=all --loglevel=LOG_INFO
 ```

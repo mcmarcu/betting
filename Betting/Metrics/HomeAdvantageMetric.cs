@@ -34,7 +34,7 @@ namespace Betting.Metrics
             {
                 if (fix.homeTeamName == teamName1)
                 {
-                    pctTeam1 += GetPoints(fix, teamName1);// * GetCoeficient(fix, teamName1);
+                    pctTeam1 += GetPoints(fix, teamName1);// no Coeficient
                     if (++homeFoundFixtures == config.depth)
                         break;
                 }
@@ -47,7 +47,7 @@ namespace Betting.Metrics
             {
                 if (fix.awayTeamName == teamName2)
                 {
-                    pctTeam2 += GetPoints(fix, teamName2);// * GetCoeficient(fix, teamName2);
+                    pctTeam2 += GetPoints(fix, teamName2);// no Coeficient
                     if (++awayFoundFixtures == config.depth)
                         break;
                 }
