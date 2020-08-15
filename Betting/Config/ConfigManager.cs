@@ -189,7 +189,7 @@ namespace Betting.Config
 
         public override bool GetUseExpanded()
         {
-            return int.Parse(GetData("useexpanded")) == 1;
+            return GetData("useexpanded") == "1";
         }
 
         public void SetCoeficientWeight(int value)

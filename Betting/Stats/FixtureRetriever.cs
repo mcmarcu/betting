@@ -29,24 +29,16 @@ namespace Betting.Stats
                 {
                     return numberOfTeamsCache[year];
                 }
-                string leagueName = configManager_.GetLeagueName();
+                
                 HashSet<string> teams = new HashSet<string>();
-                using (TextFieldParser parser = new TextFieldParser("..\\..\\DB\\" + leagueName + year + ".csv"))
+
+                List<Fixture> allFixtures = GetAllFixtures(year);
+                foreach (Fixture fixture in allFixtures)
                 {
-
-                    parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(",");
-
-                    string[] fields = parser.ReadFields();
-                    int idxHomeTeam = Array.FindIndex(fields, item => item == "HomeTeam");
-                    while (!parser.EndOfData)
-                    {
-                        fields = parser.ReadFields();
-                        if (fields[idxHomeTeam] != "" && fields[2] != "HomeTeam")
-                            teams.Add(fields[idxHomeTeam]);
-                    }
+                    teams.Add(fixture.homeTeamName);
+                    teams.Add(fixture.awayTeamName);
                 }
-
+                
                 numberOfTeamsCache.Add(year, teams.Count);
                 return teams.Count;
             }
@@ -127,7 +119,6 @@ namespace Betting.Stats
                     return fixturesCache[year];
                 }
                 string leagueName = configManager_.GetLeagueName();
-                int gamesPerMatchDay = GetGamesPerMatchDay(year);
                 List<Fixture> result = new List<Fixture>();
                 string fileName;
                 if (configManager_.GetUseExpanded())
