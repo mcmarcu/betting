@@ -6,208 +6,242 @@ namespace Betting.Config
 {
     public class ConfigManager : ConfigManagerInterface
     {
-        private void SetData(string id, string value)
-        {
-            cache[id] = value;
-        }
 
         private string GetData(string id)
         {
-            if (!cache.ContainsKey(id))
-            {
-                XmlNodeList elemList = configDocument_.GetElementsByTagName(id);
-                cache[id] = elemList[0].InnerText;
-            }
-            return cache[id];
+            XmlNodeList elemList = configDocument_.GetElementsByTagName(id);
+            return elemList[0].InnerText;
         }
 
         public void SetLeagueName(string value)
         {
-            SetData("league", value);
+            LeagueName = value;
         }
 
         public override string GetLeagueName()
         {
-            return GetData("league");
-        }
-
-        public void SetYear(string value)
-        {
-            SetData("year", value);
-        }
-
-        public override int GetYear()
-        {
-            return int.Parse(GetData("year"));
-        }
-
-        public void SetReverseYears(string value)
-        {
-            SetData("yreverse", value);
-        }
-
-        public override int GetReverseYears()
-        {
-            return int.Parse(GetData("yreverse"));
-        }
-
-        public void SetLogLevel(string value)
-        {
-            SetData("loglevel", value);
-        }
-
-        public override LogLevel GetLogLevel()
-        {
-            return (LogLevel)Enum.Parse(typeof(LogLevel), GetData("loglevel"));
-        }
-
-        public void SetDrawMargin(string value)
-        {
-            SetData("drawmargin", value);
-        }
-
-        public override int GetDrawMargin()
-        {
-            return int.Parse(GetData("drawmargin"));
-        }
-
-        public void SetDrawMixedMargin(string value)
-        {
-            SetData("drawmixedmargin", value);
-        }
-
-        public override int GetDrawMixedMargin()
-        {
-            return int.Parse(GetData("drawmixedmargin"));
-        }
-
-        public void SetMatchDay(string value)
-        {
-            SetData("matchday", value);
-        }
-
-        public override int GetMatchDay()
-        {
-            return int.Parse(GetData("matchday"));
-        }
-
-        public void SetReverseDays(string value)
-        {
-            SetData("mreverse", value);
-        }
-
-        public override int GetReverseDays()
-        {
-            return int.Parse(GetData("mreverse"));
-        }
-
-        public void SetMaxOdds(string value)
-        {
-            SetData("maxodds", value);
-        }
-
-        public override double GetMinOdds()
-        {
-            return double.Parse(GetData("minodds"));
-        }
-
-        public void SetMinOdds(string value)
-        {
-            SetData("minodds", value);
-        }
-
-        public override double GetMaxOdds()
-        {
-            return double.Parse(GetData("maxodds"));
-        }
-
-        public void SetMinMetricCorrect(string value)
-        {
-            SetData("minmetriccorrect", value);
-        }
-
-        public override double GetMinMetricCorrect()
-        {
-            return double.Parse(GetData("minmetriccorrect"));
-        }
-
-        public void SetMinYearProfit(string value)
-        {
-            SetData("minyearprofit", value);
-        }
-
-        public override double GetMinYearProfit()
-        {
-            return double.Parse(GetData("minyearprofit"));
-        }
-
-        public void SetSuccessRate(string value)
-        {
-            SetData("successrate", value);
-        }
-
-        public override double GetSuccessRate()
-        {
-            return double.Parse(GetData("successrate"));
-        }
-
-        public void SetFilterTopRate(string value)
-        {
-            SetData("filtertoprate", value);
-        }
-
-        public override int GetFilterTopRate()
-        {
-            return int.Parse(GetData("filtertoprate"));
-        }
-
-        public void SetFilterTopProfit(string value)
-        {
-            SetData("filtertopprofit", value);
-        }
-
-        public override int GetFilterTopProfit()
-        {
-            return int.Parse(GetData("filtertopprofit"));
+            return LeagueName;
         }
 
 
         public void SetBetStyle(string value)
         {
-            SetData("betstyle", value);
+            BetStyle = value;
         }
 
         public override string GetBetStyle()
         {
-            return GetData("betstyle");
+            return BetStyle;
+        }
+
+        public void SetYear(int value)
+        {
+           Year = value;
+        }
+
+        public override int GetYear()
+        {
+            return Year.Value;
+        }
+
+        public void SetReverseYears(int value)
+        {
+            ReverseYears = value;
+        }
+
+        public override int GetReverseYears()
+        {
+            return ReverseYears.Value;
+        }
+
+        public void SetLogLevel(string value)
+        {
+            TheLogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), value);
+        }
+
+        public override LogLevel GetLogLevel()
+        {
+            return TheLogLevel.Value;
+        }
+
+        public void SetDrawMargin(int value)
+        {
+            DrawMargin = value;
+        }
+
+        public override int GetDrawMargin()
+        {
+            return DrawMargin.Value;
+        }
+
+        public void SetDrawMixedMargin(int value)
+        {
+            DrawMixedMargin = value;
+        }
+
+        public override int GetDrawMixedMargin()
+        {
+            return DrawMixedMargin.Value;
+        }
+
+        public void SetMatchDay(int value)
+        {
+            Matchday = value;
+        }
+
+        public override int GetMatchDay()
+        {
+            return Matchday.Value;
+        }
+
+        public void SetReverseDays(int value)
+        {
+            ReverseDays = value; 
+        }
+
+        public override int GetReverseDays()
+        {
+            return ReverseDays.Value;
+        }
+
+        public void SetMaxOdds(double value)
+        {
+            MaxOdds = value;
+        }
+
+        public override double GetMaxOdds()
+        {
+            return MaxOdds.Value;
+        }
+
+        public void SetMinOdds(double value)
+        {
+            MinOdds = value;
+        }
+
+        public override double GetMinOdds()
+        {
+            return MinOdds.Value;
+        }
+
+        public void SetMinMetricCorrect(double value)
+        {
+            MinMetricCorrect = value;
+        }
+
+        public override double GetMinMetricCorrect()
+        {
+            return MinMetricCorrect.Value;
+        }
+
+        public void SetMinYearProfit(double value)
+        {
+            MinYearProfit = value;
+        }
+
+        public override double GetMinYearProfit()
+        {
+            return MinYearProfit.Value;
+        }
+
+        public void SetSuccessRate(double value)
+        {
+            SuccessRate = value;
+        }
+
+        public override double GetSuccessRate()
+        {
+            return SuccessRate.Value;
+        }
+
+        public void SetFilterTopRate(int value)
+        {
+            FilterTopRate = value;
+        }
+
+        public override int GetFilterTopRate()
+        {
+            return FilterTopRate.Value;
+        }
+
+        public void SetFilterTopProfit(int value)
+        {
+            FilterTopProfit = value;
+        }
+
+        public override int GetFilterTopProfit()
+        {
+            return FilterTopProfit.Value;
         }
 
         public void SetUseExpanded(bool value)
         {
-            SetData("useexpanded", value ? "1" : "0");
+            UseExpanded = value;
         }
 
         public override bool GetUseExpanded()
         {
-            return GetData("useexpanded") == "1";
+            return UseExpanded.Value;
         }
 
         public void SetCoeficientWeight(int value)
         {
-            SetData("coeficientweight", value.ToString());
+            CoeficientWeight = value;
         }
 
         public override int GetCoeficientWeight()
         {
-            return int.Parse(GetData("coeficientweight"));
+            return CoeficientWeight.Value;
         }
 
         public ConfigManager()
         {
             configDocument_ = new XmlDocument();
             configDocument_.Load("..\\..\\Config\\globalconfig.xml");
+
+            
+            LeagueName = GetData("leaguename");
+            BetStyle = GetData("betstyle");
+
+            Year = int.Parse(GetData("year"));
+            ReverseYears = int.Parse(GetData("yreverse"));
+            TheLogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), GetData("loglevel"));
+            DrawMargin = int.Parse(GetData("drawmargin"));
+            DrawMixedMargin = int.Parse(GetData("drawmixedmargin"));
+            Matchday = int.Parse(GetData("matchday"));
+            ReverseDays = int.Parse(GetData("mreverse"));
+            MaxOdds = double.Parse(GetData("maxodds"));
+            MinOdds = double.Parse(GetData("minodds"));
+            MinMetricCorrect = double.Parse(GetData("minmetriccorrect"));
+            MinYearProfit = double.Parse(GetData("minyearprofit"));
+            SuccessRate = double.Parse(GetData("successrate"));
+            FilterTopRate = int.Parse(GetData("filtertoprate"));
+            FilterTopProfit = int.Parse(GetData("filtertopprofit"));
+            UseExpanded = GetData("useexpanded") == "1";
+            CoeficientWeight = int.Parse(GetData("coeficientweight"));
         }
+
         private readonly XmlDocument configDocument_;
-        private readonly Dictionary<string, string> cache = new Dictionary<string, string>();
+
+        private string LeagueName;
+        private string BetStyle;
+
+        private int? Year;
+        private int? ReverseYears;
+        private LogLevel? TheLogLevel;
+        private int? DrawMargin;
+        private int? DrawMixedMargin;
+        private int? Matchday;
+        private int? ReverseDays;
+        private double? MaxOdds;
+        private double? MinOdds;
+        private double? MinMetricCorrect;
+        private double? MinYearProfit;
+        private double? SuccessRate;
+        private int? FilterTopRate;
+        private int? FilterTopProfit;
+        private bool? UseExpanded;
+        private int? CoeficientWeight;
+        
     }
 }

@@ -25,11 +25,11 @@ namespace Betting.Stats
         {
             lock (numberOfTeamsCache)
             {
-                if (numberOfTeamsCache.ContainsKey(year))
+                if (numberOfTeamsCache.TryGetValue(year, out int value))
                 {
-                    return numberOfTeamsCache[year];
+                    return value;
                 }
-                
+
                 HashSet<string> teams = new HashSet<string>();
 
                 List<Fixture> allFixtures = GetAllFixtures(year);
@@ -57,9 +57,9 @@ namespace Betting.Stats
             fixturesTeamCacheLock.EnterReadLock();
             try
             {
-                if (fixturesTeamCache.ContainsKey(t))
+                if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
                 {
-                    return fixturesTeamCache[t];
+                    return value;
                 }
             }
             finally
@@ -70,9 +70,9 @@ namespace Betting.Stats
             fixturesTeamCacheLock.EnterWriteLock();
             try
             {
-                if (fixturesTeamCache.ContainsKey(t))
+                if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
                 {
-                    return fixturesTeamCache[t];
+                    return value;
                 }
 
                 List<Fixture> allFixtures = GetAllFixtures(year);
@@ -101,9 +101,9 @@ namespace Betting.Stats
             fixturesCacheLock.EnterReadLock();
             try
             {
-                if (fixturesCache.ContainsKey(year))
+                if (fixturesCache.TryGetValue(year, out List<Fixture> value))
                 {
-                    return fixturesCache[year];
+                    return value;
                 }
             }
             finally
@@ -114,10 +114,11 @@ namespace Betting.Stats
             fixturesCacheLock.EnterWriteLock();
             try
             {
-                if (fixturesCache.ContainsKey(year))
+                if (fixturesCache.TryGetValue(year, out List<Fixture> value))
                 {
-                    return fixturesCache[year];
+                    return value;
                 }
+
                 string leagueName = configManager_.GetLeagueName();
                 List<Fixture> result = new List<Fixture>();
                 string fileName;
@@ -266,9 +267,9 @@ namespace Betting.Stats
             matchdayFixtureCacheLock.EnterReadLock();
             try
             {
-                if (matchdayFixtureCache.ContainsKey(t))
+                if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
                 {
-                    return matchdayFixtureCache[t];
+                    return value;
                 }
             }
             finally
@@ -279,6 +280,10 @@ namespace Betting.Stats
             matchdayFixtureCacheLock.EnterWriteLock();
             try
             {
+                if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
+                {
+                    return value;
+                }
 
                 List<Fixture> all = GetAllFixtures(year);
 

@@ -4,6 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<LangVersion>latest</LangVersion>
     <ProjectGuid>{8B53C6CD-E271-4DD0-BBB9-D5995DE82C3C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Betting</RootNamespace>

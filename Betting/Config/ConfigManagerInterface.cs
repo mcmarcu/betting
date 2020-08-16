@@ -11,6 +11,7 @@ namespace Betting.Config
         }
 
         abstract public string GetLeagueName();
+        abstract public string GetBetStyle();
         abstract public int GetYear();
         abstract public int GetReverseYears();
         abstract public LogLevel GetLogLevel();
@@ -25,7 +26,6 @@ namespace Betting.Config
         abstract public double GetSuccessRate();
         abstract public int GetFilterTopRate();
         abstract public int GetFilterTopProfit();
-        abstract public string GetBetStyle();
         abstract public bool GetUseExpanded();
         abstract public int GetCoeficientWeight();
     }

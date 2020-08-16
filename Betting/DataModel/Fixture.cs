@@ -4,25 +4,25 @@ using System.Collections.Generic;
 
 namespace Betting.DataModel
 {
-    public struct Score
+    public class Score
     {
         public int homeTeamGoals;
         public int awayTeamGoals;
     }
 
-    public struct Points
+    public class Points
     {
         public int homeTeamPoints;
         public int awayTeamPoints;
     }
 
-    public struct GamesPlayed
+    public class GamesPlayed
     {
         public int homeTeamGamesPlayed;
         public int awayTeamGamesPlayed;
     }
 
-    public struct Coeficient
+    public class Coeficient
     {
         public double homeTeam;
         public double awayTeam;
@@ -33,13 +33,13 @@ namespace Betting.DataModel
         public string homeTeamName;
         public string awayTeamName;
         public DateTime date;
-        public Score finalScore;
-        public Score halfScore;
+        public Score finalScore = new Score();
+        public Score halfScore = new Score();
         public Dictionary<string, double> odds = new Dictionary<string, double>();
         public Dictionary<string, double> fairOdds = new Dictionary<string, double>();
-        public Points points;
-        public GamesPlayed gamesPlayed;
-        public Coeficient coeficient;
+        public Points points = new Points();
+        public GamesPlayed gamesPlayed = new GamesPlayed();
+        public Coeficient coeficient = new Coeficient();
         public string result;
 
         public void Init(ConfigManagerInterface configManager)

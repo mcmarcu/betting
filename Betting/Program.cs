@@ -239,31 +239,31 @@ namespace Betting
                 if (leagueOption.HasValue())
                     configManager.SetLeagueName(leagueOption.Value());
                 if (yearOption.HasValue())
-                    configManager.SetYear(yearOption.Value());
+                    configManager.SetYear(int.Parse(yearOption.Value()));
                 if (yReverseOption.HasValue())
-                    configManager.SetReverseYears(yReverseOption.Value());
+                    configManager.SetReverseYears(int.Parse(yReverseOption.Value()));
                 if (mReverseOption.HasValue())
-                    configManager.SetReverseDays(mReverseOption.Value());
+                    configManager.SetReverseDays(int.Parse(mReverseOption.Value()));
                 if (drawMarginOption.HasValue())
-                    configManager.SetDrawMargin(drawMarginOption.Value());
+                    configManager.SetDrawMargin(int.Parse(drawMarginOption.Value()));
                 if (drawMixedMarginOption.HasValue())
-                    configManager.SetDrawMixedMargin(drawMixedMarginOption.Value());
+                    configManager.SetDrawMixedMargin(int.Parse(drawMixedMarginOption.Value()));
                 if (maxOddsOption.HasValue())
-                    configManager.SetMaxOdds(maxOddsOption.Value());
+                    configManager.SetMaxOdds(double.Parse(maxOddsOption.Value()));
                 if (minOddsOption.HasValue())
-                    configManager.SetMinOdds(minOddsOption.Value());
+                    configManager.SetMinOdds(double.Parse(minOddsOption.Value()));
                 if (minMetricCorrectOption.HasValue())
-                    configManager.SetMinMetricCorrect(minMetricCorrectOption.Value());
+                    configManager.SetMinMetricCorrect(double.Parse(minMetricCorrectOption.Value()));
                 if (minYearProfitOption.HasValue())
-                    configManager.SetMinYearProfit(minYearProfitOption.Value());
+                    configManager.SetMinYearProfit(double.Parse(minYearProfitOption.Value()));
                 if (logLevelOption.HasValue())
                     configManager.SetLogLevel(logLevelOption.Value());
                 if (successRateOption.HasValue())
-                    configManager.SetSuccessRate(successRateOption.Value());
+                    configManager.SetSuccessRate(double.Parse(successRateOption.Value()));
                 if (filterTopRate.HasValue())
-                    configManager.SetSuccessRate(filterTopRate.Value());
+                    configManager.SetSuccessRate(int.Parse(filterTopRate.Value()));
                 if (filterTopProfit.HasValue())
-                    configManager.SetSuccessRate(filterTopProfit.Value());
+                    configManager.SetSuccessRate(int.Parse(filterTopProfit.Value()));
                 if (betStyleOption.HasValue())
                     configManager.SetBetStyle(betStyleOption.Value());
                 if (useExpanded.HasValue())
@@ -281,10 +281,10 @@ namespace Betting
                     {
                         string expression = matchdayOption.Value().Replace("max", fixtureRetriever.GetNumberOfMatchDays(configManager.GetYear()).ToString());
                         DataTable dt = new DataTable();
-                        configManager.SetMatchDay(dt.Compute(expression, "").ToString());
+                        configManager.SetMatchDay(int.Parse(dt.Compute(expression, "").ToString()));
                     }
                     else
-                        configManager.SetMatchDay(matchdayOption.Value());
+                        configManager.SetMatchDay(int.Parse(matchdayOption.Value()));
                 }
 
 
