@@ -14,6 +14,8 @@ namespace BettingTest
         private Mock<FixtureRetrieverInterface> fixtureRetrieverMock;
         private string team1;
         private string team2;
+        private int teamId1;
+        private int teamId2;
         private int year;
         private Fixture actualFixture;
 
@@ -23,6 +25,8 @@ namespace BettingTest
             year = 0;
             team1 = "team1";
             team2 = "team2";
+            teamId1 = 1;
+            teamId2 = 2;
 
             List<Fixture> fixturesTeam1 = new List<Fixture>();
             List<Fixture> fixturesTeam2 = new List<Fixture>();
@@ -30,7 +34,9 @@ namespace BettingTest
             Fixture fixTeam11 = new Fixture
             {
                 homeTeamName = team1,
-                awayTeamName = ""
+                awayTeamName = "",
+                homeTeamId = teamId1,
+                awayTeamId = -1
             };
             fixTeam11.finalScore.homeTeamGoals = 1;
             fixTeam11.finalScore.awayTeamGoals = 2;
@@ -42,7 +48,9 @@ namespace BettingTest
             Fixture fixTeam1Ignored = new Fixture
             {
                 homeTeamName = "",
-                awayTeamName = team1
+                awayTeamName = team1,
+                homeTeamId = -1,
+                awayTeamId = teamId1
             };
             fixTeam1Ignored.finalScore.homeTeamGoals = 0;
             fixTeam1Ignored.finalScore.awayTeamGoals = 2;
@@ -55,7 +63,9 @@ namespace BettingTest
             Fixture fixTeam12 = new Fixture
             {
                 homeTeamName = team1,
-                awayTeamName = ""
+                awayTeamName = "",
+                homeTeamId = teamId1,
+                awayTeamId = -1
             };
             fixTeam12.finalScore.homeTeamGoals = 0;
             fixTeam12.finalScore.awayTeamGoals = 0;
@@ -67,7 +77,9 @@ namespace BettingTest
             Fixture fixTeam21 = new Fixture
             {
                 homeTeamName = "",
-                awayTeamName = team2
+                awayTeamName = team2,
+                homeTeamId = -1,
+                awayTeamId = teamId2
             };
             fixTeam21.finalScore.homeTeamGoals = 0;
             fixTeam21.finalScore.awayTeamGoals = 2;
@@ -79,7 +91,9 @@ namespace BettingTest
             Fixture fixTeam2Ignored = new Fixture
             {
                 homeTeamName = team2,
-                awayTeamName = ""
+                awayTeamName = "",
+                homeTeamId = teamId2,
+                awayTeamId = -1
             };
             fixTeam2Ignored.finalScore.homeTeamGoals = 0;
             fixTeam2Ignored.finalScore.awayTeamGoals = 2;
@@ -92,7 +106,9 @@ namespace BettingTest
             Fixture fixTeam22 = new Fixture
             {
                 homeTeamName = "",
-                awayTeamName = team2
+                awayTeamName = team2,
+                homeTeamId = -1,
+                awayTeamId = teamId2
             };
             fixTeam22.finalScore.homeTeamGoals = 0;
             fixTeam22.finalScore.awayTeamGoals = 0;
@@ -104,7 +120,9 @@ namespace BettingTest
             actualFixture = new Fixture
             {
                 homeTeamName = team1,
-                awayTeamName = team2
+                awayTeamName = team2,
+                homeTeamId = teamId1,
+                awayTeamId = teamId2
             };
             actualFixture.finalScore.homeTeamGoals = 1;
             actualFixture.finalScore.awayTeamGoals = 2;
@@ -115,8 +133,8 @@ namespace BettingTest
             fixturesTeam2.Add(actualFixture);
 
             fixtureRetrieverMock = new Mock<FixtureRetrieverInterface>();
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, team1)).Returns(fixturesTeam1);
-            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, team2)).Returns(fixturesTeam2);
+            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId1)).Returns(fixturesTeam1);
+            fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId2)).Returns(fixturesTeam2);
 
             configManagerMock = new Mock<ConfigManagerInterface>();
             configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
@@ -134,7 +152,7 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
+            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 1);
@@ -153,7 +171,7 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
+            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 1);
@@ -172,7 +190,7 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPercentage(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
+            metric.GetPercentage(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 50);
@@ -191,7 +209,7 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPercentage(out int pTeam1, out int pTeam2, team1, team2, actualFixture);
+            metric.GetPercentage(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 20);
@@ -210,8 +228,8 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            int pointsTeam1 = metric.GetPoints(actualFixture, team1);
-            int pointsTeam2 = metric.GetPoints(actualFixture, team2);
+            int pointsTeam1 = metric.GetPoints(actualFixture, teamId1);
+            int pointsTeam2 = metric.GetPoints(actualFixture, teamId2);
 
             // Assert
             Assert.AreEqual(pointsTeam1, 0);

@@ -240,7 +240,7 @@ namespace Betting.Stats
                 }
 
                 string padding = new string(' ', 50 - fixture.homeTeamName.Length - fixture.awayTeamName.Length);
-                if (totalMetricsWithData == metrics.Count && computedResult != string.Empty && actualResult != string.Empty)
+                if (totalMetricsWithData == metrics.Count && computedResult.Length != 0 && actualResult.Length != 0)
                 {
                     bool metricSuccess = computedResult.Contains(actualResult);
 

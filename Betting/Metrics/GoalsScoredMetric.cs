@@ -11,9 +11,9 @@ namespace Betting.Metrics
         {
         }
 
-        public override void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
+        public override void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
         {
-            GetPoints(out int pctTeam1, out int pctTeam2, teamName1, teamName2, fixture);
+            GetPoints(out int pctTeam1, out int pctTeam2, teamId1, teamId2, fixture);
 
             if (pctTeam1 == 0 && pctTeam2 == 0)
                 pTeam1 = 50;
@@ -22,39 +22,39 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
-        public override void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture)
+        public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
         {
             double pctTeam1 = 0;
             double pctTeam2 = 0;
 
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamName1);
+            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId1);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
-                pctTeam1 += GetGoals(fix, teamName1) * GetCoeficient(fix, teamName1);
+                pctTeam1 += GetGoals(fix, teamId1) * GetCoeficient(fix, teamId1);
             }
-            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamName2);
+            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamId2);
             List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam2)
             {
-                pctTeam2 += GetGoals(fix, teamName2) * GetCoeficient(fix, teamName2);
+                pctTeam2 += GetGoals(fix, teamId2) * GetCoeficient(fix, teamId2);
             }
 
             pTeam1 = (int)pctTeam1;
             pTeam2 = (int)pctTeam2;
         }
 
-        public double GetCoeficient(Fixture fixture, string teamName)
+        public double GetCoeficient(Fixture fixture, int teamId)
         {
-            if (teamName == fixture.homeTeamName)
+            if (teamId == fixture.homeTeamId)
                 return fixture.coeficient.awayTeam;
             else
                 return fixture.coeficient.homeTeam;
         }
 
-        public int GetGoals(Fixture fixture, string teamName)
+        public int GetGoals(Fixture fixture, int teamId)
         {
-            if (teamName == fixture.homeTeamName)
+            if (teamId == fixture.homeTeamId)
                 return fixture.finalScore.homeTeamGoals;
             else
                 return fixture.finalScore.awayTeamGoals;

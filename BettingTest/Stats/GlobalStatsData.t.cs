@@ -27,6 +27,11 @@ namespace BettingTest
             string team3 = "team3";
             string team4 = "team4";
 
+            int teamId1 = 1;
+            int teamId2 = 2;
+            int teamId3 = 3;
+            int teamId4 = 4;
+
             commonOdds = new Dictionary<string, double>
             {
                 { "1", 1.5 },
@@ -54,6 +59,8 @@ namespace BettingTest
             {
                 homeTeamName = team1,
                 awayTeamName = team2,
+                homeTeamId = teamId1,
+                awayTeamId = teamId2
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -72,6 +79,8 @@ namespace BettingTest
             {
                 homeTeamName = team3,
                 awayTeamName = team4,
+                homeTeamId = teamId3,
+                awayTeamId = teamId4
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 1;
@@ -91,6 +100,8 @@ namespace BettingTest
             {
                 homeTeamName = team1,
                 awayTeamName = team3,
+                homeTeamId = teamId1,
+                awayTeamId = teamId3
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 0;
@@ -109,6 +120,8 @@ namespace BettingTest
             {
                 homeTeamName = team2,
                 awayTeamName = team4,
+                homeTeamId = teamId2,
+                awayTeamId = teamId4
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 1;
@@ -128,6 +141,8 @@ namespace BettingTest
             {
                 homeTeamName = team2,
                 awayTeamName = team1,
+                homeTeamId = teamId2,
+                awayTeamId = teamId1
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -146,6 +161,8 @@ namespace BettingTest
             {
                 homeTeamName = team4,
                 awayTeamName = team3,
+                homeTeamId = teamId4,
+                awayTeamId = teamId3
             };
             fixture.finalScore.homeTeamGoals = 3;
             fixture.finalScore.awayTeamGoals = 2;
@@ -165,6 +182,8 @@ namespace BettingTest
             {
                 homeTeamName = team3,
                 awayTeamName = team1,
+                homeTeamId = teamId3,
+                awayTeamId = teamId1
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -183,6 +202,8 @@ namespace BettingTest
             {
                 homeTeamName = team4,
                 awayTeamName = team2,
+                homeTeamId = teamId4,
+                awayTeamId = teamId2
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -205,10 +226,10 @@ namespace BettingTest
                 fixtureRetrieverMock.Setup(p => p.GetRound(i, 3)).Returns(fixturesRound3);
                 fixtureRetrieverMock.Setup(p => p.GetRound(i, 4)).Returns(fixturesRound4);
 
-                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team1)).Returns(fixturesTeam1);
-                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team2)).Returns(fixturesTeam2);
-                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team3)).Returns(fixturesTeam3);
-                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, team4)).Returns(fixturesTeam4);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId1)).Returns(fixturesTeam1);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId2)).Returns(fixturesTeam2);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId3)).Returns(fixturesTeam3);
+                fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId4)).Returns(fixturesTeam4);
 
                 fixtureRetrieverMock.Setup(p => p.GetNumberOfMatchDays(i)).Returns(4);
                 fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(i)).Returns(2);

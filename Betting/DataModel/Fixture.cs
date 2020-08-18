@@ -32,6 +32,8 @@ namespace Betting.DataModel
     {
         public string homeTeamName;
         public string awayTeamName;
+        public int homeTeamId;
+        public int awayTeamId;
         public DateTime date;
         public Score finalScore = new Score();
         public Score halfScore = new Score();
@@ -42,11 +44,27 @@ namespace Betting.DataModel
         public Coeficient coeficient = new Coeficient();
         public string result;
 
+        /// start static generation of team Ids
+        static readonly Dictionary<string, int> teamIdMap = new Dictionary<string, int>();
+        static int lastId = 0;
+        static int GetTeamId(string teamName)
+        {
+            if(teamIdMap.TryGetValue(teamName,out int value))
+            {
+                return value;
+            }
+            teamIdMap.Add(teamName, ++lastId);
+            return lastId;
+        }
+        /// end static generation of team Ids
+
         public void Init(ConfigManagerInterface configManager)
         {
             SetResult();
             SetCoeficients(configManager);
             AddDoubleOdds();
+            homeTeamId = GetTeamId(homeTeamName);
+            awayTeamId = GetTeamId(awayTeamName);
         }
 
         private void SetResult()

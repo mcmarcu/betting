@@ -8,8 +8,8 @@ namespace Betting.Metrics
 {
     public abstract class MetricInterface
     {
-        abstract public void GetPoints(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
-        abstract public void GetPercentage(out int pTeam1, out int pTeam2, string teamName1, string teamName2, Fixture fixture);
+        abstract public void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
+        abstract public void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
 
         //For mocking/testing
         public MetricInterface()
@@ -30,8 +30,8 @@ namespace Betting.Metrics
             int startIdx = 0;
             for (int i = allFixtures.Count - 1; i >= 0; --i)
             {
-                if (allFixtures[i].homeTeamName == fixture.homeTeamName &&
-                    allFixtures[i].awayTeamName == fixture.awayTeamName)
+                if (allFixtures[i].homeTeamId == fixture.homeTeamId &&
+                    allFixtures[i].awayTeamId == fixture.awayTeamId)
                 {
                     startIdx = i;
                     break;

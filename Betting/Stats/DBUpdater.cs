@@ -235,7 +235,7 @@ namespace Betting.Stats
                     int diff = 0;
                     foreach (MetricInterface m in metrics)
                     {
-                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
+                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
                         diff += pctTeam1;
                         diff -= pctTeam2;
                     }
@@ -343,50 +343,46 @@ namespace Betting.Stats
             if (File.Exists(outputFilePath))
                 return;
 
-            using (TextFieldParser parser = new TextFieldParser(inputFilePath))
+            using TextFieldParser parser = new TextFieldParser(inputFilePath);
+            using FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write);
+            using var outputFile = new StreamWriter(fileStream);
+            string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
+            outputFile.WriteLine(outputLine);
+
+            List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
+            int index = 0;
+
+            while (!parser.EndOfData)
             {
-                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
-                using (var outputFile = new StreamWriter(fileStream))
+                Fixture fixture = fixtures[index];
+
+                int homePointCnt = currentPoints.ContainsKey(fixture.homeTeamName) ? currentPoints[fixture.homeTeamName] : 0;
+                int awayPointCnt = currentPoints.ContainsKey(fixture.awayTeamName) ? currentPoints[fixture.awayTeamName] : 0;
+                int homePlayCnt = currentPlayed.ContainsKey(fixture.homeTeamName) ? currentPlayed[fixture.homeTeamName] : 0;
+                int awayPlayCnt = currentPlayed.ContainsKey(fixture.awayTeamName) ? currentPlayed[fixture.awayTeamName] : 0;
+
+                outputLine = parser.ReadLine() + ',' + homePointCnt.ToString() + ',' + awayPointCnt.ToString() + ',' + homePlayCnt + ',' + awayPlayCnt;
+                outputFile.WriteLine(outputLine);
+
+                if (fixture.result == "1")
                 {
-                    string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
-                    outputFile.WriteLine(outputLine);
+                    AddToDict(ref currentPoints, fixture.homeTeamName, 3);
 
-                    List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
-                    int index = 0;
-
-                    while (!parser.EndOfData)
-                    {
-                        Fixture fixture = fixtures[index];
-
-                        int homePointCnt = currentPoints.ContainsKey(fixture.homeTeamName) ? currentPoints[fixture.homeTeamName] : 0;
-                        int awayPointCnt = currentPoints.ContainsKey(fixture.awayTeamName) ? currentPoints[fixture.awayTeamName] : 0;
-                        int homePlayCnt = currentPlayed.ContainsKey(fixture.homeTeamName) ? currentPlayed[fixture.homeTeamName] : 0;
-                        int awayPlayCnt = currentPlayed.ContainsKey(fixture.awayTeamName) ? currentPlayed[fixture.awayTeamName] : 0;
-
-                        outputLine = parser.ReadLine() + ',' + homePointCnt.ToString() + ',' + awayPointCnt.ToString() + ',' + homePlayCnt + ',' + awayPlayCnt;
-                        outputFile.WriteLine(outputLine);
-
-                        if (fixture.result == "1")
-                        {
-                            AddToDict(ref currentPoints, fixture.homeTeamName, 3);
-
-                        }
-                        else if (fixture.result == "X")
-                        {
-                            AddToDict(ref currentPoints, fixture.homeTeamName, 1);
-                            AddToDict(ref currentPoints, fixture.awayTeamName, 1);
-                        }
-                        else
-                        {
-                            AddToDict(ref currentPoints, fixture.awayTeamName, 3);
-                        }
-
-                        AddToDict(ref currentPlayed, fixture.homeTeamName, 1);
-                        AddToDict(ref currentPlayed, fixture.awayTeamName, 1);
-
-                        index++;
-                    }
                 }
+                else if (fixture.result == "X")
+                {
+                    AddToDict(ref currentPoints, fixture.homeTeamName, 1);
+                    AddToDict(ref currentPoints, fixture.awayTeamName, 1);
+                }
+                else
+                {
+                    AddToDict(ref currentPoints, fixture.awayTeamName, 3);
+                }
+
+                AddToDict(ref currentPlayed, fixture.homeTeamName, 1);
+                AddToDict(ref currentPlayed, fixture.awayTeamName, 1);
+
+                index++;
             }
         }
 
@@ -401,30 +397,27 @@ namespace Betting.Stats
 
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
-                using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
-                using (var outputFile = new StreamWriter(fileStream))
+                using FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write);
+                using var outputFile = new StreamWriter(fileStream);
+                string outputLine = parser.ReadLine() + ',' + "FOH" + ',' + "FOD" + ',' + "FOA";
+                outputFile.WriteLine(outputLine);
+
+                List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
+                int index = 0;
+                while (!parser.EndOfData)
                 {
-                    string outputLine = parser.ReadLine() + ',' + "FOH" + ',' + "FOD" + ',' + "FOA";
-                    outputFile.WriteLine(outputLine);
-
-                    List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
-                    int index = 0;
-                    while (!parser.EndOfData)
+                    Fixture fixture = fixtures[index];
+                    int diff = 0;
+                    foreach (MetricInterface m in metrics)
                     {
-                        Fixture fixture = fixtures[index];
-                        int diff = 0;
-                        foreach (MetricInterface m in metrics)
-                        {
-                            m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamName, fixture.awayTeamName, fixture);
-                            diff += pctTeam1;
-                            diff -= pctTeam2;
-                        }
-
-                        outputLine = parser.ReadLine() + ',' + (100 / r1.Transform(diff)).ToString("0.00") + ',' + (100 / rx.Transform(diff)).ToString("0.00") + ',' + (100 / r2.Transform(diff)).ToString("0.00");
-                        outputFile.WriteLine(outputLine);
-                        index++;
+                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
+                        diff += pctTeam1;
+                        diff -= pctTeam2;
                     }
 
+                    outputLine = parser.ReadLine() + ',' + (100 / r1.Transform(diff)).ToString("0.00") + ',' + (100 / rx.Transform(diff)).ToString("0.00") + ',' + (100 / r2.Transform(diff)).ToString("0.00");
+                    outputFile.WriteLine(outputLine);
+                    index++;
                 }
             }
 

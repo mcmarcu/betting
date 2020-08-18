@@ -50,9 +50,9 @@ namespace Betting.Stats
             return GetNumberOfTeams(year) / 2;
         }
 
-        public override List<Fixture> GetAllFixtures(int year, string team)
+        public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
-            Tuple<int, string> t = Tuple.Create(year, team);
+            Tuple<int, int> t = Tuple.Create(year, teamId);
 
             fixturesTeamCacheLock.EnterReadLock();
             try
@@ -80,8 +80,8 @@ namespace Betting.Stats
                 List<Fixture> result = new List<Fixture>();
                 for (int i = 0; i < allFixtures.Count; ++i)
                 {
-                    if (allFixtures[i].homeTeamName == team ||
-                        allFixtures[i].awayTeamName == team)
+                    if (allFixtures[i].homeTeamId == teamId ||
+                        allFixtures[i].awayTeamId == teamId)
                     {
                         result.Add(allFixtures[i]);
                     }
@@ -310,7 +310,7 @@ namespace Betting.Stats
         private readonly Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
         private readonly ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
 
-        private readonly Dictionary<Tuple<int, string>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, string>, List<Fixture>>();
+        private readonly Dictionary<Tuple<int, int>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
         private readonly ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
 
         private readonly Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();

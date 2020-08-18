@@ -12,7 +12,7 @@ namespace Betting.Metrics
             dataAvailable = true;
             try
             {
-                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamName, fixture.awayTeamName, fixture);
+                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamId, fixture.awayTeamId, fixture);
             }
             catch (Exception)
             {

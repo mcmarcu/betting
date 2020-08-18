@@ -7,7 +7,7 @@ namespace Betting.Stats
     {
         public abstract int GetNumberOfMatchDays(int year);
         public abstract int GetGamesPerMatchDay(int year);
-        public abstract List<Fixture> GetAllFixtures(int year, string team);
+        public abstract List<Fixture> GetAllFixtures(int year, int teamId);
         public abstract List<Fixture> GetAllFixtures(int year);
         public abstract List<Fixture> GetRound(int year, int matchDay);
         public void GetPrevRound(ref int year, ref int day)
