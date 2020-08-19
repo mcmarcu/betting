@@ -7,6 +7,7 @@ __I Basic league workflow__
 ```
 * [outputChampionship](./OutputData/dataI1Championship.txt)
 * [output2Bundesliga](./OutputData/dataI12Bundesliga.txt)
+* [output2SerieB](./OutputData/dataI1SerieB.txt)
 
 2. Update data with one of the metrics (inspectMetric ignored, only required for fair odds)
 ```
@@ -18,6 +19,7 @@ __I Basic league workflow__
 ```
 * [outputChampionship](./OutputData/dataI3Championship.txt)
 * [output2Bundesliga](./OutputData/dataI32Bundesliga.txt)
+* [output2SerieB](./OutputData/dataI3SerieB.txt)
 
 4. Test this metric to get more info
 ```

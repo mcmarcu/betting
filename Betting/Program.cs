@@ -1,6 +1,7 @@
 ﻿using Accord.MachineLearning;
 using Betting.Config;
 using Betting.DataModel;
+using Betting.Metrics;
 using Betting.Stats;
 using Microsoft.Extensions.CommandLineUtils;
 using System;
@@ -131,7 +132,7 @@ namespace Betting
 
         public static List<MetricConfig> GetMetricList(int i)
         {
-            List<MetricConfig> metricConfigs = new List<MetricConfig>();
+            List<MetricConfig> metricConfigs = new List<MetricConfig>(MetricFactory.differentMetricCount);
 
             int LastGamesMetricD = i % 10;
             int GoalsConcededMetricD = (i / 10) % 10;

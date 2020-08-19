@@ -77,7 +77,7 @@ namespace Betting.Stats
 
                 List<Fixture> allFixtures = GetAllFixtures(year);
 
-                List<Fixture> result = new List<Fixture>();
+                List<Fixture> result = new List<Fixture>(allFixtures.Count);
                 for (int i = 0; i < allFixtures.Count; ++i)
                 {
                     if (allFixtures[i].homeTeamId == teamId ||
@@ -290,7 +290,7 @@ namespace Betting.Stats
                 int gamesPerMatchDay = GetGamesPerMatchDay(year);
                 int startRow = (matchDay - 1) * gamesPerMatchDay;
 
-                List<Fixture> result = new List<Fixture>();
+                List<Fixture> result = new List<Fixture>(gamesPerMatchDay);
                 for (int i = 0; i < gamesPerMatchDay; ++i)
                 {
                     result.Add(all[startRow + i]);

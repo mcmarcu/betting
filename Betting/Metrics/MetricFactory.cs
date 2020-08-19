@@ -8,9 +8,10 @@ namespace Betting.Metrics
 {
     public class MetricFactory
     {
+        public const int differentMetricCount = 5;
         static public List<MetricInterface> GetMetrics(List<MetricConfig> configs, int year, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
-            List<MetricInterface> result = new List<MetricInterface>();
+            List<MetricInterface> result = new List<MetricInterface>(configs.Count);
             foreach (MetricConfig config in configs)
             {
                 if (config.name == "LastGamesMetric")

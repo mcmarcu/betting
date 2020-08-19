@@ -191,7 +191,7 @@ namespace Betting.Stats
 
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
-            List<double> matchdayOdds = new List<double>();
+            List<double> matchdayOdds = new List<double>(thisRoundFixtures.Count);
 
             foreach (Fixture fixture in thisRoundFixtures)
             {
@@ -275,7 +275,7 @@ namespace Betting.Stats
 
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
-            List<double> matchdayOdds = new List<double>();
+            List<double> matchdayOdds = new List<double>(thisRoundFixtures.Count);
 
             foreach (Fixture fixture in thisRoundFixtures)
             {
@@ -322,11 +322,10 @@ namespace Betting.Stats
 
         public void ProcessUpcomingFixtures(out double expectedProfit)
         {
-            List<double>  matchdayOdds = new List<double>();
-
             List<MetricInterface> metrics = MetricFactory.GetMetrics(metricConfigs_, configManager_.GetYear(), configManager_, fixtureRetriever_);
             List<Fixture> thisRoundFixtures = fixtureRetriever_.GetRound(configManager_.GetYear(), configManager_.GetMatchDay());
 
+            List<double> matchdayOdds = new List<double>(thisRoundFixtures.Count);
             foreach (Fixture fixture in thisRoundFixtures)
             {
                 int totalMetricsWithData = 0;

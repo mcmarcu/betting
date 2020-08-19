@@ -26,7 +26,7 @@ namespace Betting.Metrics
         // Find <depth> fixtures with starting from <fixture>
         public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, int depth)
         {
-            List<Fixture> result = new List<Fixture>();
+            List<Fixture> result = new List<Fixture>(depth);
             int startIdx = 0;
             for (int i = allFixtures.Count - 1; i >= 0; --i)
             {
