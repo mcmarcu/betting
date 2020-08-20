@@ -1,4 +1,4 @@
-﻿using Accord.MachineLearning;
+﻿
 using Betting.Config;
 using Betting.DataModel;
 using Betting.Metrics;
@@ -15,185 +15,6 @@ namespace Betting
 {
     class Program
     {
-        public class RunOutput
-        {
-            public bool success;
-            public double rate;
-            public double averageProfit;
-            public int metricId;
-            public List<double> metricDepths;
-            public int cluster;
-
-            public RunOutput(bool success_, double rate_, double averageProfit_, int i, int maxI)
-            {
-                success = success_;
-                rate = rate_;
-                averageProfit = averageProfit_;
-                metricDepths = new List<double>();
-                metricId = i;
-                maxI /= 10;
-                while (maxI > 0)
-                {
-                    metricDepths.Add(i % 10);
-                    maxI /= 10;
-                    i /= 10;
-                }
-                cluster = 0;
-            }
-        }
-
-        public static void AddClusterInfo(ref SortedDictionary<double, RunOutput> dict)
-        {
-            if (dict.Count <= 3)
-                return;
-
-            Accord.Math.Random.Generator.Seed = 0;
-
-            double[][] metrics = new double[dict.Count][];
-            int i = 0;
-            foreach (RunOutput t in dict.Values)
-            {
-                metrics[i++] = t.metricDepths.ToArray();
-            }
-
-            // Create a new K-Means algorithm
-            KMeans kmeans = new KMeans(k: dict.Count / 3);
-
-            // Compute and retrieve the data centroids
-            var clusters = kmeans.Learn(metrics);
-
-            // Use the centroids to parition all the data
-            int[] labels = clusters.Decide(metrics);
-
-            int j = 0;
-            foreach (RunOutput v in dict.Values)
-            {
-                v.cluster = labels[j++];
-            }
-        }
-
-        public static void PrintClusterInfo(Logger logger, SortedDictionary<double, RunOutput> dict)
-        {
-            SortedDictionary<int, SortedSet<int>> clusteredOutput = new SortedDictionary<int, SortedSet<int>>();
-
-            foreach (RunOutput t in dict.Values)
-            {
-                if (!clusteredOutput.ContainsKey(t.cluster))
-                    clusteredOutput.Add(t.cluster, new SortedSet<int>());
-
-                clusteredOutput[t.cluster].Add(t.metricId);
-            }
-
-            foreach (int k in clusteredOutput.Keys)
-            {
-                logger.LogResult("config {0}", k);
-                foreach (int t in clusteredOutput[k])
-                    logger.LogResult(", {0}", t);
-                logger.LogResult("\n");
-            }
-
-        }
-
-        public static void PrintMetricList(Logger logger, int i)
-        {
-            int LastGamesMetricD = i % 10;
-            int GoalsConcededMetricD = (i / 10) % 10;
-            int GoalsDifferenceMetricD = (i / 100) % 10;
-            int GoalsScoredMetricD = (i / 1000) % 10;
-            int HomeAdvantageMetricD = (i / 10000) % 10;
-
-
-            if (LastGamesMetricD != 0)
-            {
-                logger.LogResult(" LastGames ({0}); ", LastGamesMetricD);
-            }
-
-            if (GoalsDifferenceMetricD != 0)
-            {
-                logger.LogResult(" GoalsDifferenceMetric ({0}); ", GoalsDifferenceMetricD);
-            }
-
-            if (GoalsScoredMetricD != 0)
-            {
-                logger.LogResult(" GoalsScored ({0}); ", GoalsScoredMetricD);
-            }
-
-            if (GoalsConcededMetricD != 0)
-            {
-                logger.LogResult(" GoalsConceded ({0}); ", GoalsConcededMetricD);
-            }
-
-            if (HomeAdvantageMetricD != 0)
-            {
-                logger.LogResult(" HomeAdvantageMetric ({0}); ", HomeAdvantageMetricD);
-            }
-
-        }
-
-        public static List<MetricConfig> GetMetricList(int i)
-        {
-            List<MetricConfig> metricConfigs = new List<MetricConfig>(MetricFactory.differentMetricCount);
-
-            int LastGamesMetricD = i % 10;
-            int GoalsConcededMetricD = (i / 10) % 10;
-            int GoalsDifferenceMetricD = (i / 100) % 10;
-            int GoalsScoredMetricD = (i / 1000) % 10;
-            int HomeAdvantageMetricD = (i / 10000) % 10;
-
-
-            if (LastGamesMetricD != 0)
-            {
-                MetricConfig lastGamesMetric = new MetricConfig
-                {
-                    name = "LastGamesMetric",
-                    depth = LastGamesMetricD
-                };
-                metricConfigs.Add(lastGamesMetric);
-            }
-
-            if (GoalsDifferenceMetricD != 0)
-            {
-                MetricConfig goalsDifferenceMetric = new MetricConfig
-                {
-                    name = "GoalsDifferenceMetric",
-                    depth = GoalsDifferenceMetricD
-                };
-                metricConfigs.Add(goalsDifferenceMetric);
-            }
-
-            if (GoalsScoredMetricD != 0)
-            {
-                MetricConfig goalsScoredMetric = new MetricConfig
-                {
-                    name = "GoalsScoredMetric",
-                    depth = GoalsScoredMetricD
-                };
-                metricConfigs.Add(goalsScoredMetric);
-            }
-
-            if (GoalsConcededMetricD != 0)
-            {
-                MetricConfig goalsConcededMetric = new MetricConfig
-                {
-                    name = "GoalsConcededMetric",
-                    depth = GoalsConcededMetricD
-                };
-                metricConfigs.Add(goalsConcededMetric);
-            }
-
-            if (HomeAdvantageMetricD != 0)
-            {
-                MetricConfig homeAdvantageMetric = new MetricConfig
-                {
-                    name = "HomeAdvantageMetric",
-                    depth = HomeAdvantageMetricD
-                };
-                metricConfigs.Add(homeAdvantageMetric);
-            }
-
-            return metricConfigs;
-        }
-
         static void Main(string[] args)
         {
 
@@ -220,15 +41,13 @@ namespace Betting
             var maxOddsOption = app.Option("-o|--maxodds <optionvalue>", "Max odds (2.0)", CommandOptionType.SingleValue);
             var minOddsOption = app.Option("-O|--minodds <optionvalue>", "Min odds (2.0)", CommandOptionType.SingleValue);
             var minMetricCorrectOption = app.Option("-c|--minmetriccorrect <optionvalue>", "?? 1", CommandOptionType.SingleValue);
-            var minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (-5)", CommandOptionType.SingleValue);
+            var minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (0)", CommandOptionType.SingleValue);
+            var minAverageProfitOption = app.Option("-P|--minaverageprofit <optionvalue>", "Min average for all years (0)", CommandOptionType.SingleValue);
             var logLevelOption = app.Option("-g|--loglevel <optionvalue>", "LOG_DEBUG, LOG_INFO, LOG_RESULT", CommandOptionType.SingleValue);
-            var successRateOption = app.Option("-s|--successrate <optionvalue>", "how much should be correct(75)", CommandOptionType.SingleValue);
             var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
-            var filterTopProfit = app.Option("-f|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
+            var filterTopProfit = app.Option("-F|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
             var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
             var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
-
-
 
 
             app.OnExecute(() =>
@@ -257,14 +76,14 @@ namespace Betting
                     configManager.SetMinMetricCorrect(double.Parse(minMetricCorrectOption.Value()));
                 if (minYearProfitOption.HasValue())
                     configManager.SetMinYearProfit(double.Parse(minYearProfitOption.Value()));
+                if (minAverageProfitOption.HasValue())
+                    configManager.SetMinAverageProfit(double.Parse(minAverageProfitOption.Value()));
                 if (logLevelOption.HasValue())
                     configManager.SetLogLevel(logLevelOption.Value());
-                if (successRateOption.HasValue())
-                    configManager.SetSuccessRate(double.Parse(successRateOption.Value()));
                 if (filterTopRate.HasValue())
-                    configManager.SetSuccessRate(int.Parse(filterTopRate.Value()));
+                    configManager.SetFilterTopRate(int.Parse(filterTopRate.Value()));
                 if (filterTopProfit.HasValue())
-                    configManager.SetSuccessRate(int.Parse(filterTopProfit.Value()));
+                    configManager.SetFilterTopProfit(int.Parse(filterTopProfit.Value()));
                 if (betStyleOption.HasValue())
                     configManager.SetBetStyle(betStyleOption.Value());
                 if (useExpanded.HasValue())
@@ -300,13 +119,13 @@ namespace Betting
                         int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
                         for (int i = 0; i < maxI; ++i)
                         {
-                            List<MetricConfig> metricConfigs = GetMetricList(i);
+                            List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
 
                             if (metricConfigs.Count == 0)
                                 continue;
 
                             if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
-                                PrintMetricList(logger, i);
+                                MetricFactory.PrintMetricList(logger, i);
 
                             DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
                             db.AddPoints(false);
@@ -332,8 +151,8 @@ namespace Betting
                     else
                     {
                         int metricConfigId = int.Parse(inspectMetric.Value());
-                        List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                        PrintMetricList(logger, metricConfigId);
+                        List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(metricConfigId);
+                        MetricFactory.PrintMetricList(logger, metricConfigId);
                         DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
                         db.AddPoints(true);
                         logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2']);
@@ -342,8 +161,8 @@ namespace Betting
                 else if (predictResults.HasValue())
                 {
                     int metricConfigId = int.Parse(inspectMetric.Value());
-                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                    PrintMetricList(logger, metricConfigId);
+                    List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(metricConfigId);
+                    MetricFactory.PrintMetricList(logger, metricConfigId);
                     logger.LogResultSuccess("\n Results: \n");
                     GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                     gs.ProcessUpcomingFixtures(out double profit);
@@ -351,8 +170,8 @@ namespace Betting
                 else if (inspectMetric.HasValue())
                 {
                     int metricConfigId = int.Parse(inspectMetric.Value());
-                    List<MetricConfig> metricConfigs = GetMetricList(metricConfigId);
-                    PrintMetricList(logger, metricConfigId);
+                    List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(metricConfigId);
+                    MetricFactory.PrintMetricList(logger, metricConfigId);
 
                     GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                     gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
@@ -375,13 +194,13 @@ namespace Betting
                     int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
                     Parallel.For(0, maxI, (i, state) =>
                     {
-                        List<MetricConfig> metricConfigs = GetMetricList(i);
+                        List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
 
                         if (metricConfigs.Count == 0)
                             return;
 
                         if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
-                            PrintMetricList(logger, i);
+                            MetricFactory.PrintMetricList(logger, i);
 
                         GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                         gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
@@ -427,44 +246,44 @@ namespace Betting
                     {
                         logger.LogResult("TopByProfit {0}: \n\n", configManager.GetFilterTopProfit());
 
-                        AddClusterInfo(ref topByProfit);
+                        OutputFormatter.AddClusterInfo(ref topByProfit);
                         foreach (RunOutput t in topByProfit.Values)
                         {
                             if (t.success)
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(logger, t.metricId);
+                            MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
 
                         logger.LogResult("TopByRate {0}: \n\n", configManager.GetFilterTopRate());
 
-                        AddClusterInfo(ref topByRate);
+                        OutputFormatter.AddClusterInfo(ref topByRate);
                         foreach (RunOutput t in topByRate.Values)
                         {
                             if (t.success)
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(logger, t.metricId);
+                            MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
 
                         logger.LogResult("SuccessRuns {0}: \n\n", successRuns.Count);
 
-                        AddClusterInfo(ref successRuns);
+                        OutputFormatter.AddClusterInfo(ref successRuns);
                         foreach (RunOutput t in successRuns.Values)
                         {
                             if (t.success)
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
                             else
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
-                            PrintMetricList(logger, t.metricId);
+                            MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
                         if (configManager.GetLogLevel() > ConfigManager.LogLevel.LOG_RESULT)
-                            PrintClusterInfo(logger, successRuns);
+                            OutputFormatter.PrintClusterInfo(logger, successRuns);
                     }
                 }
 

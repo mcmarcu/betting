@@ -22,39 +22,30 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
+        private void GetTeamPoints(out int pTeam, int teamId, Fixture fixture, bool checkHomeTeam)
+        {
+            double pctTeam = 0;
+
+            List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
+            List<Fixture> fixturesTeam = FindFixtures(allT, fixture, config.depth * 2);
+            int foundFixtures = 0;
+            foreach (Fixture fix in fixturesTeam)
+            {
+                int idToCheck = checkHomeTeam ? fix.homeTeamId : fix.awayTeamId;
+                if (idToCheck == teamId)
+                {
+                    pctTeam += GetPoints(fix, teamId);// no Coeficient
+                    if (++foundFixtures == config.depth)
+                        break;
+                }
+            }
+            pTeam = (int)pctTeam;
+        }
+
         public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
         {
-            double pctTeam1 = 0;
-            double pctTeam2 = 0;
-
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId1);
-            List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth * 2);
-            int homeFoundFixtures = 0;
-            foreach (Fixture fix in fixturesTeam1)
-            {
-                if (fix.homeTeamId == teamId1)
-                {
-                    pctTeam1 += GetPoints(fix, teamId1);// no Coeficient
-                    if (++homeFoundFixtures == config.depth)
-                        break;
-                }
-            }
-
-            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamId2);
-            List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth * 2);
-            int awayFoundFixtures = 0;
-            foreach (Fixture fix in fixturesTeam2)
-            {
-                if (fix.awayTeamId == teamId2)
-                {
-                    pctTeam2 += GetPoints(fix, teamId2);// no Coeficient
-                    if (++awayFoundFixtures == config.depth)
-                        break;
-                }
-            }
-
-            pTeam1 = (int)pctTeam1;
-            pTeam2 = (int)pctTeam2;
+            GetTeamPoints(out pTeam1, teamId1, fixture, true);
+            GetTeamPoints(out pTeam2, teamId2, fixture, false);
         }
 
         public int GetPoints(Fixture fixture, int teamId)

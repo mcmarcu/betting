@@ -96,6 +96,7 @@
     <Compile Include="Config\ConfigManagerInterface.cs" />
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\Logger.cs" />
+    <Compile Include="Config\OutputFormatter.cs" />
     <Compile Include="DataModel\MetricConfig.cs" />
     <Compile Include="DataModel\Fixture.cs" />
     <Compile Include="Metrics\GoalsConcededMetric.cs" />

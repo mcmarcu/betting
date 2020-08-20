@@ -23,7 +23,7 @@ namespace Betting.Config
         abstract public double GetMaxOdds();
         abstract public double GetMinMetricCorrect();
         abstract public double GetMinYearProfit();
-        abstract public double GetSuccessRate();
+        abstract public double GetMinAverageProfit();
         abstract public int GetFilterTopRate();
         abstract public int GetFilterTopProfit();
         abstract public bool GetUseExpanded();

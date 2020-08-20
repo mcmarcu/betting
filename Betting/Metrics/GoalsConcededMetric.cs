@@ -11,29 +11,25 @@ namespace Betting.Metrics
         {
         }
 
-        public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
+        private void GetTeamPoints(out int pTeam, int teamId, Fixture fixture)
         {
-            double pctTeam1 = 0;
-            double pctTeam2 = 0;
+            double pctTeam = 0;
 
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId1);
+            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId);
             List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
-                pctTeam1 += GetGoals(fix, teamId1) * GetCoeficient(fix, teamId1);
+                pctTeam += GetGoals(fix, teamId) * GetCoeficient(fix, teamId);
             }
-            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamId2);
-            List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam2)
-            {
-                pctTeam2 += GetGoals(fix, teamId2) * GetCoeficient(fix, teamId2);
-            }
-
-            //reverse
-            pTeam1 = (int)pctTeam2;
-            pTeam2 = (int)pctTeam1;
+           
+            pTeam = (int)pctTeam;
         }
 
+        public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
+        {
+            GetTeamPoints(out pTeam2, teamId1, fixture);//reverse
+            GetTeamPoints(out pTeam1, teamId2, fixture);//reverse
+        }
 
         public override void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
         {

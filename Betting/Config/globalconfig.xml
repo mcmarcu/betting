@@ -11,8 +11,8 @@
   <maxodds>1.8</maxodds>
   <minodds>1.0</minodds>
   <minmetriccorrect>1</minmetriccorrect>
-  <minyearprofit>-5</minyearprofit>
-  <successrate>75</successrate>
+  <minyearprofit>0</minyearprofit>
+  <minaverageprofit>0</minaverageprofit>
   <filtertoprate>20</filtertoprate>
   <filtertopprofit>20</filtertopprofit>
   <betstyle>3</betstyle><!-- all max-->

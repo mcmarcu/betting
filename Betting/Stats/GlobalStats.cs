@@ -47,9 +47,10 @@ namespace Betting.Stats
                 profitSum += yearProfit;
             });
 
-            success = successYears == reverseYears;
-            rate = (totalGames != 0) ? ((double)correctGames / (double)totalGames) * 100 : 0;
+
+            rate = totalGames == 0 ? 0 : ((double)correctGames / (double)totalGames) * 100;
             averageProfit = profitSum / reverseYears;
+            success = (successYears == reverseYears) && (averageProfit >= configManager_.GetMinAverageProfit());
         }
 
         public void GetYearData(out int correctFixturesWithData, out int totalFixturesWithData, out double currentProfit, int year)

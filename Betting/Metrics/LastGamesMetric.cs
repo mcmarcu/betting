@@ -22,26 +22,24 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
+        private void GetTeamPoints(out int pTeam, int teamId, Fixture fixture)
+        {
+            double pctTeam = 0;
+
+            List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
+            List<Fixture> fixturesTeam = FindFixtures(allT, fixture, config.depth);
+            foreach (Fixture fix in fixturesTeam)
+            {
+                pctTeam += GetPoints(fix, teamId) * GetCoeficient(fix, teamId);
+            }
+
+            pTeam = (int)pctTeam;
+        }
+
         public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
         {
-            double pctTeam1 = 0;
-            double pctTeam2 = 0;
-
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId1);
-            List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam1)
-            {
-                pctTeam1 += GetPoints(fix, teamId1) * GetCoeficient(fix, teamId1);
-            }
-
-            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamId2);
-            List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam2)
-            {
-                pctTeam2 += GetPoints(fix, teamId2) * GetCoeficient(fix, teamId2);
-            }
-            pTeam1 = (int)pctTeam1;
-            pTeam2 = (int)pctTeam2;
+            GetTeamPoints(out pTeam1, teamId1, fixture);
+            GetTeamPoints(out pTeam2, teamId2, fixture);
         }
 
         public int GetPoints(Fixture fixture, int teamId)

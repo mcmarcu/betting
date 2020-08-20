@@ -144,14 +144,14 @@ namespace Betting.Config
             return MinYearProfit.Value;
         }
 
-        public void SetSuccessRate(double value)
+        public void SetMinAverageProfit(double value)
         {
-            SuccessRate = value;
+            MinAverageProfit = value;
         }
 
-        public override double GetSuccessRate()
+        public override double GetMinAverageProfit()
         {
-            return SuccessRate.Value;
+            return MinAverageProfit.Value;
         }
 
         public void SetFilterTopRate(int value)
@@ -214,7 +214,7 @@ namespace Betting.Config
             MinOdds = double.Parse(GetData("minodds"));
             MinMetricCorrect = double.Parse(GetData("minmetriccorrect"));
             MinYearProfit = double.Parse(GetData("minyearprofit"));
-            SuccessRate = double.Parse(GetData("successrate"));
+            MinAverageProfit = double.Parse(GetData("minaverageprofit"));
             FilterTopRate = int.Parse(GetData("filtertoprate"));
             FilterTopProfit = int.Parse(GetData("filtertopprofit"));
             UseExpanded = GetData("useexpanded") == "1";
@@ -237,7 +237,7 @@ namespace Betting.Config
         private double? MinOdds;
         private double? MinMetricCorrect;
         private double? MinYearProfit;
-        private double? SuccessRate;
+        private double? MinAverageProfit;
         private int? FilterTopRate;
         private int? FilterTopProfit;
         private bool? UseExpanded;

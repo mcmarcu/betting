@@ -22,28 +22,24 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
-        public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
+        private void GetTeamPoints(out int pTeam, int teamId, int advTeamId, Fixture fixture)
         {
-            double pctTeam1 = 0;
-            double pctTeam2 = 0;
+            double pctTeam = 0;
 
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId1);
-            List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
+            List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
+            List<Fixture> fixturesTeam1 = FindFixtures(allT, fixture, config.depth);
             foreach (Fixture fix in fixturesTeam1)
             {
-                pctTeam1 += GetScoredGoals(fix, teamId1) * GetCoeficient(fix, teamId2);
-                pctTeam1 -= GetConcededGoals(fix, teamId1) * GetCoeficient(fix, teamId2);
+                pctTeam += GetScoredGoals(fix, teamId) * GetCoeficient(fix, advTeamId);
+                pctTeam -= GetConcededGoals(fix, teamId) * GetCoeficient(fix, advTeamId);
             }
-            List<Fixture> allT2 = fixtureRetriever_.GetAllFixtures(year, teamId2);
-            List<Fixture> fixturesTeam2 = FindFixtures(allT2, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam2)
-            {
-                pctTeam2 += GetScoredGoals(fix, teamId2) * GetCoeficient(fix, teamId1);
-                pctTeam2 -= GetConcededGoals(fix, teamId2) * GetCoeficient(fix, teamId1);
-            }
+            pTeam = (int)pctTeam;
+        }
 
-            pTeam1 = (int)pctTeam1;
-            pTeam2 = (int)pctTeam2;
+        public override void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture)
+        {
+            GetTeamPoints(out pTeam1, teamId1, teamId2, fixture);
+            GetTeamPoints(out pTeam2, teamId2, teamId1, fixture);
         }
 
         public double GetCoeficient(Fixture fixture, int teamId)
