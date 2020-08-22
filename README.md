@@ -5,9 +5,11 @@ __I Basic league workflow__
 ```
 -e --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
 ```
+* [outputPremierLeague](./OutputData/dataI1PremierLeague.txt)
 * [outputChampionship](./OutputData/dataI1Championship.txt)
 * [output2Bundesliga](./OutputData/dataI12Bundesliga.txt)
-* [output2SerieB](./OutputData/dataI1SerieB.txt)
+* [outputSerieB](./OutputData/dataI1SerieB.txt)
+* [outputBelgium](./OutputData/dataI1Belgium.txt)
 
 2. Update data with one of the metrics (inspectMetric ignored, only required for fair odds)
 ```
@@ -17,6 +19,7 @@ __I Basic league workflow__
 ```
 -e --useExpanded=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2.0 --minyearprofit=0 --successrate=70 --betstyle=all --loglevel=LOG_RESULT
 ```
+* [outputPremierLeague](./OutputData/dataI3PremierLeague.txt)
 * [outputChampionship](./OutputData/dataI3Championship.txt)
 * [output2Bundesliga](./OutputData/dataI32Bundesliga.txt)
 * [output2SerieB](./OutputData/dataI3SerieB.txt)

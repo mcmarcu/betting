@@ -2,8 +2,8 @@
 using Betting.DataModel;
 using Microsoft.VisualBasic.FileIO;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Betting.Stats
 {
@@ -23,26 +23,22 @@ namespace Betting.Stats
 
         private int GetNumberOfTeams(int year)
         {
-            lock (numberOfTeamsCache)
+            if (numberOfTeamsCache.TryGetValue(year, out int value))
             {
-                if (numberOfTeamsCache.TryGetValue(year, out int value))
-                {
-                    return value;
-                }
-
-                HashSet<string> teams = new HashSet<string>();
-
-                List<Fixture> allFixtures = GetAllFixtures(year);
-                foreach (Fixture fixture in allFixtures)
-                {
-                    teams.Add(fixture.homeTeamName);
-                    teams.Add(fixture.awayTeamName);
-                }
-                
-                numberOfTeamsCache.Add(year, teams.Count);
-                return teams.Count;
+                return value;
             }
 
+            HashSet<string> teams = new HashSet<string>();
+
+            List<Fixture> allFixtures = GetAllFixtures(year);
+            foreach (Fixture fixture in allFixtures)
+            {
+                teams.Add(fixture.homeTeamName);
+                teams.Add(fixture.awayTeamName);
+            }
+                
+            numberOfTeamsCache[year] = teams.Count;
+            return teams.Count;
         }
 
         public override int GetGamesPerMatchDay(int year)
@@ -53,185 +49,145 @@ namespace Betting.Stats
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
             Tuple<int, int> t = Tuple.Create(year, teamId);
-
-            fixturesTeamCacheLock.EnterReadLock();
-            try
+            
+            if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
             {
-                if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
+                return value;
+            }
+
+            List<Fixture> allFixtures = GetAllFixtures(year);
+
+            List<Fixture> result = new List<Fixture>(allFixtures.Count);
+            for (int i = 0; i < allFixtures.Count; ++i)
+            {
+                if (allFixtures[i].homeTeamId == teamId ||
+                    allFixtures[i].awayTeamId == teamId)
                 {
-                    return value;
+                    result.Add(allFixtures[i]);
                 }
             }
-            finally
-            {
-                fixturesTeamCacheLock.ExitReadLock();
-            }
 
-            fixturesTeamCacheLock.EnterWriteLock();
-            try
-            {
-                if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
-                {
-                    return value;
-                }
-
-                List<Fixture> allFixtures = GetAllFixtures(year);
-
-                List<Fixture> result = new List<Fixture>(allFixtures.Count);
-                for (int i = 0; i < allFixtures.Count; ++i)
-                {
-                    if (allFixtures[i].homeTeamId == teamId ||
-                        allFixtures[i].awayTeamId == teamId)
-                    {
-                        result.Add(allFixtures[i]);
-                    }
-                }
-
-                fixturesTeamCache.Add(t, result);
-                return result;
-            }
-            finally
-            {
-                fixturesTeamCacheLock.ExitWriteLock();
-            }
+            fixturesTeamCache[t] = result;
+            return result;
         }
 
         public override List<Fixture> GetAllFixtures(int year)
         {
-            fixturesCacheLock.EnterReadLock();
-            try
+            
+            if (fixturesCache.TryGetValue(year, out List<Fixture> value))
             {
-                if (fixturesCache.TryGetValue(year, out List<Fixture> value))
-                {
-                    return value;
-                }
-            }
-            finally
-            {
-                fixturesCacheLock.ExitReadLock();
+                return value;
             }
 
-            fixturesCacheLock.EnterWriteLock();
-            try
+            string leagueName = configManager_.GetLeagueName();
+            List<Fixture> result = new List<Fixture>();
+            string fileName;
+            if (configManager_.GetUseExpanded())
             {
-                if (fixturesCache.TryGetValue(year, out List<Fixture> value))
+                fileName = "..\\..\\DBEX\\" + leagueName + year + ".csv";
+            }
+            else
+            {
+                fileName = "..\\..\\DB\\" + leagueName + year + ".csv";
+            }
+
+            using (TextFieldParser parser = new TextFieldParser(fileName))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+
+                string[] fields = parser.ReadFields();
+                int idxDate = Array.FindIndex(fields, item => item == "Date");
+                int idxHomeTeam = Array.FindIndex(fields, item => item == "HomeTeam");
+                int idxAwayTeam = Array.FindIndex(fields, item => item == "AwayTeam");
+                int idxFTHG = Array.FindIndex(fields, item => item == "FTHG");
+                int idxFTAG = Array.FindIndex(fields, item => item == "FTAG");
+                int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
+                int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
+
+                string[] oddProviders = { "B365", "BW", "PS", "VC", "GB" };
+                Dictionary<string, int> oddIdx = new Dictionary<string, int>();
+
+                foreach (string oddProvider in oddProviders)
                 {
-                    return value;
+                    int idxH = Array.FindIndex(fields, item => item == (oddProvider + "H"));
+                    oddIdx.Add((oddProvider + "H"), idxH);
+                    int idxD = Array.FindIndex(fields, item => item == (oddProvider + "D"));
+                    oddIdx.Add((oddProvider + "D"), idxD);
+                    int idxA = Array.FindIndex(fields, item => item == (oddProvider + "A"));
+                    oddIdx.Add((oddProvider + "A"), idxA);
                 }
 
-                string leagueName = configManager_.GetLeagueName();
-                List<Fixture> result = new List<Fixture>();
-                string fileName;
+
+                int idxHPTS = -1;
+                int idxAPTS = -1;
+                int idxHPL = -1;
+                int idxAPL = -1;
+                int idxFOH = -1;
+                int idxFOD = -1;
+                int idxFOA = -1;
+
+
                 if (configManager_.GetUseExpanded())
                 {
-                    fileName = "..\\..\\DBEX\\" + leagueName + year + ".csv";
+                    idxHPTS = Array.FindIndex(fields, item => item == "HPTS");
+                    idxAPTS = Array.FindIndex(fields, item => item == "APTS");
+                    idxHPL = Array.FindIndex(fields, item => item == "HPL");
+                    idxAPL = Array.FindIndex(fields, item => item == "APL");
+                    idxFOH = Array.FindIndex(fields, item => item == "FOH");
+                    idxFOD = Array.FindIndex(fields, item => item == "FOD");
+                    idxFOA = Array.FindIndex(fields, item => item == "FOA");
                 }
-                else
+
+
+                while (!parser.EndOfData)
                 {
-                    fileName = "..\\..\\DB\\" + leagueName + year + ".csv";
-                }
-
-                using (TextFieldParser parser = new TextFieldParser(fileName))
-                {
-                    parser.TextFieldType = FieldType.Delimited;
-                    parser.SetDelimiters(",");
-
-                    string[] fields = parser.ReadFields();
-                    int idxDate = Array.FindIndex(fields, item => item == "Date");
-                    int idxHomeTeam = Array.FindIndex(fields, item => item == "HomeTeam");
-                    int idxAwayTeam = Array.FindIndex(fields, item => item == "AwayTeam");
-                    int idxFTHG = Array.FindIndex(fields, item => item == "FTHG");
-                    int idxFTAG = Array.FindIndex(fields, item => item == "FTAG");
-                    int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
-                    int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
-
-                    string[] oddProviders = { "B365", "BW", "PS", "VC", "GB" };
-                    Dictionary<string, int> oddIdx = new Dictionary<string, int>();
+                    fields = parser.ReadFields();
+                    if (fields[2] == "")
+                        break;
+                    Fixture newFixture = new Fixture
+                    {
+                        homeTeamName = fields[idxHomeTeam],
+                        awayTeamName = fields[idxAwayTeam]
+                    };
+                    int.TryParse(fields[idxFTHG], out newFixture.finalScore.homeTeamGoals);
+                    int.TryParse(fields[idxFTAG], out newFixture.finalScore.awayTeamGoals);
+                    int.TryParse(fields[idxHTHG], out newFixture.halfScore.homeTeamGoals);
+                    int.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
+                    newFixture.date = DateTime.Parse(fields[idxDate]);
 
                     foreach (string oddProvider in oddProviders)
                     {
-                        int idxH = Array.FindIndex(fields, item => item == (oddProvider + "H"));
-                        oddIdx.Add((oddProvider + "H"), idxH);
-                        int idxD = Array.FindIndex(fields, item => item == (oddProvider + "D"));
-                        oddIdx.Add((oddProvider + "D"), idxD);
-                        int idxA = Array.FindIndex(fields, item => item == (oddProvider + "A"));
-                        oddIdx.Add((oddProvider + "A"), idxA);
+                        if (TryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
+                            break;
                     }
 
-
-                    int idxHPTS = -1;
-                    int idxAPTS = -1;
-                    int idxHPL = -1;
-                    int idxAPL = -1;
-                    int idxFOH = -1;
-                    int idxFOD = -1;
-                    int idxFOA = -1;
-
+                    if (newFixture.odds.Count != 3)
+                    {
+                        newFixture.odds.Add("1", 1);
+                        newFixture.odds.Add("X", 1);
+                        newFixture.odds.Add("2", 1);
+                    }
 
                     if (configManager_.GetUseExpanded())
                     {
-                        idxHPTS = Array.FindIndex(fields, item => item == "HPTS");
-                        idxAPTS = Array.FindIndex(fields, item => item == "APTS");
-                        idxHPL = Array.FindIndex(fields, item => item == "HPL");
-                        idxAPL = Array.FindIndex(fields, item => item == "APL");
-                        idxFOH = Array.FindIndex(fields, item => item == "FOH");
-                        idxFOD = Array.FindIndex(fields, item => item == "FOD");
-                        idxFOA = Array.FindIndex(fields, item => item == "FOA");
+                        newFixture.points.homeTeamPoints = int.Parse(fields[idxHPTS]);
+                        newFixture.points.awayTeamPoints = int.Parse(fields[idxAPTS]);
+                        newFixture.gamesPlayed.homeTeamGamesPlayed = int.Parse(fields[idxHPL]);
+                        newFixture.gamesPlayed.awayTeamGamesPlayed = int.Parse(fields[idxAPL]);
+                        newFixture.fairOdds.Add("1", double.Parse(fields[idxFOH]));
+                        newFixture.fairOdds.Add("X", double.Parse(fields[idxFOD]));
+                        newFixture.fairOdds.Add("2", double.Parse(fields[idxFOA]));
                     }
+                    newFixture.Init(configManager_);
 
-
-                    while (!parser.EndOfData)
-                    {
-                        fields = parser.ReadFields();
-                        if (fields[2] == "")
-                            break;
-                        Fixture newFixture = new Fixture
-                        {
-                            homeTeamName = fields[idxHomeTeam],
-                            awayTeamName = fields[idxAwayTeam]
-                        };
-                        int.TryParse(fields[idxFTHG], out newFixture.finalScore.homeTeamGoals);
-                        int.TryParse(fields[idxFTAG], out newFixture.finalScore.awayTeamGoals);
-                        int.TryParse(fields[idxHTHG], out newFixture.halfScore.homeTeamGoals);
-                        int.TryParse(fields[idxHTAG], out newFixture.halfScore.awayTeamGoals);
-                        newFixture.date = DateTime.Parse(fields[idxDate]);
-
-                        foreach (string oddProvider in oddProviders)
-                        {
-                            if (TryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
-                                break;
-                        }
-
-                        if (newFixture.odds.Count != 3)
-                        {
-                            newFixture.odds.Add("1", 1);
-                            newFixture.odds.Add("X", 1);
-                            newFixture.odds.Add("2", 1);
-                        }
-
-                        if (configManager_.GetUseExpanded())
-                        {
-                            newFixture.points.homeTeamPoints = int.Parse(fields[idxHPTS]);
-                            newFixture.points.awayTeamPoints = int.Parse(fields[idxAPTS]);
-                            newFixture.gamesPlayed.homeTeamGamesPlayed = int.Parse(fields[idxHPL]);
-                            newFixture.gamesPlayed.awayTeamGamesPlayed = int.Parse(fields[idxAPL]);
-                            newFixture.fairOdds.Add("1", double.Parse(fields[idxFOH]));
-                            newFixture.fairOdds.Add("X", double.Parse(fields[idxFOD]));
-                            newFixture.fairOdds.Add("2", double.Parse(fields[idxFOA]));
-                        }
-                        newFixture.Init(configManager_);
-
-                        result.Add(newFixture);
-                    }
+                    result.Add(newFixture);
                 }
+            }
 
-                fixturesCache.Add(year, result);
-                return result;
-            }
-            finally
-            {
-                fixturesCacheLock.ExitWriteLock();
-            }
+            fixturesCache[year] = result;
+            return result;
+
         }
 
         private bool TryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
@@ -264,56 +220,30 @@ namespace Betting.Stats
         {
             Tuple<int, int> t = Tuple.Create(year, matchDay);
 
-            matchdayFixtureCacheLock.EnterReadLock();
-            try
+            if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
             {
-                if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
-                {
-                    return value;
-                }
-            }
-            finally
-            {
-                matchdayFixtureCacheLock.ExitReadLock();
+                return value;
             }
 
-            matchdayFixtureCacheLock.EnterWriteLock();
-            try
+            List<Fixture> all = GetAllFixtures(year);
+
+            int gamesPerMatchDay = GetGamesPerMatchDay(year);
+            int startRow = (matchDay - 1) * gamesPerMatchDay;
+
+            List<Fixture> result = new List<Fixture>(gamesPerMatchDay);
+            for (int i = 0; i < gamesPerMatchDay; ++i)
             {
-                if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
-                {
-                    return value;
-                }
-
-                List<Fixture> all = GetAllFixtures(year);
-
-                int gamesPerMatchDay = GetGamesPerMatchDay(year);
-                int startRow = (matchDay - 1) * gamesPerMatchDay;
-
-                List<Fixture> result = new List<Fixture>(gamesPerMatchDay);
-                for (int i = 0; i < gamesPerMatchDay; ++i)
-                {
-                    result.Add(all[startRow + i]);
-                }
-                matchdayFixtureCache[t] = result;
-                return result;
+                result.Add(all[startRow + i]);
             }
-            finally
-            {
-                matchdayFixtureCacheLock.ExitWriteLock();
-            }
+            matchdayFixtureCache[t] = result;
+            return result;
         }
 
-        private readonly Dictionary<int, List<Fixture>> fixturesCache = new Dictionary<int, List<Fixture>>();
-        private readonly ReaderWriterLockSlim fixturesCacheLock = new ReaderWriterLockSlim();
+        private readonly ConcurrentDictionary<int, List<Fixture>> fixturesCache = new ConcurrentDictionary<int, List<Fixture>>();
+        private readonly ConcurrentDictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<Tuple<int, int>, List<Fixture>>();
+        private readonly ConcurrentDictionary<Tuple<int, int>, List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<Tuple<int, int>, List<Fixture>>();
 
-        private readonly Dictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
-        private readonly ReaderWriterLockSlim matchdayFixtureCacheLock = new ReaderWriterLockSlim();
-
-        private readonly Dictionary<Tuple<int, int>, List<Fixture>> fixturesTeamCache = new Dictionary<Tuple<int, int>, List<Fixture>>();
-        private readonly ReaderWriterLockSlim fixturesTeamCacheLock = new ReaderWriterLockSlim();
-
-        private readonly Dictionary<int, int> numberOfTeamsCache = new Dictionary<int, int>();
+        private readonly ConcurrentDictionary<int, int> numberOfTeamsCache = new ConcurrentDictionary<int, int>();
 
         private readonly ConfigManagerInterface configManager_;
     }

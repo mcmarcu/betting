@@ -30,6 +30,7 @@ namespace Betting.DataModel
 
     public class Fixture
     {
+        public int fixtureId;
         public string homeTeamName;
         public string awayTeamName;
         public int homeTeamId;
@@ -46,15 +47,17 @@ namespace Betting.DataModel
 
         /// start static generation of team Ids
         static readonly Dictionary<string, int> teamIdMap = new Dictionary<string, int>();
-        static int lastId = 0;
+        static int lastTeamId = 0;
+        static int lastFixtureId = 0;
+
         static int GetTeamId(string teamName)
         {
             if(teamIdMap.TryGetValue(teamName,out int value))
             {
                 return value;
             }
-            teamIdMap.Add(teamName, ++lastId);
-            return lastId;
+            teamIdMap.Add(teamName, ++lastTeamId);
+            return lastTeamId;
         }
         /// end static generation of team Ids
 
@@ -63,6 +66,7 @@ namespace Betting.DataModel
             SetResult();
             SetCoeficients(configManager);
             AddDoubleOdds();
+            fixtureId = ++lastFixtureId;
             homeTeamId = GetTeamId(homeTeamName);
             awayTeamId = GetTeamId(awayTeamName);
         }

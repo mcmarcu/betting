@@ -17,7 +17,6 @@ namespace Betting
     {
         static void Main(string[] args)
         {
-
             var app = new CommandLineApplication
             {
                 Name = "Betting",

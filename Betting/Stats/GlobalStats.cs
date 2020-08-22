@@ -1,6 +1,7 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using Betting.Metrics;
+using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,6 +111,18 @@ namespace Betting.Stats
             return profit;
         }
 
+        private int CountCharsInString(string str, char c)
+        {
+            int count = 0;
+            int length = str.Length;
+            for (int i = length - 1; i >= 0; i--)
+            {
+                if (str[i] == c)
+                    count++;
+            }
+            return count;
+        }
+
         public string ComputeExpectedResult(string aggregateResult, int totalMetricsWithData)
         {
             string computedResult = string.Empty;
@@ -118,8 +131,8 @@ namespace Betting.Stats
             string possibleResults = "1X2";
             foreach (char result in possibleResults)
             {
-                int count = aggregateResult.Count(f => f == result);
-                if (count >= goodMetricsCount)
+                //int count = aggregateResult.Count(f => f == result);
+                if (CountCharsInString(aggregateResult,result) >= goodMetricsCount)
                 {
                     computedResult += result;
                 }
@@ -135,8 +148,8 @@ namespace Betting.Stats
             }
             else if (computedResult == "X" /*|| computedResult == ""*/)
             {
-                int count1 = aggregateResult.Count(f => f == '1');
-                int count2 = aggregateResult.Count(f => f == '2');
+                int count1 = CountCharsInString(aggregateResult, '1');//aggregateResult.Count(f => f == '1');
+                int count2 = CountCharsInString(aggregateResult, '2');//aggregateResult.Count(f => f == '2');
                 if (count1 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('2'))
                     computedResult = "1X";
                 else if (count2 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('1'))

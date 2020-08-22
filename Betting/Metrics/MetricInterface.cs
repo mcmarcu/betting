@@ -27,24 +27,13 @@ namespace Betting.Metrics
         public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, int depth)
         {
             List<Fixture> result = new List<Fixture>(depth);
-            int startIdx = 0;
-            for (int i = allFixtures.Count - 1; i >= 0; --i)
-            {
-                if (allFixtures[i].homeTeamId == fixture.homeTeamId &&
-                    allFixtures[i].awayTeamId == fixture.awayTeamId)
-                {
-                    startIdx = i;
-                    break;
-                }
-            }
+            int startIdx = allFixtures.Count - 1;
+            for (; startIdx >= 0  && (allFixtures[startIdx].fixtureId != fixture.fixtureId); --startIdx)
+            {}
 
-            for (int i = startIdx - 1; i >= 0; --i)
+            for (int i = startIdx - 1; (i >= 0) && (result.Count < depth); --i)
             {
                 result.Add(allFixtures[i]);
-                if (result.Count == depth)
-                {
-                    break;
-                }
             }
 
             /*if (result.Count != depth)
