@@ -37,8 +37,7 @@ namespace Betting.Stats
                 teams.Add(fixture.awayTeamName);
             }
                 
-            numberOfTeamsCache[year] = teams.Count;
-            return teams.Count;
+            return numberOfTeamsCache.GetOrAdd(year, teams.Count);
         }
 
         public override int GetGamesPerMatchDay(int year)
@@ -67,8 +66,7 @@ namespace Betting.Stats
                 }
             }
 
-            fixturesTeamCache[t] = result;
-            return result;
+            return fixturesTeamCache.GetOrAdd(t, result);
         }
 
         public override List<Fixture> GetAllFixtures(int year)
@@ -185,9 +183,7 @@ namespace Betting.Stats
                 }
             }
 
-            fixturesCache[year] = result;
-            return result;
-
+            return fixturesCache.GetOrAdd(year, result);
         }
 
         private bool TryGetOddData(string oddProvider, string[] fields, Dictionary<string, int> oddIdx, ref Fixture fixture)
@@ -235,8 +231,8 @@ namespace Betting.Stats
             {
                 result.Add(all[startRow + i]);
             }
-            matchdayFixtureCache[t] = result;
-            return result;
+
+            return matchdayFixtureCache.GetOrAdd(t, result);
         }
 
         private readonly ConcurrentDictionary<int, List<Fixture>> fixturesCache = new ConcurrentDictionary<int, List<Fixture>>();

@@ -1,7 +1,6 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using Betting.Metrics;
-using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +65,8 @@ namespace Betting.Stats
                 //GetMatchdayDataFairOdds(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
                 GetMatchdayData(out int correctFixtures, out int totalFixtures, out double matchdayProfit, matchDay, year);
 
-                logger_.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, ((double)correctFixtures / (double)totalFixtures) * 100, matchdayProfit);
+                double rate = totalFixtures == 0 ? 0 : ((double)correctFixtures / (double)totalFixtures) * 100;
+                logger_.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, rate, matchdayProfit);
 
                 correctFixturesWithData += correctFixtures;
                 totalFixturesWithData += totalFixtures;
@@ -146,6 +146,10 @@ namespace Betting.Stats
             {
                 computedResult = "X2";
             }
+            
+            //TODO: count also if we just have 1 and X
+            //where at least one is in more than half?
+
             else if (computedResult == "X" /*|| computedResult == ""*/)
             {
                 int count1 = CountCharsInString(aggregateResult, '1');//aggregateResult.Count(f => f == '1');

@@ -8,6 +8,7 @@ __I Basic league workflow__
 * [outputPremierLeague](./OutputData/dataI1PremierLeague.txt)
 * [outputChampionship](./OutputData/dataI1Championship.txt)
 * [output2Bundesliga](./OutputData/dataI12Bundesliga.txt)
+* [outputSerieA](./OutputData/dataI1SerieA.txt)
 * [outputSerieB](./OutputData/dataI1SerieB.txt)
 * [outputBelgium](./OutputData/dataI1Belgium.txt)
 
@@ -22,7 +23,9 @@ __I Basic league workflow__
 * [outputPremierLeague](./OutputData/dataI3PremierLeague.txt)
 * [outputChampionship](./OutputData/dataI3Championship.txt)
 * [output2Bundesliga](./OutputData/dataI32Bundesliga.txt)
+* [output2SerieA](./OutputData/dataI3SerieA.txt)
 * [output2SerieB](./OutputData/dataI3SerieB.txt)
+* [output2Belgium](./OutputData/dataI3Belgium.txt)
 
 4. Test this metric to get more info
 ```
@@ -51,4 +54,27 @@ __III Use data to predict__
 2. Predict using expanded CoeficientWeight 3 data
 ```
 -w --useExpanded=3 -x=39000 --league=Championship --year=2019 --matchday=37 --minodds=1.0 --maxodds=2.0 --betstyle=all --loglevel=LOG_INFO
+```
+
+
+__IV Successfull runs__
+
+1. Championship
+```
+-x=37006 --useExpanded=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2 --minyearprofit=0 --betstyle=all --loglevel=LOG_INFO
+Result True, Rate 74.88, avgProfit 501.70
+```
+
+
+```
+-x=68078 --useExpanded=3 --league=Championship --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2 --minyearprofit=0 --betstyle=all --loglevel=LOG_INFO
+Result True, Rate 77.75, avgProfit 275.33
+```
+
+
+2. 2Bundesliga
+
+```
+-x=90900 --useExpanded=3 --league=2Bundesliga --year=2018 --matchday=max-2 --mreverse=10 --minodds=1.0 --maxodds=2 --minyearprofit=0 --betstyle=all --loglevel=LOG_INFO
+Result True, Rate 76.82, avgProfit 276.90
 ```

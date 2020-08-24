@@ -18,11 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OutputData", "OutputData", 
 		OutputData\dataI1Belgium.txt = OutputData\dataI1Belgium.txt
 		OutputData\dataI1Championship.txt = OutputData\dataI1Championship.txt
 		OutputData\dataI1PremierLeague.txt = OutputData\dataI1PremierLeague.txt
+		OutputData\dataI1SerieA.txt = OutputData\dataI1SerieA.txt
 		OutputData\dataI1SerieB.txt = OutputData\dataI1SerieB.txt
 		OutputData\dataI32Bundesliga.txt = OutputData\dataI32Bundesliga.txt
 		OutputData\dataI3Belgium.txt = OutputData\dataI3Belgium.txt
 		OutputData\dataI3Championship.txt = OutputData\dataI3Championship.txt
 		OutputData\dataI3PremierLeague.txt = OutputData\dataI3PremierLeague.txt
+		OutputData\dataI3SerieA.txt = OutputData\dataI3SerieA.txt
 		OutputData\dataI3SerieB.txt = OutputData\dataI3SerieB.txt
 	EndProjectSection
 EndProject

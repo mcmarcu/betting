@@ -1,5 +1,6 @@
 ﻿using Betting.Config;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Betting.DataModel
@@ -46,18 +47,13 @@ namespace Betting.DataModel
         public string result;
 
         /// start static generation of team Ids
-        static readonly Dictionary<string, int> teamIdMap = new Dictionary<string, int>();
+        static readonly ConcurrentDictionary<string, int> teamIdMap = new ConcurrentDictionary<string, int>();
         static int lastTeamId = 0;
         static int lastFixtureId = 0;
 
         static int GetTeamId(string teamName)
         {
-            if(teamIdMap.TryGetValue(teamName,out int value))
-            {
-                return value;
-            }
-            teamIdMap.Add(teamName, ++lastTeamId);
-            return lastTeamId;
+            return teamIdMap.GetOrAdd(teamName, ++lastTeamId);
         }
         /// end static generation of team Ids
 
