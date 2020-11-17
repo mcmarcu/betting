@@ -103,7 +103,7 @@ namespace Betting.Stats
                 int idxHTHG = Array.FindIndex(fields, item => item == "HTHG");
                 int idxHTAG = Array.FindIndex(fields, item => item == "HTAG");
 
-                string[] oddProviders = { "B365", "BW", "PS", "VC", "GB" };
+                string[] oddProviders = { "BbAv", "Avg", "B365", "GB", "P", "BW", "PS", "VC" };
                 Dictionary<string, int> oddIdx = new Dictionary<string, int>();
 
                 foreach (string oddProvider in oddProviders)
@@ -114,6 +114,10 @@ namespace Betting.Stats
                     oddIdx.Add((oddProvider + "D"), idxD);
                     int idxA = Array.FindIndex(fields, item => item == (oddProvider + "A"));
                     oddIdx.Add((oddProvider + "A"), idxA);
+                    int idxM25 = Array.FindIndex(fields, item => item == (oddProvider + ">2.5"));
+                    oddIdx.Add((oddProvider + ">2.5"), idxM25);
+                    int idxL25 = Array.FindIndex(fields, item => item == (oddProvider + "<2.5"));
+                    oddIdx.Add((oddProvider + "<2.5"), idxL25);
                 }
 
 
@@ -160,11 +164,13 @@ namespace Betting.Stats
                             break;
                     }
 
-                    if (newFixture.odds.Count != 3)
+                    if (newFixture.odds.Count != 5)
                     {
                         newFixture.odds.Add("1", 1);
                         newFixture.odds.Add("X", 1);
                         newFixture.odds.Add("2", 1);
+                        newFixture.odds.Add(">2.5", 1);
+                        newFixture.odds.Add("<2.5", 1);
                     }
 
                     if (configManager_.GetUseExpanded())
@@ -191,6 +197,8 @@ namespace Betting.Stats
             string idH = oddProvider + "H";
             string idD = oddProvider + "D";
             string idA = oddProvider + "A";
+            string idM25 = oddProvider + ">2.5";
+            string idL25 = oddProvider + "<2.5";
 
             try
             {
@@ -200,10 +208,16 @@ namespace Betting.Stats
                 if (oddD < 1) return false;
                 double oddA = double.Parse(fields[oddIdx[idA]]);
                 if (oddA < 1) return false;
+                double oddM25 = double.Parse(fields[oddIdx[idM25]]);
+                if (oddA < 1) return false;
+                double oddL25 = double.Parse(fields[oddIdx[idL25]]);
+                if (oddA < 1) return false;
 
                 fixture.odds.Add("1", odd1);
                 fixture.odds.Add("X", oddD);
                 fixture.odds.Add("2", oddA);
+                fixture.odds.Add(">2.5", oddM25);
+                fixture.odds.Add("<2.5", oddL25);
             }
             catch (Exception)
             {

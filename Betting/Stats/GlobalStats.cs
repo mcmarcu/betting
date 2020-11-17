@@ -127,40 +127,51 @@ namespace Betting.Stats
         {
             string computedResult = string.Empty;
             int goodMetricsCount = (int)(configManager_.GetMinMetricCorrect() * (double)totalMetricsWithData);
-            //int goodMetricsCount = 1;//(totalMetricsWithData+1) / 2;//ceil
-            string possibleResults = "1X2";
-            foreach (char result in possibleResults)
-            {
-                //int count = aggregateResult.Count(f => f == result);
-                if (CountCharsInString(aggregateResult,result) >= goodMetricsCount)
-                {
-                    computedResult += result;
-                }
-            }
+            int count1 = CountCharsInString(aggregateResult, '1');
+            int count2 = CountCharsInString(aggregateResult, '2');
+            int countX = CountCharsInString(aggregateResult, 'X');
 
-            if (computedResult == "1" && aggregateResult.Contains('X'))
+            if (count1 >= goodMetricsCount)
+            {
+                computedResult += "1";
+            }
+            if (countX >= goodMetricsCount)
+            {
+                computedResult += "X";
+            }
+            if (count2 >= goodMetricsCount)
+            {
+                computedResult += "2";
+            }
+            
+
+            if (computedResult == "1" && countX > 0)
             {
                 computedResult = "1X";
             }
-            else if (computedResult == "2" && aggregateResult.Contains('X'))
+            else if (computedResult == "2" && countX > 0)
             {
                 computedResult = "X2";
             }
-            
-            //TODO: count also if we just have 1 and X
-            //where at least one is in more than half?
-
-            else if (computedResult == "X" /*|| computedResult == ""*/)
+            /*else if (computedResult == "X")
             {
-                int count1 = CountCharsInString(aggregateResult, '1');//aggregateResult.Count(f => f == '1');
-                int count2 = CountCharsInString(aggregateResult, '2');//aggregateResult.Count(f => f == '2');
-                if (count1 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('2'))
+                if (count1 >= (goodMetricsCount + 1) / 2 && count2 == 0)
                     computedResult = "1X";
-                else if (count2 >= (goodMetricsCount + 1) / 2 && !aggregateResult.Contains('1'))
+                else if (count2 >= (goodMetricsCount + 1) / 2 && count1 == 0)
+                    computedResult = "X2";
+                else
+                    computedResult = "";
+            }*/
+            else if (computedResult == "X" || computedResult == "")
+            {
+                if (count1 > 0 && count2 == 0)
+                    computedResult = "1X";
+                else if (count2 >= 0 && count1 == 0)
                     computedResult = "X2";
                 else
                     computedResult = "";
             }
+            
 
             //bad expected 1X2
             if (computedResult.Length == 3 || computedResult.Length == 0)
@@ -227,23 +238,23 @@ namespace Betting.Stats
                     actualResult = fixture.result;
                 }
 
-                /*double oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
-                if (oddDiff1 > 0 && oddDiff1 < 1 
-                    && fixture.odds["1"] <= configManager_.GetMaxOdds()
-                    && fixture.odds["1"] >= configManager_.GetMinOdds())
-                {
-                    aggregateResult += "1 ";
-                    totalMetricsWithData++;
-                }
+               /*double oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
+               if (oddDiff1 > 0 && oddDiff1 < 1 
+                   && fixture.odds["1"] <= configManager_.GetMaxOdds()
+                   && fixture.odds["1"] >= configManager_.GetMinOdds())
+               {
+                   aggregateResult += "1 ";
+                   totalMetricsWithData++;
+               }
 
-                double oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
-                if (oddDiffX > 0 && oddDiffX < 1
-                    && fixture.odds["X"] <= configManager_.GetMaxOdds()
-                    && fixture.odds["X"] >= configManager_.GetMinOdds())
-                {
-                    aggregateResult += "X ";
-                    totalMetricsWithData++;
-                }*/
+               double oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
+               if (oddDiffX > 0 && oddDiffX < 1
+                   && fixture.odds["X"] <= configManager_.GetMaxOdds()
+                   && fixture.odds["X"] >= configManager_.GetMinOdds())
+               {
+                   aggregateResult += "X ";
+                   totalMetricsWithData++;
+               }*/
 
                 string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
 

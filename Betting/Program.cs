@@ -116,30 +116,27 @@ namespace Betting
 
                         int numMetrics = 4;
                         int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
-                        for (int i = 0; i < maxI; ++i)
+                        Parallel.For(1, maxI, (i, state) =>
                         {
                             List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
-
-                            if (metricConfigs.Count == 0)
-                                continue;
-
-                            if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
-                                MetricFactory.PrintMetricList(logger, i);
 
                             DBUpdater db = new DBUpdater(metricConfigs, configManager, fixtureRetriever);
                             db.AddPoints(false);
                             logger.LogResult("\n R2 values  1 {0:0.00}, X {1:0.00}, 2 {2:0.00} metric {3} \n", db.r2Values_['1'], db.r2Values_['X'], db.r2Values_['2'], i);
 
-                            foreach (KeyValuePair<char, double> kv in db.r2Values_)
+                            lock (sortedAvg)
                             {
-                                if (kv.Key != '1')
-                                    continue;
-                                if (!sortedAvg.ContainsKey(kv.Value))
-                                    sortedAvg.Add(kv.Value, new KeyValuePair<char, int>(kv.Key, i));
-                                if (sortedAvg.Count > configManager.GetFilterTopProfit())
-                                    sortedAvg.Remove(sortedAvg.Keys.First());
+                                foreach (KeyValuePair<char, double> kv in db.r2Values_)
+                                {
+                                    if (kv.Key != '1')
+                                        continue;
+                                    if (!sortedAvg.ContainsKey(kv.Value))
+                                        sortedAvg.Add(kv.Value, new KeyValuePair<char, int>(kv.Key, i));
+                                    if (sortedAvg.Count > configManager.GetFilterTopProfit())
+                                        sortedAvg.Remove(sortedAvg.Keys.First());
+                                }
                             }
-                        }
+                        });
 
                         foreach (var x in sortedAvg)
                         {
@@ -191,12 +188,9 @@ namespace Betting
 
                     int numMetrics = 5;
                     int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
-                    Parallel.For(0, maxI, (i, state) =>
+                    Parallel.For(1, maxI, (i, state) =>
                     {
                         List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
-
-                        if (metricConfigs.Count == 0)
-                            return;
 
                         if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
                             MetricFactory.PrintMetricList(logger, i);

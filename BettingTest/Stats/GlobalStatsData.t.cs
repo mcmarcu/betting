@@ -493,7 +493,7 @@ namespace BettingTest
             // Assert
             double correctFixturesWithDataPerYear = 0 + 2 + 1;
             double totalFixturesWithDataPerYear = 2 + 2 + 2;
-            Assert.AreEqual(rate, correctFixturesWithDataPerYear/ totalFixturesWithDataPerYear * 100);
+            Assert.AreEqual(rate, correctFixturesWithDataPerYear / totalFixturesWithDataPerYear * 100);
             Assert.AreEqual(success, false);
             Assert.AreEqual(averageProfit, (0 - 1 - 1)
                                            + (commonOdds["1"] - 1 + commonOdds["2"] - 1)

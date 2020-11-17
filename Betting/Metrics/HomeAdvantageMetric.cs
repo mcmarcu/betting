@@ -34,7 +34,7 @@ namespace Betting.Metrics
                 int idToCheck = checkHomeTeam ? fix.homeTeamId : fix.awayTeamId;
                 if (idToCheck == teamId)
                 {
-                    pctTeam += GetPoints(fix, teamId);// no Coeficient
+                    pctTeam += GetPoints(fix, teamId) * GetCoeficient(fix, teamId);
                     if (++foundFixtures == config.depth)
                         break;
                 }
@@ -58,6 +58,14 @@ namespace Betting.Metrics
                 return 3;
             else
                 return 0;
+        }
+
+        public double GetCoeficient(Fixture fixture, int teamId)
+        {
+            if (teamId == fixture.homeTeamId)
+                return fixture.coeficient.awayTeam;
+            else
+                return fixture.coeficient.homeTeam;
         }
     }
 }

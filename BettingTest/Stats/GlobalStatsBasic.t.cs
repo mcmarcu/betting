@@ -62,7 +62,7 @@ namespace BettingTest
             configManagerMock.Setup(p => p.GetMinMetricCorrect()).Returns(1);
             List<MetricConfig> configs = new List<MetricConfig>();
             GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
-            string aggregateResult = "1 X";
+            string aggregateResult = "1 2";
             int totalMetricsWithData = 2;
 
             // Act

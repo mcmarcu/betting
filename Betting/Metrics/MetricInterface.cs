@@ -36,10 +36,10 @@ namespace Betting.Metrics
                 result.Add(allFixtures[i]);
             }
 
-            /*if (result.Count != depth)
+            if (result.Count != depth)
             {
                 throw new ArgumentException("Not enough fixtures to satisfy metric depth");
-            }*/
+            }
 
             return result;
         }

@@ -42,20 +42,20 @@ namespace Betting.Metrics
             GetTeamPoints(out pTeam2, teamId2, fixture);
         }
 
-        public double GetCoeficient(Fixture fixture, int teamId)
-        {
-            if (teamId == fixture.homeTeamId)
-                return fixture.coeficient.awayTeam;
-            else
-                return fixture.coeficient.homeTeam;
-        }
-
         public int GetGoals(Fixture fixture, int teamId)
         {
             if (teamId == fixture.homeTeamId)
                 return fixture.finalScore.homeTeamGoals;
             else
                 return fixture.finalScore.awayTeamGoals;
+        }
+
+        public double GetCoeficient(Fixture fixture, int teamId)
+        {
+            if (teamId == fixture.homeTeamId)
+                return fixture.coeficient.awayTeam;
+            else
+                return fixture.coeficient.homeTeam;
         }
 
     }
