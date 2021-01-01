@@ -4,6 +4,7 @@ using Betting.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Betting.Stats
@@ -221,22 +222,26 @@ namespace Betting.Stats
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
             List<double> matchdayOdds = new List<double>(thisRoundFixtures.Count);
-
+            
             foreach (Fixture fixture in thisRoundFixtures)
             {
                 int totalMetricsWithData = 0;
-                string aggregateResult = string.Empty;
+                StringBuilder aggregatExpectedResultsBuilder = new StringBuilder();
                 string actualResult = string.Empty;
                 foreach (MetricInterface metric in metrics)
                 {
                     ResultChecker checker = new ResultChecker(metric, fixture, configManager_);
                     if (checker.dataAvailable)
                     {
-                        aggregateResult += checker.GetExpectedResult() + " ";
+                        //aggregateResult += checker.GetExpectedResult() + " ";
+                        aggregatExpectedResultsBuilder.Append(checker.GetExpectedResult());
+                        aggregatExpectedResultsBuilder.Append(" ");
+
                         totalMetricsWithData++;
                     }
                     actualResult = fixture.result;
                 }
+                string aggregateResult = aggregatExpectedResultsBuilder.ToString();
 
                /*double oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
                if (oddDiff1 > 0 && oddDiff1 < 1 

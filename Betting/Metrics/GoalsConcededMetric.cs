@@ -15,11 +15,12 @@ namespace Betting.Metrics
         {
             double pctTeam = 0;
 
-            List<Fixture> allT1 = fixtureRetriever_.GetAllFixtures(year, teamId);
-            List<Fixture> fixturesTeam1 = FindFixtures(allT1, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam1)
+            List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
+            int startIdx = FindFixtures(allT, fixture.fixtureId, config.depth);
+            int toProcess = config.depth;
+            for (int i = startIdx; toProcess > 0; --i, --toProcess)
             {
-                pctTeam += GetGoals(fix, teamId) * GetCoeficient(fix, teamId);
+                pctTeam += GetGoals(allT[i], teamId) * GetCoeficient(allT[i], teamId);
             }
            
             pTeam = (int)pctTeam;

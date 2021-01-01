@@ -36,7 +36,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = "",
                 homeTeamId = teamId1,
-                awayTeamId = -1
+                awayTeamId = -1,
+                fixtureId = 1,
             };
             fixTeam11.finalScore.homeTeamGoals = 1;
             fixTeam11.finalScore.awayTeamGoals = 2;
@@ -50,7 +51,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team1,
                 homeTeamId = -1,
-                awayTeamId = teamId1
+                awayTeamId = teamId1,
+                fixtureId = 2,
             };
             fixTeam1Ignored.finalScore.homeTeamGoals = 0;
             fixTeam1Ignored.finalScore.awayTeamGoals = 2;
@@ -65,7 +67,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = "",
                 homeTeamId = teamId1,
-                awayTeamId = -1
+                awayTeamId = -1,
+                fixtureId = 3,
             };
             fixTeam12.finalScore.homeTeamGoals = 0;
             fixTeam12.finalScore.awayTeamGoals = 0;
@@ -79,7 +82,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team2,
                 homeTeamId = -1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 4,
             };
             fixTeam21.finalScore.homeTeamGoals = 0;
             fixTeam21.finalScore.awayTeamGoals = 2;
@@ -93,7 +97,8 @@ namespace BettingTest
                 homeTeamName = team2,
                 awayTeamName = "",
                 homeTeamId = teamId2,
-                awayTeamId = -1
+                awayTeamId = -1,
+                fixtureId = 5,
             };
             fixTeam2Ignored.finalScore.homeTeamGoals = 0;
             fixTeam2Ignored.finalScore.awayTeamGoals = 2;
@@ -108,7 +113,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team2,
                 homeTeamId = -1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 6,
             };
             fixTeam22.finalScore.homeTeamGoals = 0;
             fixTeam22.finalScore.awayTeamGoals = 0;
@@ -122,7 +128,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = team2,
                 homeTeamId = teamId1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 7,
             };
             actualFixture.finalScore.homeTeamGoals = 1;
             actualFixture.finalScore.awayTeamGoals = 2;

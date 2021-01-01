@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace Betting.Stats
 {
-
     public class FixtureRetriever : FixtureRetrieverInterface
     {
         public FixtureRetriever(ConfigManagerInterface configManager)

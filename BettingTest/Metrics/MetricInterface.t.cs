@@ -4,6 +4,7 @@ using Betting.Metrics;
 using Betting.Stats;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace BettingTest
@@ -78,12 +79,12 @@ namespace BettingTest
             MetricInterface metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            List<Fixture> fixtures = metric.FindFixtures(fixturesTeam, actualFixture, 1);
+            int fixtureIdx = metric.FindFixtures(fixturesTeam, actualFixture.fixtureId, 1);
 
             // Assert
-            Assert.AreEqual(fixtures.Count, 1);
-            Assert.AreEqual(fixtures[0].homeTeamName, team);
-            Assert.AreEqual(fixtures[0].awayTeamName, "secondGame");
+            Assert.AreEqual(fixtureIdx, 1);
+            Assert.AreEqual(fixturesTeam[fixtureIdx].homeTeamName, team);
+            Assert.AreEqual(fixturesTeam[fixtureIdx].awayTeamName, "secondGame");
         }
 
         [Test]
@@ -98,14 +99,14 @@ namespace BettingTest
             MetricInterface metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            List<Fixture> fixtures = metric.FindFixtures(fixturesTeam, actualFixture, 2);
+            int fixtureIdx = metric.FindFixtures(fixturesTeam, actualFixture.fixtureId, 2);
 
             // Assert
-            Assert.AreEqual(fixtures.Count, 2);
-            Assert.AreEqual(fixtures[0].homeTeamName, team);
-            Assert.AreEqual(fixtures[0].awayTeamName, "secondGame");
-            Assert.AreEqual(fixtures[1].homeTeamName, team);
-            Assert.AreEqual(fixtures[1].awayTeamName, "firstGame");
+            Assert.AreEqual(fixtureIdx, 1);
+            Assert.AreEqual(fixturesTeam[fixtureIdx].homeTeamName, team);
+            Assert.AreEqual(fixturesTeam[fixtureIdx].awayTeamName, "secondGame");
+            Assert.AreEqual(fixturesTeam[fixtureIdx-1].homeTeamName, team);
+            Assert.AreEqual(fixturesTeam[fixtureIdx-1].awayTeamName, "firstGame");
         }
     }
 }

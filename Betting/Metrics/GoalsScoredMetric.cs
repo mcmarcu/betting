@@ -27,10 +27,11 @@ namespace Betting.Metrics
             double pctTeam = 0;
 
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
-            List<Fixture> fixturesTeam = FindFixtures(allT, fixture, config.depth);
-            foreach (Fixture fix in fixturesTeam)
+            int startIdx = FindFixtures(allT, fixture.fixtureId, config.depth);
+            int toProcess = config.depth;
+            for (int i = startIdx; toProcess > 0; --i, --toProcess)
             {
-                pctTeam += GetGoals(fix, teamId) * GetCoeficient(fix, teamId);
+                pctTeam += GetGoals(allT[i], teamId) * GetCoeficient(allT[i], teamId);
             }
 
             pTeam = (int)pctTeam;

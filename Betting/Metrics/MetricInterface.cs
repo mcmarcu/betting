@@ -24,24 +24,17 @@ namespace Betting.Metrics
         }
 
         // Find <depth> fixtures with starting from <fixture>
-        public List<Fixture> FindFixtures(List<Fixture> allFixtures, Fixture fixture, int depth)
+        public int FindFixtures(List<Fixture> allFixtures, int fixtureId, int depth)
         {
-            List<Fixture> result = new List<Fixture>(depth);
-            int startIdx = allFixtures.Count - 1;
-            for (; startIdx >= 0  && (allFixtures[startIdx].fixtureId != fixture.fixtureId); --startIdx)
-            {}
+            int startIdx = allFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
 
-            for (int i = startIdx - 1; (i >= 0) && (result.Count < depth); --i)
-            {
-                result.Add(allFixtures[i]);
-            }
+            --startIdx;
 
-            if (result.Count != depth)
+            if ((startIdx+1) < depth)//+1 as startIdx is 0-indexed
             {
                 throw new ArgumentException("Not enough fixtures to satisfy metric depth");
             }
-
-            return result;
+            return startIdx;
         }
 
         public MetricConfig config;

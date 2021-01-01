@@ -27,14 +27,16 @@ namespace Betting.Metrics
             double pctTeam = 0;
 
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
-            List<Fixture> fixturesTeam = FindFixtures(allT, fixture, config.depth * 2);
+
+            int startIdx = FindFixtures(allT, fixture.fixtureId, config.depth * 2);
+            int toProcess = config.depth*2;
             int foundFixtures = 0;
-            foreach (Fixture fix in fixturesTeam)
+            for (int i = startIdx; toProcess > 0; --i, --toProcess)
             {
-                int idToCheck = checkHomeTeam ? fix.homeTeamId : fix.awayTeamId;
+                int idToCheck = checkHomeTeam ? allT[i].homeTeamId : allT[i].awayTeamId;
                 if (idToCheck == teamId)
                 {
-                    pctTeam += GetPoints(fix, teamId) * GetCoeficient(fix, teamId);
+                    pctTeam += GetPoints(allT[i], teamId) * GetCoeficient(allT[i], teamId);
                     if (++foundFixtures == config.depth)
                         break;
                 }
