@@ -24,17 +24,25 @@ namespace Betting.Metrics
         {
             int drawMargin = configManager.GetDrawMargin();
             int drawMixedMargin = configManager.GetDrawMixedMargin();
-            if (Math.Abs(pct1 - pct2) < drawMargin)
-                return "X";
 
-            string result = string.Empty;
+            int pctDiff = Math.Abs(pct1 - pct2);
+            if (pctDiff < drawMargin)
+            {
+                return "X";
+            }
             if (pct1 > pct2)
-                result += "1";
-            if (Math.Abs(pct1 - pct2) < drawMixedMargin)
-                result += "X";
+            {
+                return pctDiff < drawMixedMargin ? "1X" : "1"; 
+            }
             if (pct1 < pct2)
-                result += "2";
-            return result;
+            {
+                return pctDiff < drawMixedMargin ? "X2" : "2";
+            }
+            if(pctDiff < drawMixedMargin)
+            {
+                return "X";
+            }
+            throw new ArgumentException("Failed to get expected result. Check drawMargin and drawMixedMrgin");
         }
 
         private readonly ConfigManagerInterface configManager;

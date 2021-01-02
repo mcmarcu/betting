@@ -47,7 +47,7 @@ namespace Betting.DataModel
         public string result;
 
         /// start static generation of team Ids
-        static readonly ConcurrentDictionary<string, int> teamIdMap = new ConcurrentDictionary<string, int>();
+        static readonly ConcurrentDictionary<string, int> teamIdMap = new ConcurrentDictionary<string, int>(10,31);
         static int lastTeamId = 0;
         static int lastFixtureId = 0;
 

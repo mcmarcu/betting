@@ -233,7 +233,6 @@ namespace Betting.Stats
                     ResultChecker checker = new ResultChecker(metric, fixture, configManager_);
                     if (checker.dataAvailable)
                     {
-                        //aggregateResult += checker.GetExpectedResult() + " ";
                         aggregatExpectedResultsBuilder.Append(checker.GetExpectedResult());
                         aggregatExpectedResultsBuilder.Append(" ");
 

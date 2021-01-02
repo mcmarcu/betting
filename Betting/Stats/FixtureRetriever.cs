@@ -46,7 +46,7 @@ namespace Betting.Stats
 
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
-            Tuple<int, int> t = Tuple.Create(year, teamId);
+            ValueTuple<int, int> t = (year, teamId);
             
             if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
             {
@@ -227,7 +227,7 @@ namespace Betting.Stats
 
         public override List<Fixture> GetRound(int year, int matchDay)
         {
-            Tuple<int, int> t = Tuple.Create(year, matchDay);
+            ValueTuple<int, int> t = (year, matchDay);
 
             if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
             {
@@ -248,11 +248,11 @@ namespace Betting.Stats
             return matchdayFixtureCache.GetOrAdd(t, result);
         }
 
-        private readonly ConcurrentDictionary<int, List<Fixture>> fixturesCache = new ConcurrentDictionary<int, List<Fixture>>();
-        private readonly ConcurrentDictionary<Tuple<int, int>, List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<Tuple<int, int>, List<Fixture>>();
-        private readonly ConcurrentDictionary<Tuple<int, int>, List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<Tuple<int, int>, List<Fixture>>();
+        private readonly ConcurrentDictionary<int, List<Fixture>> fixturesCache = new ConcurrentDictionary<int, List<Fixture>>(10, 31);
+        private readonly ConcurrentDictionary<(int, int), List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<(int, int), List<Fixture>>(10, 809);
+        private readonly ConcurrentDictionary<(int, int), List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<(int, int), List<Fixture>>(10, 809);
 
-        private readonly ConcurrentDictionary<int, int> numberOfTeamsCache = new ConcurrentDictionary<int, int>();
+        private readonly ConcurrentDictionary<int, int> numberOfTeamsCache = new ConcurrentDictionary<int, int>(10, 31);
 
         private readonly ConfigManagerInterface configManager_;
     }
