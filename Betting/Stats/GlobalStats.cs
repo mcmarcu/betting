@@ -89,7 +89,7 @@ namespace Betting.Stats
 
         public double GetCombinationProfit(List<double> matchdayOdds, int betStyleMask)
         {
-            double count = Math.Pow(2, matchdayOdds.Count);
+            double count = 1 << matchdayOdds.Count;
             double profit = 0;
             for (int i = 1; i <= count - 1; i++)
             {
@@ -189,25 +189,20 @@ namespace Betting.Stats
 
             int betStyleMask = 0;
 
-            //max
-            if (betStyle.Contains("max") && !betStyle.Contains(maxGames.ToString()))
+            if (betStyle=="all")
+            {
+                betStyleMask = ~0;
+            }
+            else if (betStyle=="max")
             {
                 betStyleMask |= 1 << maxGames;
-                betStyle = betStyle.Replace("max", "");
             }
-
-            //all
-            if (betStyle.Contains("all"))
+            else
             {
-                for (int i = 1; i <= maxGames; ++i)
-                    betStyleMask |= 1 << i;
-                betStyle = betStyle.Replace("all", "");
-            }
-
-
-            for (int i = 0; i < betStyle.Count(); ++i)
-            {
-                betStyleMask |= 1 << (betStyle[i] - '0');
+                for (int i = 0; i < betStyle.Count(); ++i)
+                {
+                    betStyleMask |= 1 << (betStyle[i] - '0');
+                }
             }
 
             return GetCombinationProfit(matchdayOdds, betStyleMask);
