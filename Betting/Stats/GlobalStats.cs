@@ -75,15 +75,12 @@ namespace Betting.Stats
             }
         }
 
-        private int GetNumOnesInInteger(int n)
+        private int GetNumOnesInInteger(int v)
         {
-            int count = 0;
-            while (n > 0)
-            {
-                count += n & 1;
-                n >>= 1;
-            }
-            return count;
+            // https://stackoverflow.com/questions/14555607/number-of-bits-set-in-a-number
+            v -= ((v >> 1) & 0x55555555);
+            v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+            return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
         }
 
         public double GetCombinationProfit(List<double> matchdayOdds, int betStyleMask)

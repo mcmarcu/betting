@@ -46,9 +46,9 @@ namespace Betting.Stats
 
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
-            ValueTuple<int, int> t = (year, teamId);
+            int key = year * 100 + teamId;
             
-            if (fixturesTeamCache.TryGetValue(t, out List<Fixture> value))
+            if (fixturesTeamCache.TryGetValue(key, out List<Fixture> value))
             {
                 return value;
             }
@@ -65,7 +65,7 @@ namespace Betting.Stats
                 }
             }
 
-            return fixturesTeamCache.GetOrAdd(t, result);
+            return fixturesTeamCache.GetOrAdd(key, result);
         }
 
         public override List<Fixture> GetAllFixtures(int year)
@@ -227,9 +227,9 @@ namespace Betting.Stats
 
         public override List<Fixture> GetRound(int year, int matchDay)
         {
-            ValueTuple<int, int> t = (year, matchDay);
+            int key = year * 100 + matchDay;
 
-            if (matchdayFixtureCache.TryGetValue(t, out List<Fixture> value))
+            if (matchdayFixtureCache.TryGetValue(key, out List<Fixture> value))
             {
                 return value;
             }
@@ -245,12 +245,12 @@ namespace Betting.Stats
                 result.Add(all[startRow + i]);
             }
 
-            return matchdayFixtureCache.GetOrAdd(t, result);
+            return matchdayFixtureCache.GetOrAdd(key, result);
         }
 
         private readonly ConcurrentDictionary<int, List<Fixture>> fixturesCache = new ConcurrentDictionary<int, List<Fixture>>(10, 31);
-        private readonly ConcurrentDictionary<(int, int), List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<(int, int), List<Fixture>>(10, 809);
-        private readonly ConcurrentDictionary<(int, int), List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<(int, int), List<Fixture>>(10, 809);
+        private readonly ConcurrentDictionary<int, List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<int, List<Fixture>>(10, 809);
+        private readonly ConcurrentDictionary<int, List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<int, List<Fixture>>(10, 809);
 
         private readonly ConcurrentDictionary<int, int> numberOfTeamsCache = new ConcurrentDictionary<int, int>(10, 31);
 

@@ -150,14 +150,33 @@ namespace BettingTest
             GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
             double oddGame1 = 2;
             double oddGame2 = 3;
+            double oddGame3 = 4;
+            double oddGame4 = 5;
             matchdayOdds.Add(oddGame1);
             matchdayOdds.Add(oddGame2);
+            matchdayOdds.Add(oddGame3);
+            matchdayOdds.Add(oddGame4);
+
 
             // Act
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1) + (oddGame2 - 1) + ((oddGame1 * oddGame2) - 1));
+            Assert.AreEqual(result, (oddGame1 - 1) +
+                                    (oddGame2 - 1) +
+                                    (oddGame3 - 1) +
+                                    (oddGame4 - 1) +
+                                    ((oddGame1 * oddGame2) - 1) +
+                                    ((oddGame1 * oddGame3) - 1) +
+                                    ((oddGame1 * oddGame4) - 1) +
+                                    ((oddGame2 * oddGame3) - 1) +
+                                    ((oddGame2 * oddGame4) - 1) +
+                                    ((oddGame3 * oddGame4) - 1) +
+                                    ((oddGame1 * oddGame2 * oddGame3) - 1) +
+                                    ((oddGame1 * oddGame2 * oddGame4) - 1) +
+                                    ((oddGame1 * oddGame3 * oddGame4) - 1) +
+                                    ((oddGame2 * oddGame3 * oddGame4) - 1) +
+                                    ((oddGame1 * oddGame2 * oddGame3 * oddGame4) - 1));
         }
 
         [Test]
@@ -170,14 +189,16 @@ namespace BettingTest
             GlobalStats globalStats = new GlobalStats(configs, configManagerMock.Object, fixtureRetrieverMock.Object, logger);
             double oddGame1 = 2;
             double oddGame2 = 3;
+            double oddGame3 = 4;
             matchdayOdds.Add(oddGame1);
             matchdayOdds.Add(oddGame2);
+            matchdayOdds.Add(oddGame3);
 
             // Act
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, ((oddGame1 * oddGame2) - 1));
+            Assert.AreEqual(result, ((oddGame1 * oddGame2 * oddGame3) - 1));
         }
 
         [Test]
@@ -221,8 +242,12 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1) + (oddGame2 - 1) + (oddGame3 - 1) +
-                (oddGame1 * oddGame2 - 1) + (oddGame2 * oddGame3 - 1) + (oddGame3 * oddGame1 - 1));
+            Assert.AreEqual(result, (oddGame1 - 1) + 
+                                    (oddGame2 - 1) + 
+                                    (oddGame3 - 1) +
+                                    (oddGame1 * oddGame2 - 1) + 
+                                    (oddGame2 * oddGame3 - 1) + 
+                                    (oddGame3 * oddGame1 - 1));
         }
 
         [Test]
@@ -244,9 +269,13 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1) + (oddGame2 - 1) + (oddGame3 - 1) +
-                (oddGame1 * oddGame2 - 1) + (oddGame2 * oddGame3 - 1) + (oddGame3 * oddGame1 - 1) +
-                (oddGame1 * oddGame2 * oddGame3 - 1));
+            Assert.AreEqual(result, (oddGame1 - 1) + 
+                                    (oddGame2 - 1) + 
+                                    (oddGame3 - 1) +
+                                    (oddGame1 * oddGame2 - 1) +
+                                    (oddGame2 * oddGame3 - 1) + 
+                                    (oddGame3 * oddGame1 - 1) +
+                                    (oddGame1 * oddGame2 * oddGame3 - 1));
         }
     }
 }
