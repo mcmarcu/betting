@@ -1,7 +1,6 @@
 ﻿using Betting.Config;
 using Betting.DataModel;
 using Betting.Metrics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,23 +90,32 @@ namespace Betting.Stats
         {
             double count = 1 << matchdayOdds.Count;
             double profit = 0;
-            for (int i = 1; i <= count - 1; i++)
+            for (int i = 1; i <= count; ++i)
             {
+                //if betStyleMask=2 (we count double odds only) and we matchdayOdds.Count=3
+                //we only take the masks which have 2 ones set
                 if ((betStyleMask & (1 << GetNumOnesInInteger(i))) == 0)
+                {
                     continue;
+                }
 
                 double cProfit = 1;
-                for (int j = 0; j < matchdayOdds.Count; j++)
+                for (int j = 0; cProfit != 0 && j < matchdayOdds.Count; ++j)
                 {
                     if (((i >> j) & 1) == 1)
                     {
                         cProfit *= matchdayOdds[j];
                     }
                 }
+
                 if (cProfit > 0)
+                {
                     profit += cProfit - 1;
+                }
                 else
+                {
                     profit -= 1;
+                }
             }
             return profit;
         }
@@ -116,7 +124,7 @@ namespace Betting.Stats
         {
             int count = 0;
             int length = str.Length;
-            for (int i = length - 1; i >= 0; i--)
+            for (int i = length - 1; i >= 0; --i)
             {
                 if (str[i] == c)
                     count++;
