@@ -44,6 +44,22 @@ namespace Betting.Stats
             return GetNumberOfTeams(year) / 2;
         }
 
+        public override int FindFixtureIndex(int year, int teamId, int fixtureId)
+        {
+            int key = (year * 100000) + (teamId * 1000) + fixtureId;
+
+            if (fixturesIndexCache.TryGetValue(key, out int value))
+            {
+                return value;
+            }
+
+            List<Fixture> teamFixtures = GetAllFixtures(year, teamId);
+            int result = teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+
+
+            return fixturesIndexCache.GetOrAdd(key, result);
+        }
+
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
             int key = year * 100 + teamId;
@@ -252,6 +268,7 @@ namespace Betting.Stats
         private readonly ConcurrentDictionary<int, List<Fixture>> matchdayFixtureCache = new ConcurrentDictionary<int, List<Fixture>>(10, 809);
         private readonly ConcurrentDictionary<int, List<Fixture>> fixturesTeamCache = new ConcurrentDictionary<int, List<Fixture>>(10, 809);
 
+        private readonly ConcurrentDictionary<int, int> fixturesIndexCache = new ConcurrentDictionary<int, int>(10, 9679);
         private readonly ConcurrentDictionary<int, int> numberOfTeamsCache = new ConcurrentDictionary<int, int>(10, 31);
 
         private readonly ConfigManagerInterface configManager_;

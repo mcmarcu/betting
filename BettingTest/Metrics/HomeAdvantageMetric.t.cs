@@ -143,6 +143,12 @@ namespace BettingTest
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId1)).Returns(fixturesTeam1);
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId2)).Returns(fixturesTeam2);
 
+            fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns((int year, int teamId, int fixtureId) => {
+                    List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
+                    return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+                });
+
             configManagerMock = new Mock<ConfigManagerInterface>();
             configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
         }
@@ -235,8 +241,8 @@ namespace BettingTest
             HomeAdvantageMetric metric = new HomeAdvantageMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            int pointsTeam1 = metric.GetPoints(actualFixture, teamId1);
-            int pointsTeam2 = metric.GetPoints(actualFixture, teamId2);
+            double pointsTeam1 = metric.GetPoints(actualFixture, teamId1);
+            double pointsTeam2 = metric.GetPoints(actualFixture, teamId2);
 
             // Assert
             Assert.AreEqual(pointsTeam1, 0);

@@ -22,5 +22,7 @@ namespace Betting.Stats
                 day--;
             }
         }
+
+        public abstract int FindFixtureIndex(int year, int teamId, int fixtureId);
     }
 }

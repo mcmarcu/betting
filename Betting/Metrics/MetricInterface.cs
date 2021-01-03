@@ -24,9 +24,9 @@ namespace Betting.Metrics
         }
 
         // Find <depth> fixtures with starting from <fixture>
-        public int FindFixtures(List<Fixture> allFixtures, int fixtureId, int depth)
+        public int FindFixtures(int year, int teamId, int fixtureId, int depth)
         {
-            int startIdx = allFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+            int startIdx = fixtureRetriever_.FindFixtureIndex(year, teamId, fixtureId);
 
             --startIdx;
 

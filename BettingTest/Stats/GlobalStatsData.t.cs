@@ -60,7 +60,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = team2,
                 homeTeamId = teamId1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 1,
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -80,7 +81,8 @@ namespace BettingTest
                 homeTeamName = team3,
                 awayTeamName = team4,
                 homeTeamId = teamId3,
-                awayTeamId = teamId4
+                awayTeamId = teamId4,
+                fixtureId = 2,
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 1;
@@ -101,7 +103,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = team3,
                 homeTeamId = teamId1,
-                awayTeamId = teamId3
+                awayTeamId = teamId3,
+                fixtureId = 3,
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 0;
@@ -121,7 +124,8 @@ namespace BettingTest
                 homeTeamName = team2,
                 awayTeamName = team4,
                 homeTeamId = teamId2,
-                awayTeamId = teamId4
+                awayTeamId = teamId4,
+                fixtureId = 4,
             };
             fixture.finalScore.homeTeamGoals = 1;
             fixture.finalScore.awayTeamGoals = 1;
@@ -142,7 +146,8 @@ namespace BettingTest
                 homeTeamName = team2,
                 awayTeamName = team1,
                 homeTeamId = teamId2,
-                awayTeamId = teamId1
+                awayTeamId = teamId1,
+                fixtureId = 5,
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -162,7 +167,8 @@ namespace BettingTest
                 homeTeamName = team4,
                 awayTeamName = team3,
                 homeTeamId = teamId4,
-                awayTeamId = teamId3
+                awayTeamId = teamId3,
+                fixtureId = 6,
             };
             fixture.finalScore.homeTeamGoals = 3;
             fixture.finalScore.awayTeamGoals = 2;
@@ -183,7 +189,8 @@ namespace BettingTest
                 homeTeamName = team3,
                 awayTeamName = team1,
                 homeTeamId = teamId3,
-                awayTeamId = teamId1
+                awayTeamId = teamId1,
+                fixtureId = 7,
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -203,7 +210,8 @@ namespace BettingTest
                 homeTeamName = team4,
                 awayTeamName = team2,
                 homeTeamId = teamId4,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 8,
             };
             fixture.finalScore.homeTeamGoals = 0;
             fixture.finalScore.awayTeamGoals = 1;
@@ -231,9 +239,18 @@ namespace BettingTest
                 fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId3)).Returns(fixturesTeam3);
                 fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId4)).Returns(fixturesTeam4);
 
+
+                
+
                 fixtureRetrieverMock.Setup(p => p.GetNumberOfMatchDays(i)).Returns(4);
                 fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(i)).Returns(2);
             }
+
+            fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns((int year, int teamId, int fixtureId) => { List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
+                    return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+                });
+            
         }
 
         [Test]

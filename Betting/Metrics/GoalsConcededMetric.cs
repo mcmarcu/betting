@@ -16,7 +16,7 @@ namespace Betting.Metrics
             double pctTeam = 0;
 
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
-            int startIdx = FindFixtures(allT, fixture.fixtureId, config.depth);
+            int startIdx = FindFixtures(year, teamId, fixture.fixtureId, config.depth);
             int toProcess = config.depth;
             for (int i = startIdx; toProcess > 0; --i, --toProcess)
             {
@@ -43,7 +43,7 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
-        public int GetGoals(Fixture fixture, int teamId)
+        public double GetGoals(Fixture fixture, int teamId)
         {
             if (teamId == fixture.homeTeamId)
                 return fixture.finalScore.awayTeamGoals;

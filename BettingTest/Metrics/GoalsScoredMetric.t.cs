@@ -50,7 +50,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = "",
                 homeTeamId = teamId1,
-                awayTeamId = -1
+                awayTeamId = -1,
+                fixtureId = 1,
             };
             fixTeam12.finalScore.homeTeamGoals = 0;
             fixTeam12.finalScore.awayTeamGoals = 0;
@@ -64,7 +65,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team2,
                 homeTeamId = -1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 2,
             };
             fixTeam21.finalScore.homeTeamGoals = 0;
             fixTeam21.finalScore.awayTeamGoals = 2;
@@ -78,7 +80,8 @@ namespace BettingTest
                 homeTeamName = "",
                 awayTeamName = team2,
                 homeTeamId = -1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 3,
             };
             fixTeam22.finalScore.homeTeamGoals = 0;
             fixTeam22.finalScore.awayTeamGoals = 0;
@@ -92,7 +95,8 @@ namespace BettingTest
                 homeTeamName = team1,
                 awayTeamName = team2,
                 homeTeamId = teamId1,
-                awayTeamId = teamId2
+                awayTeamId = teamId2,
+                fixtureId = 4,
             };
             actualFixture.finalScore.homeTeamGoals = 1;
             actualFixture.finalScore.awayTeamGoals = 2;
@@ -105,6 +109,12 @@ namespace BettingTest
             fixtureRetrieverMock = new Mock<FixtureRetrieverInterface>();
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId1)).Returns(fixturesTeam1);
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId2)).Returns(fixturesTeam2);
+
+            fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                .Returns((int year, int teamId, int fixtureId) => {
+                    List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
+                    return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+                });
 
             configManagerMock = new Mock<ConfigManagerInterface>();
             configManagerMock.Setup(p => p.GetUseExpanded()).Returns(false);
@@ -198,8 +208,8 @@ namespace BettingTest
             GoalsScoredMetric metric = new GoalsScoredMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            int goalsConcededTeam1 = metric.GetGoals(actualFixture, teamId1);
-            int goalsConcededTeam2 = metric.GetGoals(actualFixture, teamId2);
+            double goalsConcededTeam1 = metric.GetGoals(actualFixture, teamId1);
+            double goalsConcededTeam2 = metric.GetGoals(actualFixture, teamId2);
 
             // Assert
             Assert.AreEqual(goalsConcededTeam1, actualFixture.finalScore.homeTeamGoals);
