@@ -235,9 +235,9 @@ namespace Betting.Stats
                     int diff = 0;
                     foreach (MetricInterface m in metrics)
                     {
-                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
-                        diff += pctTeam1;
-                        diff -= pctTeam2;
+                        m.GetPoints(out double pctTeam1, out double pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
+                        diff += (int)pctTeam1;
+                        diff -= (int)pctTeam2;
                     }
 
                     if (diff < -width || diff > width)
@@ -410,9 +410,9 @@ namespace Betting.Stats
                     int diff = 0;
                     foreach (MetricInterface m in metrics)
                     {
-                        m.GetPoints(out int pctTeam1, out int pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
-                        diff += pctTeam1;
-                        diff -= pctTeam2;
+                        m.GetPoints(out double pctTeam1, out double pctTeam2, fixture.homeTeamId, fixture.awayTeamId, fixture);
+                        diff += (int)pctTeam1;
+                        diff -= (int)pctTeam2;
                     }
 
                     outputLine = parser.ReadLine() + ',' + (100 / r1.Transform(diff)).ToString("0.00") + ',' + (100 / rx.Transform(diff)).ToString("0.00") + ',' + (100 / r2.Transform(diff)).ToString("0.00");

@@ -53,6 +53,11 @@ namespace Betting.DataModel
 
         static int GetTeamId(string teamName)
         {
+            if (teamIdMap.TryGetValue(teamName, out int value))
+            {
+                return value;
+            }
+            
             return teamIdMap.GetOrAdd(teamName, ++lastTeamId);
         }
         /// end static generation of team Ids
@@ -63,6 +68,7 @@ namespace Betting.DataModel
             SetCoeficients(configManager);
             AddDoubleOdds();
             fixtureId = ++lastFixtureId;
+            
             homeTeamId = GetTeamId(homeTeamName);
             awayTeamId = GetTeamId(awayTeamName);
         }

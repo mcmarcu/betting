@@ -46,7 +46,7 @@ namespace Betting.Stats
 
         public override int FindFixtureIndex(int year, int teamId, int fixtureId)
         {
-            int key = (year * 100000) + (teamId * 1000) + fixtureId;
+            int key = (year * 1000000000) + (teamId * 1000000) + fixtureId;
 
             if (fixturesIndexCache.TryGetValue(key, out int value))
             {
@@ -54,7 +54,7 @@ namespace Betting.Stats
             }
 
             List<Fixture> teamFixtures = GetAllFixtures(year, teamId);
-            int result = teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
+            int result = teamFixtures.FindIndex(thisFix => thisFix.fixtureId == fixtureId);
 
 
             return fixturesIndexCache.GetOrAdd(key, result);
@@ -62,7 +62,7 @@ namespace Betting.Stats
 
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
-            int key = year * 100 + teamId;
+            int key = year * 1000 + teamId;
             
             if (fixturesTeamCache.TryGetValue(key, out List<Fixture> value))
             {

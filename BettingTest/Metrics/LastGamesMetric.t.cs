@@ -133,7 +133,7 @@ namespace BettingTest
             LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
+            metric.GetPoints(out double pTeam1, out double pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 1);
@@ -152,7 +152,7 @@ namespace BettingTest
             LastGamesMetric metric = new LastGamesMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
+            metric.GetPoints(out double pTeam1, out double pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 1);

@@ -132,7 +132,7 @@ namespace BettingTest
             GoalsScoredMetric metric = new GoalsScoredMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
+            metric.GetPoints(out double pTeam1, out double pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 0);
@@ -151,7 +151,7 @@ namespace BettingTest
             GoalsScoredMetric metric = new GoalsScoredMetric(metricConfig, year, configManagerMock.Object, fixtureRetrieverMock.Object);
 
             // Act
-            metric.GetPoints(out int pTeam1, out int pTeam2, teamId1, teamId2, actualFixture);
+            metric.GetPoints(out double pTeam1, out double pTeam2, teamId1, teamId2, actualFixture);
 
             // Assert
             Assert.AreEqual(pTeam1, 1);

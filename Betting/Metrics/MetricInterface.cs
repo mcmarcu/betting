@@ -8,7 +8,7 @@ namespace Betting.Metrics
 {
     public abstract class MetricInterface
     {
-        abstract public void GetPoints(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
+        abstract public void GetPoints(out double pTeam1, out double pTeam2, int teamId1, int teamId2, Fixture fixture);
         abstract public void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
 
         //For mocking/testing

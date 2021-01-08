@@ -105,7 +105,7 @@ namespace Betting.Stats
                     }
                 }
 
-                if (cProfit > 0)
+                if (cProfit != 0)
                 {
                     profit += cProfit - 1;
                 }

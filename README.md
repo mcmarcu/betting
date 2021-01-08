@@ -62,6 +62,7 @@ __II Fair odds workflow__
 ```
 -u -x=76 --league=Championship -y=2018 -r=9
 ```
+
 3. Todo
 
 __III Use data to predict__
