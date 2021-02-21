@@ -10,23 +10,23 @@ namespace Betting.Config
             LOG_RESULT
         }
 
-        abstract public string GetLeagueName();
-        abstract public string GetBetStyle();
-        abstract public int GetYear();
-        abstract public int GetReverseYears();
-        abstract public LogLevel GetLogLevel();
-        abstract public int GetDrawMargin();
-        abstract public int GetDrawMixedMargin();
-        abstract public int GetMatchDay();
-        abstract public int GetReverseDays();
-        abstract public double GetMinOdds();
-        abstract public double GetMaxOdds();
-        abstract public double GetMinMetricCorrect();
-        abstract public double GetMinYearProfit();
-        abstract public double GetMinAverageProfit();
-        abstract public int GetFilterTopRate();
-        abstract public int GetFilterTopProfit();
-        abstract public bool GetUseExpanded();
-        abstract public int GetCoeficientWeight();
+        public abstract string GetLeagueName();
+        public abstract string GetBetStyle();
+        public abstract int GetYear();
+        public abstract int GetReverseYears();
+        public abstract LogLevel GetLogLevel();
+        public abstract int GetDrawMargin();
+        public abstract int GetDrawMixedMargin();
+        public abstract int GetMatchDay();
+        public abstract int GetReverseDays();
+        public abstract double GetMinOdds();
+        public abstract double GetMaxOdds();
+        public abstract double GetMinMetricCorrect();
+        public abstract double GetMinYearProfit();
+        public abstract double GetMinAverageProfit();
+        public abstract int GetFilterTopRate();
+        public abstract int GetFilterTopProfit();
+        public abstract bool GetUseExpanded();
+        public abstract int GetCoeficientWeight();
     }
 }

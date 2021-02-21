@@ -35,7 +35,7 @@ namespace Betting.Stats
                 teams.Add(fixture.homeTeamName);
                 teams.Add(fixture.awayTeamName);
             }
-                
+
             return numberOfTeamsCache.GetOrAdd(year, teams.Count);
         }
 
@@ -63,7 +63,7 @@ namespace Betting.Stats
         public override List<Fixture> GetAllFixtures(int year, int teamId)
         {
             int key = year * 1000 + teamId;
-            
+
             if (fixturesTeamCache.TryGetValue(key, out List<Fixture> value))
             {
                 return value;
@@ -86,7 +86,7 @@ namespace Betting.Stats
 
         public override List<Fixture> GetAllFixtures(int year)
         {
-            
+
             if (fixturesCache.TryGetValue(year, out List<Fixture> value))
             {
                 return value;
@@ -161,7 +161,10 @@ namespace Betting.Stats
                 {
                     fields = parser.ReadFields();
                     if (fields[2] == "")
+                    {
                         break;
+                    }
+
                     Fixture newFixture = new Fixture
                     {
                         homeTeamName = fields[idxHomeTeam],
@@ -176,7 +179,9 @@ namespace Betting.Stats
                     foreach (string oddProvider in oddProviders)
                     {
                         if (TryGetOddData(oddProvider, fields, oddIdx, ref newFixture))
+                        {
                             break;
+                        }
                     }
 
                     if (newFixture.odds.Count != 5)
@@ -218,15 +223,34 @@ namespace Betting.Stats
             try
             {
                 double odd1 = double.Parse(fields[oddIdx[idH]]);
-                if (odd1 < 1) return false;
+                if (odd1 < 1)
+                {
+                    return false;
+                }
+
                 double oddD = double.Parse(fields[oddIdx[idD]]);
-                if (oddD < 1) return false;
+                if (oddD < 1)
+                {
+                    return false;
+                }
+
                 double oddA = double.Parse(fields[oddIdx[idA]]);
-                if (oddA < 1) return false;
+                if (oddA < 1)
+                {
+                    return false;
+                }
+
                 double oddM25 = double.Parse(fields[oddIdx[idM25]]);
-                if (oddA < 1) return false;
+                if (oddA < 1)
+                {
+                    return false;
+                }
+
                 double oddL25 = double.Parse(fields[oddIdx[idL25]]);
-                if (oddA < 1) return false;
+                if (oddA < 1)
+                {
+                    return false;
+                }
 
                 fixture.odds.Add("1", odd1);
                 fixture.odds.Add("X", oddD);

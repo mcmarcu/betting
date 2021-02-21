@@ -34,21 +34,23 @@ namespace Betting.Stats
             {
                 int computeYear = year - i;
                 GetYearData(out int yearCorrect, out int yearTotal, out double yearProfit, computeYear);
-                
+
                 totalGames += yearTotal;
                 correctGames += yearCorrect;
 
-                double yrate = (yearTotal != 0) ? ((double)yearCorrect / (double)yearTotal) * 100 : 0;
+                double yrate = (yearTotal != 0) ? (yearCorrect / (double)yearTotal) * 100 : 0;
                 logger_.LogInfo("\nGlobal success rate : {0:0.00}, profit {1:0.00} on year {2}  -------\n\n", yrate, yearProfit, computeYear);
 
                 if (yearProfit >= configManager_.GetMinYearProfit())
+                {
                     ++successYears;
+                }
 
                 profitSum += yearProfit;
             });
 
 
-            rate = totalGames == 0 ? 0 : ((double)correctGames / (double)totalGames) * 100;
+            rate = totalGames == 0 ? 0 : (correctGames / (double)totalGames) * 100;
             averageProfit = profitSum / reverseYears;
             success = (successYears == reverseYears) && (averageProfit >= configManager_.GetMinAverageProfit());
         }
@@ -65,7 +67,7 @@ namespace Betting.Stats
                 //GetMatchdayDataFairOdds(out correctFixtures, out totalFixtures, out matchdayProfit, matchDay, year);
                 GetMatchdayData(out int correctFixtures, out int totalFixtures, out double matchdayProfit, matchDay, year);
 
-                double rate = totalFixtures == 0 ? 0 : ((double)correctFixtures / (double)totalFixtures) * 100;
+                double rate = totalFixtures == 0 ? 0 : (correctFixtures / (double)totalFixtures) * 100;
                 logger_.LogDebug("Matchday : {0} - year {1}, correct {2}\t total {3}, rate {4}, profit {5:0.00} \n", matchDay, year, correctFixtures, totalFixtures, rate, matchdayProfit);
 
                 correctFixturesWithData += correctFixtures;
@@ -124,7 +126,9 @@ namespace Betting.Stats
             for (int i = length - 1; i >= 0; --i)
             {
                 if (str[i] == c)
+                {
                     count++;
+                }
             }
             return count;
         }
@@ -132,7 +136,7 @@ namespace Betting.Stats
         public string ComputeExpectedResult(string aggregateResult, int totalMetricsWithData)
         {
             string computedResult = string.Empty;
-            int goodMetricsCount = (int)(configManager_.GetMinMetricCorrect() * (double)totalMetricsWithData);
+            int goodMetricsCount = (int)(configManager_.GetMinMetricCorrect() * totalMetricsWithData);
             int count1 = CountCharsInString(aggregateResult, '1');
             int count2 = CountCharsInString(aggregateResult, '2');
             int countX = CountCharsInString(aggregateResult, 'X');
@@ -149,7 +153,7 @@ namespace Betting.Stats
             {
                 computedResult += "2";
             }
-            
+
 
             if (computedResult == "1" && countX > 0)
             {
@@ -171,13 +175,19 @@ namespace Betting.Stats
             else if (computedResult == "X" || computedResult == "")
             {
                 if (count1 > 0 && count2 == 0)
+                {
                     computedResult = "1X";
+                }
                 else if (count2 >= 0 && count1 == 0)
+                {
                     computedResult = "X2";
+                }
                 else
+                {
                     computedResult = "";
+                }
             }
-            
+
 
             //bad expected 1X2
             if (computedResult.Length == 3 || computedResult.Length == 0)
@@ -194,11 +204,11 @@ namespace Betting.Stats
 
             int betStyleMask = 0;
 
-            if (betStyle=="all")
+            if (betStyle == "all")
             {
                 betStyleMask = ~0;
             }
-            else if (betStyle=="max")
+            else if (betStyle == "max")
             {
                 betStyleMask |= 1 << maxGames;
             }
@@ -222,7 +232,7 @@ namespace Betting.Stats
             correctFixturesWithData = 0;
             totalFixturesWithData = 0;
             List<double> matchdayOdds = new List<double>(thisRoundFixtures.Count);
-            
+
             foreach (Fixture fixture in thisRoundFixtures)
             {
                 int totalMetricsWithData = 0;
@@ -242,23 +252,23 @@ namespace Betting.Stats
                 }
                 string aggregateResult = aggregatExpectedResultsBuilder.ToString();
 
-               /*double oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
-               if (oddDiff1 > 0 && oddDiff1 < 1 
-                   && fixture.odds["1"] <= configManager_.GetMaxOdds()
-                   && fixture.odds["1"] >= configManager_.GetMinOdds())
-               {
-                   aggregateResult += "1 ";
-                   totalMetricsWithData++;
-               }
+                /*double oddDiff1 = fixture.odds["1"] - fixture.fairOdds["1"];
+                if (oddDiff1 > 0 && oddDiff1 < 1 
+                    && fixture.odds["1"] <= configManager_.GetMaxOdds()
+                    && fixture.odds["1"] >= configManager_.GetMinOdds())
+                {
+                    aggregateResult += "1 ";
+                    totalMetricsWithData++;
+                }
 
-               double oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
-               if (oddDiffX > 0 && oddDiffX < 1
-                   && fixture.odds["X"] <= configManager_.GetMaxOdds()
-                   && fixture.odds["X"] >= configManager_.GetMinOdds())
-               {
-                   aggregateResult += "X ";
-                   totalMetricsWithData++;
-               }*/
+                double oddDiffX = fixture.odds["X"] - fixture.fairOdds["X"];
+                if (oddDiffX > 0 && oddDiffX < 1
+                    && fixture.odds["X"] <= configManager_.GetMaxOdds()
+                    && fixture.odds["X"] >= configManager_.GetMinOdds())
+                {
+                    aggregateResult += "X ";
+                    totalMetricsWithData++;
+                }*/
 
                 string computedResult = ComputeExpectedResult(aggregateResult, totalMetricsWithData);
 
@@ -279,7 +289,9 @@ namespace Betting.Stats
 
                     totalFixturesWithData++;
                     if (metricSuccess)
+                    {
                         correctFixturesWithData++;
+                    }
 
                     if (metricSuccess)
                     {
@@ -327,7 +339,9 @@ namespace Betting.Stats
 
                         totalFixturesWithData++;
                         if (metricSuccess)
+                        {
                             correctFixturesWithData++;
+                        }
 
                         if (metricSuccess)
                         {

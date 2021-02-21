@@ -242,11 +242,11 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1) + 
-                                    (oddGame2 - 1) + 
+            Assert.AreEqual(result, (oddGame1 - 1) +
+                                    (oddGame2 - 1) +
                                     (oddGame3 - 1) +
-                                    (oddGame1 * oddGame2 - 1) + 
-                                    (oddGame2 * oddGame3 - 1) + 
+                                    (oddGame1 * oddGame2 - 1) +
+                                    (oddGame2 * oddGame3 - 1) +
                                     (oddGame3 * oddGame1 - 1));
         }
 
@@ -269,11 +269,11 @@ namespace BettingTest
             double result = globalStats.GetMatchdayProfit(matchdayOdds);
 
             // Assert
-            Assert.AreEqual(result, (oddGame1 - 1) + 
-                                    (oddGame2 - 1) + 
+            Assert.AreEqual(result, (oddGame1 - 1) +
+                                    (oddGame2 - 1) +
                                     (oddGame3 - 1) +
                                     (oddGame1 * oddGame2 - 1) +
-                                    (oddGame2 * oddGame3 - 1) + 
+                                    (oddGame2 * oddGame3 - 1) +
                                     (oddGame3 * oddGame1 - 1) +
                                     (oddGame1 * oddGame2 * oddGame3 - 1));
         }

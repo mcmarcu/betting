@@ -144,7 +144,8 @@ namespace BettingTest
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId2)).Returns(fixturesTeam2);
 
             fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns((int year, int teamId, int fixtureId) => {
+                .Returns((int year, int teamId, int fixtureId) =>
+                {
                     List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
                     return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
                 });

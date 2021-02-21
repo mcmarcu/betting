@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml;
 
 namespace Betting.Config
@@ -36,7 +35,7 @@ namespace Betting.Config
 
         public void SetYear(int value)
         {
-           Year = value;
+            Year = value;
         }
 
         public override int GetYear()
@@ -96,7 +95,7 @@ namespace Betting.Config
 
         public void SetReverseDays(int value)
         {
-            ReverseDays = value; 
+            ReverseDays = value;
         }
 
         public override int GetReverseDays()
@@ -199,7 +198,7 @@ namespace Betting.Config
             configDocument_ = new XmlDocument();
             configDocument_.Load("..\\..\\Config\\globalconfig.xml");
 
-            
+
             LeagueName = GetData("leaguename");
             BetStyle = GetData("betstyle");
 
@@ -242,6 +241,6 @@ namespace Betting.Config
         private int? FilterTopProfit;
         private bool? UseExpanded;
         private int? CoeficientWeight;
-        
+
     }
 }

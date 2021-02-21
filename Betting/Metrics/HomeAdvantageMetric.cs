@@ -16,9 +16,14 @@ namespace Betting.Metrics
             GetPoints(out double pctTeam1, out double pctTeam2, teamId1, teamId2, fixture);
 
             if (pctTeam1 == 0 && pctTeam2 == 0)
+            {
                 pTeam1 = 50;
+            }
             else
+            {
                 pTeam1 = (int)(pctTeam1 / (pctTeam1 + pctTeam2) * 100d);
+            }
+
             pTeam2 = 100 - pTeam1;
         }
 
@@ -27,7 +32,7 @@ namespace Betting.Metrics
             pTeam = 0d;
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
             int startIdx = FindFixtures(year, teamId, fixture.fixtureId, config.depth * 2);
-            int toProcess = config.depth*2;
+            int toProcess = config.depth * 2;
             int foundFixtures = 0;
             for (int i = startIdx; toProcess > 0; --i, --toProcess)
             {
@@ -36,7 +41,9 @@ namespace Betting.Metrics
                 {
                     pTeam += GetPoints(allT[i], teamId) * GetCoeficient(allT[i], teamId);
                     if (++foundFixtures == config.depth)
+                    {
                         break;
+                    }
                 }
             }
         }
@@ -50,21 +57,33 @@ namespace Betting.Metrics
         public double GetPoints(Fixture fixture, int teamId)
         {
             if (fixture.finalScore.homeTeamGoals == fixture.finalScore.awayTeamGoals)
+            {
                 return 1d;
+            }
             else if (teamId == fixture.homeTeamId && fixture.finalScore.homeTeamGoals > fixture.finalScore.awayTeamGoals)
+            {
                 return 3d;
+            }
             else if (teamId == fixture.awayTeamId && fixture.finalScore.homeTeamGoals < fixture.finalScore.awayTeamGoals)
+            {
                 return 3d;
+            }
             else
+            {
                 return 0d;
+            }
         }
 
         public double GetCoeficient(Fixture fixture, int teamId)
         {
             if (teamId == fixture.homeTeamId)
+            {
                 return fixture.coeficient.awayTeam;
+            }
             else
+            {
                 return fixture.coeficient.homeTeam;
+            }
         }
     }
 }

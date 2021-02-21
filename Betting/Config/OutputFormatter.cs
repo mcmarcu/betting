@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Accord.MachineLearning;
+﻿using Accord.MachineLearning;
+using System.Collections.Generic;
 
 namespace Betting.Config
 {
@@ -35,7 +35,9 @@ namespace Betting.Config
         public static void AddClusterInfo(ref SortedDictionary<double, RunOutput> dict)
         {
             if (dict.Count <= 3)
+            {
                 return;
+            }
 
             Accord.Math.Random.Generator.Seed = 0;
 
@@ -50,7 +52,7 @@ namespace Betting.Config
             KMeans kmeans = new KMeans(k: dict.Count / 3);
 
             // Compute and retrieve the data centroids
-            var clusters = kmeans.Learn(metrics);
+            KMeansClusterCollection clusters = kmeans.Learn(metrics);
 
             // Use the centroids to parition all the data
             int[] labels = clusters.Decide(metrics);
@@ -69,7 +71,9 @@ namespace Betting.Config
             foreach (RunOutput t in dict.Values)
             {
                 if (!clusteredOutput.ContainsKey(t.cluster))
+                {
                     clusteredOutput.Add(t.cluster, new SortedSet<int>());
+                }
 
                 clusteredOutput[t.cluster].Add(t.metricId);
             }
@@ -78,7 +82,10 @@ namespace Betting.Config
             {
                 logger.LogResult("config {0}", k);
                 foreach (int t in clusteredOutput[k])
+                {
                     logger.LogResult(", {0}", t);
+                }
+
                 logger.LogResult("\n");
             }
 

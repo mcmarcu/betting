@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Betting.Stats
 {
-    class DBUpdater
+    internal class DBUpdater
     {
         public DBUpdater(List<MetricConfig> metricConfigs, ConfigManagerInterface configManager, FixtureRetrieverInterface fixtureRetriever)
         {
@@ -37,7 +37,7 @@ namespace Betting.Stats
             double[] outputs = values.Values.ToArray();
 
             // We can create a learning algorithm
-            var ls = new PolynomialLeastSquares()
+            PolynomialLeastSquares ls = new PolynomialLeastSquares()
             {
                 Degree = 2
             };
@@ -62,7 +62,10 @@ namespace Betting.Stats
             //LastGamesMetric:   0.77 0.81 0.08
             //GoalsScoredMetric: 0.75 0.85 0.02
             if (r2 == 1.0)
+            {
                 r2 = 0.0;
+            }
+
             r2Values_.Add(result, r2);
 
             return poly;
@@ -72,17 +75,25 @@ namespace Betting.Stats
         private void AddToDict(ref Dictionary<string, int> dict, string key, int value)
         {
             if (!dict.ContainsKey(key))
+            {
                 dict.Add(key, value);
+            }
             else
+            {
                 dict[key] += value;
+            }
         }
 
         private void AddToDict(ref SortedDictionary<double, double> dict, int key, int value)
         {
             if (!dict.ContainsKey(key))
+            {
                 dict.Add(key, value);
+            }
             else
+            {
                 dict[key] += value;
+            }
         }
 
 
@@ -134,7 +145,9 @@ namespace Betting.Stats
                 {
                     string[] stringFields = parser.ReadFields();
                     if (stringFields[0] != "PCT")
+                    {
                         continue;
+                    }
 
                     stringFields[0] = "0";
                     double[] doubleFields = Array.ConvertAll(stringFields, s => double.Parse(s));
@@ -183,13 +196,15 @@ namespace Betting.Stats
             result[0] = 0;
             {
                 ratingsMemoryStream.Seek(0, SeekOrigin.End);
-                var outputFile = new StreamWriter(ratingsMemoryStream);
+                StreamWriter outputFile = new StreamWriter(ratingsMemoryStream);
                 string outputLine = "SUM" + ',';
                 for (int i = 1; i < result.Length; ++i)
                 {
                     outputLine += result[i].ToString();
                     if (i < result.Length - 1)
+                    {
                         outputLine += ',';
+                    }
                 }
                 outputFile.WriteLine(outputLine);
 
@@ -201,7 +216,9 @@ namespace Betting.Stats
                     outputLine += (result[i + 2] / result[i + 3] * 100).ToString("0.00") + ',';
                     outputLine += "0";
                     if (i < result.Length - 4)
+                    {
                         outputLine += ',';
+                    }
                 }
                 outputFile.WriteLine(outputLine);
                 outputFile.Flush();
@@ -241,7 +258,9 @@ namespace Betting.Stats
                     }
 
                     if (diff < -width || diff > width)
+                    {
                         continue;
+                    }
 
                     if (fixture.result == "1")
                     {
@@ -269,11 +288,13 @@ namespace Betting.Stats
                 outputLine += keyPrefix + "T" + i.ToString();
 
                 if (i < width)
+                {
                     outputLine += ',';
+                }
             }
 
             {
-                var outputFile = new StreamWriter(ratingsMemorySteam);
+                StreamWriter outputFile = new StreamWriter(ratingsMemorySteam);
                 if (writeHeader)
                 {
                     outputFile.WriteLine(outputLine);
@@ -287,7 +308,9 @@ namespace Betting.Stats
                     outputLine += drawDiff[i].ToString() + ',';
                     outputLine += totalOnDiff[i].ToString();
                     if (i < width)
+                    {
                         outputLine += ',';
+                    }
                 }
                 outputFile.WriteLine(outputLine);
                 outputFile.Flush();
@@ -297,7 +320,7 @@ namespace Betting.Stats
         public void GenerateStatsForYear(int year, bool writeHeader, ref MemoryStream memoryStream)
         {
             {
-                var outputFile = new StreamWriter(memoryStream);
+                StreamWriter outputFile = new StreamWriter(memoryStream);
                 string outputLine;
                 if (writeHeader)
                 {
@@ -341,11 +364,13 @@ namespace Betting.Stats
             string outputFilePath = "..\\..\\DBEX\\" + leagueName + year + ".csv";
 
             if (File.Exists(outputFilePath))
+            {
                 return;
+            }
 
             using TextFieldParser parser = new TextFieldParser(inputFilePath);
             using FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write);
-            using var outputFile = new StreamWriter(fileStream);
+            using StreamWriter outputFile = new StreamWriter(fileStream);
             string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
             outputFile.WriteLine(outputLine);
 
@@ -398,7 +423,7 @@ namespace Betting.Stats
             using (TextFieldParser parser = new TextFieldParser(inputFilePath))
             {
                 using FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write);
-                using var outputFile = new StreamWriter(fileStream);
+                using StreamWriter outputFile = new StreamWriter(fileStream);
                 string outputLine = parser.ReadLine() + ',' + "FOH" + ',' + "FOD" + ',' + "FOA";
                 outputFile.WriteLine(outputLine);
 

@@ -47,17 +47,17 @@ namespace Betting.DataModel
         public string result;
 
         /// start static generation of team Ids
-        static readonly ConcurrentDictionary<string, int> teamIdMap = new ConcurrentDictionary<string, int>(10,31);
-        static int lastTeamId = 0;
-        static int lastFixtureId = 0;
+        private static readonly ConcurrentDictionary<string, int> teamIdMap = new ConcurrentDictionary<string, int>(10, 31);
+        private static int lastTeamId = 0;
+        private static int lastFixtureId = 0;
 
-        static int GetTeamId(string teamName)
+        private static int GetTeamId(string teamName)
         {
             if (teamIdMap.TryGetValue(teamName, out int value))
             {
                 return value;
             }
-            
+
             return teamIdMap.GetOrAdd(teamName, ++lastTeamId);
         }
         /// end static generation of team Ids
@@ -68,7 +68,7 @@ namespace Betting.DataModel
             SetCoeficients(configManager);
             AddDoubleOdds();
             fixtureId = ++lastFixtureId;
-            
+
             homeTeamId = GetTeamId(homeTeamName);
             awayTeamId = GetTeamId(awayTeamName);
         }
@@ -76,11 +76,17 @@ namespace Betting.DataModel
         private void SetResult()
         {
             if (finalScore.homeTeamGoals == finalScore.awayTeamGoals)
+            {
                 result = "X";
+            }
             else if (finalScore.homeTeamGoals > finalScore.awayTeamGoals)
+            {
                 result = "1";
+            }
             else
+            {
                 result = "2";
+            }
         }
 
         private void SetCoeficients(ConfigManagerInterface configManager)
@@ -116,19 +122,35 @@ namespace Betting.DataModel
 
                 // normalization of commision
                 if (odds["1X"] < 1 && odds["1X"] > 0.90)
+                {
                     odds["1X"] = 1;
+                }
+
                 if (odds["X2"] < 1 && odds["X2"] > 0.90)
+                {
                     odds["X2"] = 1;
+                }
+
                 if (odds["12"] < 1 && odds["12"] > 0.90)
+                {
                     odds["12"] = 1;
+                }
 
                 // checking odds
                 if (odds["1X"] < 1)
+                {
                     throw new ArgumentOutOfRangeException("Failed to get odds 1X >= 1");
+                }
+
                 if (odds["X2"] < 1)
+                {
                     throw new ArgumentOutOfRangeException("Failed to get odds X2 >= 1");
+                }
+
                 if (odds["12"] < 1)
+                {
                     throw new ArgumentOutOfRangeException("Failed to get odds 12 >= 1");
+                }
             }
 
             odds.Add("1X2", 0);

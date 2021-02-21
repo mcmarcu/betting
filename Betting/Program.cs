@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace Betting
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var app = new CommandLineApplication
+            CommandLineApplication app = new CommandLineApplication
             {
                 Name = "Betting",
                 Description = "Betting console app with argument parsing."
@@ -25,28 +25,28 @@ namespace Betting
 
             app.HelpOption("-?|-h|--help");
 
-            var executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
-            var inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
-            var predictResults = app.Option("-w|--predictResults", "predict results", CommandOptionType.NoValue);
-            var dbUpdate = app.Option("-u|--dbUpdate", "Create enhanced csv files", CommandOptionType.NoValue);
+            CommandOption executeMetrics = app.Option("-e|--evaluateMetrics", "Evaluate all metrics", CommandOptionType.NoValue);
+            CommandOption inspectMetric = app.Option("-x|--inspectMeric <optionvalue>", "get data about a metric", CommandOptionType.SingleValue);
+            CommandOption predictResults = app.Option("-w|--predictResults", "predict results", CommandOptionType.NoValue);
+            CommandOption dbUpdate = app.Option("-u|--dbUpdate", "Create enhanced csv files", CommandOptionType.NoValue);
 
-            var leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
-            var yearOption = app.Option("-y|--year <optionvalue>", "Yeasr to start compute (2018)", CommandOptionType.SingleValue);
-            var yReverseOption = app.Option("-r|--yreverse <optionvalue>", "Year to go behind(7)", CommandOptionType.SingleValue);
-            var matchdayOption = app.Option("-m|--matchday <optionvalue>", "Matchday to start compute (max Championship = 46 max Premier League = 38)", CommandOptionType.SingleValue);
-            var mReverseOption = app.Option("-v|--mreverse <optionvalue>", "Matchdays to go behind(Matchday-10)", CommandOptionType.SingleValue);
-            var drawMarginOption = app.Option("-d|--drawmargin <optionvalue>", "Percent safety for draw(2)", CommandOptionType.SingleValue);
-            var drawMixedMarginOption = app.Option("-i|--drawmixedmargin <optionvalue>", "Percent safety for draw mixed(20)", CommandOptionType.SingleValue);
-            var maxOddsOption = app.Option("-o|--maxodds <optionvalue>", "Max odds (2.0)", CommandOptionType.SingleValue);
-            var minOddsOption = app.Option("-O|--minodds <optionvalue>", "Min odds (2.0)", CommandOptionType.SingleValue);
-            var minMetricCorrectOption = app.Option("-c|--minmetriccorrect <optionvalue>", "?? 1", CommandOptionType.SingleValue);
-            var minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (0)", CommandOptionType.SingleValue);
-            var minAverageProfitOption = app.Option("-P|--minaverageprofit <optionvalue>", "Min average for all years (0)", CommandOptionType.SingleValue);
-            var logLevelOption = app.Option("-g|--loglevel <optionvalue>", "LOG_DEBUG, LOG_INFO, LOG_RESULT", CommandOptionType.SingleValue);
-            var filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
-            var filterTopProfit = app.Option("-F|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
-            var betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
-            var useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
+            CommandOption leagueOption = app.Option("-l|--league <optionvalue>", "League name (PremierLeague/Championship)", CommandOptionType.SingleValue);
+            CommandOption yearOption = app.Option("-y|--year <optionvalue>", "Yeasr to start compute (2018)", CommandOptionType.SingleValue);
+            CommandOption yReverseOption = app.Option("-r|--yreverse <optionvalue>", "Year to go behind(7)", CommandOptionType.SingleValue);
+            CommandOption matchdayOption = app.Option("-m|--matchday <optionvalue>", "Matchday to start compute (max Championship = 46 max Premier League = 38)", CommandOptionType.SingleValue);
+            CommandOption mReverseOption = app.Option("-v|--mreverse <optionvalue>", "Matchdays to go behind(Matchday-10)", CommandOptionType.SingleValue);
+            CommandOption drawMarginOption = app.Option("-d|--drawmargin <optionvalue>", "Percent safety for draw(2)", CommandOptionType.SingleValue);
+            CommandOption drawMixedMarginOption = app.Option("-i|--drawmixedmargin <optionvalue>", "Percent safety for draw mixed(20)", CommandOptionType.SingleValue);
+            CommandOption maxOddsOption = app.Option("-o|--maxodds <optionvalue>", "Max odds (2.0)", CommandOptionType.SingleValue);
+            CommandOption minOddsOption = app.Option("-O|--minodds <optionvalue>", "Min odds (2.0)", CommandOptionType.SingleValue);
+            CommandOption minMetricCorrectOption = app.Option("-c|--minmetriccorrect <optionvalue>", "?? 1", CommandOptionType.SingleValue);
+            CommandOption minYearProfitOption = app.Option("-p|--minyearprofit <optionvalue>", "Min profit per year (0)", CommandOptionType.SingleValue);
+            CommandOption minAverageProfitOption = app.Option("-P|--minaverageprofit <optionvalue>", "Min average for all years (0)", CommandOptionType.SingleValue);
+            CommandOption logLevelOption = app.Option("-g|--loglevel <optionvalue>", "LOG_DEBUG, LOG_INFO, LOG_RESULT", CommandOptionType.SingleValue);
+            CommandOption filterTopRate = app.Option("-f|--filtertoprate <optionvalue>", "how many should we keep in the output sorted by rate(10)", CommandOptionType.SingleValue);
+            CommandOption filterTopProfit = app.Option("-F|--filtertopprofit <optionvalue>", "how many should we keep in the output sorted by profit(10)", CommandOptionType.SingleValue);
+            CommandOption betStyleOption = app.Option("-t|--betstyle <optionvalue>", "ticket options (12345)", CommandOptionType.SingleValue);
+            CommandOption useExpanded = app.Option("-X|--useExpanded", "Use expanded csv data", CommandOptionType.SingleValue);
 
 
             app.OnExecute(() =>
@@ -56,35 +56,80 @@ namespace Betting
                 stopWatch.Start();
 
                 if (leagueOption.HasValue())
+                {
                     configManager.SetLeagueName(leagueOption.Value());
+                }
+
                 if (yearOption.HasValue())
+                {
                     configManager.SetYear(int.Parse(yearOption.Value()));
+                }
+
                 if (yReverseOption.HasValue())
+                {
                     configManager.SetReverseYears(int.Parse(yReverseOption.Value()));
+                }
+
                 if (mReverseOption.HasValue())
+                {
                     configManager.SetReverseDays(int.Parse(mReverseOption.Value()));
+                }
+
                 if (drawMarginOption.HasValue())
+                {
                     configManager.SetDrawMargin(int.Parse(drawMarginOption.Value()));
+                }
+
                 if (drawMixedMarginOption.HasValue())
+                {
                     configManager.SetDrawMixedMargin(int.Parse(drawMixedMarginOption.Value()));
+                }
+
                 if (maxOddsOption.HasValue())
+                {
                     configManager.SetMaxOdds(double.Parse(maxOddsOption.Value()));
+                }
+
                 if (minOddsOption.HasValue())
+                {
                     configManager.SetMinOdds(double.Parse(minOddsOption.Value()));
+                }
+
                 if (minMetricCorrectOption.HasValue())
+                {
                     configManager.SetMinMetricCorrect(double.Parse(minMetricCorrectOption.Value()));
+                }
+
                 if (minYearProfitOption.HasValue())
+                {
                     configManager.SetMinYearProfit(double.Parse(minYearProfitOption.Value()));
+                }
+
                 if (minAverageProfitOption.HasValue())
+                {
                     configManager.SetMinAverageProfit(double.Parse(minAverageProfitOption.Value()));
+                }
+
                 if (logLevelOption.HasValue())
+                {
                     configManager.SetLogLevel(logLevelOption.Value());
+                }
+
                 if (filterTopRate.HasValue())
+                {
                     configManager.SetFilterTopRate(int.Parse(filterTopRate.Value()));
+                }
+
                 if (filterTopProfit.HasValue())
+                {
                     configManager.SetFilterTopProfit(int.Parse(filterTopProfit.Value()));
+                }
+
                 if (betStyleOption.HasValue())
+                {
                     configManager.SetBetStyle(betStyleOption.Value());
+                }
+
                 if (useExpanded.HasValue())
                 {
                     configManager.SetUseExpanded(true);
@@ -103,7 +148,9 @@ namespace Betting
                         configManager.SetMatchDay(int.Parse(dt.Compute(expression, "").ToString()));
                     }
                     else
+                    {
                         configManager.SetMatchDay(int.Parse(matchdayOption.Value()));
+                    }
                 }
 
 
@@ -129,16 +176,24 @@ namespace Betting
                                 foreach (KeyValuePair<char, double> kv in db.r2Values_)
                                 {
                                     if (kv.Key != '1')
+                                    {
                                         continue;
+                                    }
+
                                     if (!sortedAvg.ContainsKey(kv.Value))
+                                    {
                                         sortedAvg.Add(kv.Value, new KeyValuePair<char, int>(kv.Key, i));
+                                    }
+
                                     if (sortedAvg.Count > configManager.GetFilterTopProfit())
+                                    {
                                         sortedAvg.Remove(sortedAvg.Keys.First());
+                                    }
                                 }
                             }
                         });
 
-                        foreach (var x in sortedAvg)
+                        foreach (KeyValuePair<double, KeyValuePair<char, int>> x in sortedAvg)
                         {
                             logger.LogResult("\nR2 metric {0:0.00}, value {1:0.00}\n", x.Value.Value, x.Key);
                         }
@@ -173,9 +228,13 @@ namespace Betting
                     gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
 
                     if (success)
+                    {
                         logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
+                    }
                     else
+                    {
                         logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00} \n", success, rate, averageProfit);
+                    }
                 }
                 else if (executeMetrics.HasValue())
                 {
@@ -193,7 +252,9 @@ namespace Betting
                         List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
 
                         if (configManager.GetLogLevel() <= ConfigManager.LogLevel.LOG_INFO)
+                        {
                             MetricFactory.PrintMetricList(logger, i);
+                        }
 
                         GlobalStats gs = new GlobalStats(metricConfigs, configManager, fixtureRetriever, logger);
                         gs.GetAllYearsData(out bool success, out double rate, out double averageProfit);
@@ -215,23 +276,34 @@ namespace Betting
                             logger.LogResultSuccess("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
                         }
                         else
+                        {
                             logger.LogResultFail("Result {0}, Rate {1:0.00}, avgProfit {2:0.00}, cfg {3} \n", success, rate, averageProfit, i);
-
+                        }
 
                         lock (topByProfit)
                         {
                             if (!topByProfit.ContainsKey(averageProfit))
+                            {
                                 topByProfit.Add(averageProfit, new RunOutput(success, rate, averageProfit, i, maxI));
+                            }
+
                             if (topByProfit.Count > configManager.GetFilterTopProfit())
+                            {
                                 topByProfit.Remove(topByProfit.Keys.First());
+                            }
                         }
 
                         lock (topByRate)
                         {
                             if (!topByRate.ContainsKey(rate))
+                            {
                                 topByRate.Add(rate, new RunOutput(success, rate, averageProfit, i, maxI));
+                            }
+
                             if (topByRate.Count > configManager.GetFilterTopRate())
+                            {
                                 topByRate.Remove(topByRate.Keys.First());
+                            }
                         }
                     });
 
@@ -243,9 +315,14 @@ namespace Betting
                         foreach (RunOutput t in topByProfit.Values)
                         {
                             if (t.success)
+                            {
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
                             else
+                            {
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
+
                             MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
@@ -256,9 +333,14 @@ namespace Betting
                         foreach (RunOutput t in topByRate.Values)
                         {
                             if (t.success)
+                            {
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
                             else
+                            {
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
+
                             MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
@@ -269,14 +351,21 @@ namespace Betting
                         foreach (RunOutput t in successRuns.Values)
                         {
                             if (t.success)
+                            {
                                 logger.LogResultSuccess("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}: ", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
                             else
+                            {
                                 logger.LogResultFail("Rate {0:0.00}, avgProfit {1:0.00}, id {2}, cl {3}:", t.rate, t.averageProfit, t.metricId, t.cluster);
+                            }
+
                             MetricFactory.PrintMetricList(logger, t.metricId);
                             logger.LogResult("\n ---------------- \n");
                         }
                         if (configManager.GetLogLevel() > ConfigManager.LogLevel.LOG_RESULT)
+                        {
                             OutputFormatter.PrintClusterInfo(logger, successRuns);
+                        }
                     }
                 }
 

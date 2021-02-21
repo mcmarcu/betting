@@ -12,7 +12,7 @@ namespace Betting.Metrics
             dataAvailable = true;
             try
             {
-                metric.GetPercentage(out this.pct1, out this.pct2, fixture.homeTeamId, fixture.awayTeamId, fixture);
+                metric.GetPercentage(out pct1, out pct2, fixture.homeTeamId, fixture.awayTeamId, fixture);
             }
             catch (Exception)
             {
@@ -32,13 +32,13 @@ namespace Betting.Metrics
             }
             if (pct1 > pct2)
             {
-                return pctDiff < drawMixedMargin ? "1X" : "1"; 
+                return pctDiff < drawMixedMargin ? "1X" : "1";
             }
             if (pct1 < pct2)
             {
                 return pctDiff < drawMixedMargin ? "X2" : "2";
             }
-            if(pctDiff < drawMixedMargin)
+            if (pctDiff < drawMixedMargin)
             {
                 return "X";
             }

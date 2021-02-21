@@ -240,17 +240,19 @@ namespace BettingTest
                 fixtureRetrieverMock.Setup(p => p.GetAllFixtures(i, teamId4)).Returns(fixturesTeam4);
 
 
-                
+
 
                 fixtureRetrieverMock.Setup(p => p.GetNumberOfMatchDays(i)).Returns(4);
                 fixtureRetrieverMock.Setup(p => p.GetGamesPerMatchDay(i)).Returns(2);
             }
 
             fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns((int year, int teamId, int fixtureId) => { List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
+                .Returns((int year, int teamId, int fixtureId) =>
+                {
+                    List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
                     return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
                 });
-            
+
         }
 
         [Test]
@@ -468,7 +470,7 @@ namespace BettingTest
             Assert.AreEqual(correctFixturesWithData, 0 + 2 + 1);
             Assert.AreEqual(totalFixturesWithData, 2 + 2 + 2);
             Assert.AreEqual(currentProfit, (0 - 1 - 1)
-                                           + (commonOdds["1"] - 1 + commonOdds["2"] - 1) 
+                                           + (commonOdds["1"] - 1 + commonOdds["2"] - 1)
                                            + (commonOdds["2"] - 1 - 1));
         }
 
@@ -489,7 +491,7 @@ namespace BettingTest
             configManagerMock.Setup(p => p.GetReverseYears()).Returns(4);
             configManagerMock.Setup(p => p.GetLogLevel()).Returns(ConfigManager.LogLevel.LOG_DEBUG);
             configManagerMock.Setup(p => p.GetMinYearProfit()).Returns(70);
-            
+
 
 
             MetricConfig metricConfigLastGames = new MetricConfig

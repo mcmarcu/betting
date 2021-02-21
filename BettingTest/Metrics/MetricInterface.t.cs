@@ -4,7 +4,6 @@ using Betting.Metrics;
 using Betting.Stats;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace BettingTest
@@ -26,7 +25,7 @@ namespace BettingTest
             year = 0;
             team = "team";
             teamId = 123;
-            
+
 
             fixturesTeam = new List<Fixture>();
 
@@ -76,7 +75,8 @@ namespace BettingTest
             fixtureRetrieverMock.Setup(p => p.GetAllFixtures(year, teamId)).Returns(fixturesTeam);
 
             fixtureRetrieverMock.Setup(p => p.FindFixtureIndex(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .Returns((int year, int teamId, int fixtureId) => {
+                .Returns((int year, int teamId, int fixtureId) =>
+                {
                     List<Fixture> teamFixtures = fixtureRetrieverMock.Object.GetAllFixtures(year, teamId);
                     return teamFixtures.FindLastIndex(thisFix => thisFix.fixtureId == fixtureId);
                 });
@@ -121,8 +121,8 @@ namespace BettingTest
             Assert.AreEqual(fixtureIdx, 1);
             Assert.AreEqual(fixturesTeam[fixtureIdx].homeTeamName, team);
             Assert.AreEqual(fixturesTeam[fixtureIdx].awayTeamName, "secondGame");
-            Assert.AreEqual(fixturesTeam[fixtureIdx-1].homeTeamName, team);
-            Assert.AreEqual(fixturesTeam[fixtureIdx-1].awayTeamName, "firstGame");
+            Assert.AreEqual(fixturesTeam[fixtureIdx - 1].homeTeamName, team);
+            Assert.AreEqual(fixturesTeam[fixtureIdx - 1].awayTeamName, "firstGame");
         }
     }
 }

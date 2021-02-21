@@ -2,14 +2,13 @@
 using Betting.DataModel;
 using Betting.Stats;
 using System;
-using System.Collections.Generic;
 
 namespace Betting.Metrics
 {
     public abstract class MetricInterface
     {
-        abstract public void GetPoints(out double pTeam1, out double pTeam2, int teamId1, int teamId2, Fixture fixture);
-        abstract public void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
+        public abstract void GetPoints(out double pTeam1, out double pTeam2, int teamId1, int teamId2, Fixture fixture);
+        public abstract void GetPercentage(out int pTeam1, out int pTeam2, int teamId1, int teamId2, Fixture fixture);
 
         //For mocking/testing
         public MetricInterface()
@@ -30,7 +29,7 @@ namespace Betting.Metrics
 
             --startIdx;
 
-            if ((startIdx+1) < depth)//+1 as startIdx is 0-indexed
+            if ((startIdx + 1) < depth)//+1 as startIdx is 0-indexed
             {
                 throw new ArgumentException("Not enough fixtures to satisfy metric depth");
             }

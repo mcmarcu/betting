@@ -34,7 +34,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -53,7 +56,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
 
@@ -72,7 +78,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -90,7 +99,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -109,7 +121,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -128,7 +143,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -146,7 +164,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -165,7 +186,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
@@ -184,7 +208,10 @@ namespace Betting.Config
                 }
                 finally
                 {
-                    if (lockTaken) _spinlock.Exit(false);
+                    if (lockTaken)
+                    {
+                        _spinlock.Exit(false);
+                    }
                 }
             }
         }
