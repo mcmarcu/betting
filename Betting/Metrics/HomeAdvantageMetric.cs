@@ -34,7 +34,7 @@ namespace Betting.Metrics
             int startIdx = FindFixtures(year, teamId, fixture.fixtureId, config.depth * 2);
             int toProcess = config.depth * 2;
             int foundFixtures = 0;
-            for (int i = startIdx; toProcess > 0; --i, --toProcess)
+            for (int i = startIdx; toProcess > 0 && i >= 0; --i, --toProcess)
             {
                 int idToCheck = checkHomeTeam ? allT[i].homeTeamId : allT[i].awayTeamId;
                 if (idToCheck == teamId)
@@ -71,18 +71,6 @@ namespace Betting.Metrics
             else
             {
                 return 0d;
-            }
-        }
-
-        public double GetCoeficient(Fixture fixture, int teamId)
-        {
-            if (teamId == fixture.homeTeamId)
-            {
-                return fixture.coeficient.awayTeam;
-            }
-            else
-            {
-                return fixture.coeficient.homeTeam;
             }
         }
     }

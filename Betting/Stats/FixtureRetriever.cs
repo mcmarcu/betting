@@ -138,6 +138,8 @@ namespace Betting.Stats
 
                 int idxHPTS = -1;
                 int idxAPTS = -1;
+                int idxHRATEFORM = -1;
+                int idxARATEFORM = -1;
                 int idxHPL = -1;
                 int idxAPL = -1;
                 int idxFOH = -1;
@@ -149,6 +151,8 @@ namespace Betting.Stats
                 {
                     idxHPTS = Array.FindIndex(fields, item => item == "HPTS");
                     idxAPTS = Array.FindIndex(fields, item => item == "APTS");
+                    idxHRATEFORM = Array.FindIndex(fields, item => item == "HRATEFORM");
+                    idxARATEFORM = Array.FindIndex(fields, item => item == "ARATEFORM");
                     idxHPL = Array.FindIndex(fields, item => item == "HPL");
                     idxAPL = Array.FindIndex(fields, item => item == "APL");
                     idxFOH = Array.FindIndex(fields, item => item == "FOH");
@@ -197,6 +201,8 @@ namespace Betting.Stats
                     {
                         newFixture.points.homeTeamPoints = int.Parse(fields[idxHPTS]);
                         newFixture.points.awayTeamPoints = int.Parse(fields[idxAPTS]);
+                        newFixture.rateForm.homeTeam = double.Parse(fields[idxHRATEFORM]);
+                        newFixture.rateForm.awayTeam = double.Parse(fields[idxARATEFORM]);
                         newFixture.gamesPlayed.homeTeamGamesPlayed = int.Parse(fields[idxHPL]);
                         newFixture.gamesPlayed.awayTeamGamesPlayed = int.Parse(fields[idxAPL]);
                         newFixture.fairOdds.Add("1", double.Parse(fields[idxFOH]));

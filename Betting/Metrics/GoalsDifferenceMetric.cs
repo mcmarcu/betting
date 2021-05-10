@@ -27,23 +27,23 @@ namespace Betting.Metrics
             pTeam2 = 100 - pTeam1;
         }
 
-        private void GetTeamPoints(out double pTeam, int teamId, int advTeamId, Fixture fixture)
+        private void GetTeamPoints(out double pTeam, int teamId, Fixture fixture)
         {
             pTeam = 0d;
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
             int startIdx = FindFixtures(year, teamId, fixture.fixtureId, config.depth);
             int toProcess = config.depth;
-            for (int i = startIdx; toProcess > 0; --i, --toProcess)
+            for (int i = startIdx; toProcess > 0 && i >= 0; --i, --toProcess)
             {
-                pTeam += GetScoredGoals(allT[i], teamId) * GetCoeficient(allT[i], advTeamId);
-                pTeam -= GetConcededGoals(allT[i], teamId) * GetCoeficient(allT[i], advTeamId);
+                pTeam += GetScoredGoals(allT[i], teamId) * GetCoeficient(allT[i], teamId);
+                pTeam -= GetConcededGoals(allT[i], teamId) / GetCoeficient(allT[i], teamId);//division as we do conceded goals and we take other team coeff
             }
         }
 
         public override void GetPoints(out double pTeam1, out double pTeam2, int teamId1, int teamId2, Fixture fixture)
         {
-            GetTeamPoints(out pTeam1, teamId1, teamId2, fixture);
-            GetTeamPoints(out pTeam2, teamId2, teamId1, fixture);
+            GetTeamPoints(out pTeam1, teamId1, fixture);
+            GetTeamPoints(out pTeam2, teamId2, fixture);
         }
 
         public double GetScoredGoals(Fixture fixture, int teamId)
@@ -69,17 +69,5 @@ namespace Betting.Metrics
                 return fixture.finalScore.homeTeamGoals;
             }
         }
-        public double GetCoeficient(Fixture fixture, int teamId)
-        {
-            if (teamId == fixture.homeTeamId)
-            {
-                return fixture.coeficient.homeTeam;
-            }
-            else
-            {
-                return fixture.coeficient.awayTeam;
-            }
-        }
-
     }
 }

@@ -33,7 +33,7 @@ namespace Betting.Metrics
             List<Fixture> allT = fixtureRetriever_.GetAllFixtures(year, teamId);
             int startIdx = FindFixtures(year, teamId, fixture.fixtureId, config.depth);
             int toProcess = config.depth;
-            for (int i = startIdx; toProcess > 0; --i, --toProcess)
+            for (int i = startIdx; toProcess > 0 && i >= 0; --i, --toProcess)
             {
                 pTeam += GetGoals(allT[i], teamId) * GetCoeficient(allT[i], teamId);
             }
@@ -54,18 +54,6 @@ namespace Betting.Metrics
             else
             {
                 return fixture.finalScore.awayTeamGoals;
-            }
-        }
-
-        public double GetCoeficient(Fixture fixture, int teamId)
-        {
-            if (teamId == fixture.homeTeamId)
-            {
-                return fixture.coeficient.awayTeam;
-            }
-            else
-            {
-                return fixture.coeficient.homeTeam;
             }
         }
 

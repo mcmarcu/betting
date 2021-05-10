@@ -9,15 +9,23 @@ namespace Betting.Metrics
     public class MetricFactory
     {
         public const int differentMetricCount = 5;
+        private static void ExtractMetricCoefficient(int i, out int LastGamesMetricD, out int GoalsConcededMetricD, out int GoalsDifferenceMetricD, out int GoalsScoredMetricD, out int HomeAdvantageMetricD)
+        {
+            LastGamesMetricD = i % 10;
+            GoalsConcededMetricD = (i / 10) % 10;
+            GoalsDifferenceMetricD = (i / 100) % 10;
+            GoalsScoredMetricD = (i / 1000) % 10;
+            HomeAdvantageMetricD = (i / 10000) % 10;
+        }
 
         public static void PrintMetricList(Logger logger, int i)
         {
-            int LastGamesMetricD = i % 10;
-            int GoalsConcededMetricD = (i / 10) % 10;
-            int GoalsDifferenceMetricD = (i / 100) % 10;
-            int GoalsScoredMetricD = (i / 1000) % 10;
-            int HomeAdvantageMetricD = (i / 10000) % 10;
-
+            ExtractMetricCoefficient(i, 
+                out int LastGamesMetricD, 
+                out int GoalsConcededMetricD, 
+                out int GoalsDifferenceMetricD, 
+                out int GoalsScoredMetricD, 
+                out int HomeAdvantageMetricD);
 
             if (LastGamesMetricD != 0)
             {
@@ -48,15 +56,14 @@ namespace Betting.Metrics
 
         public static List<MetricConfig> GetMetricList(int i)
         {
+            ExtractMetricCoefficient(i,
+                out int LastGamesMetricD,
+                out int GoalsConcededMetricD,
+                out int GoalsDifferenceMetricD,
+                out int GoalsScoredMetricD,
+                out int HomeAdvantageMetricD);
+
             List<MetricConfig> metricConfigs = new List<MetricConfig>(MetricFactory.differentMetricCount);
-
-            int LastGamesMetricD = i % 10;
-            int GoalsConcededMetricD = (i / 10) % 10;
-            int GoalsDifferenceMetricD = (i / 100) % 10;
-            int GoalsScoredMetricD = (i / 1000) % 10;
-            int HomeAdvantageMetricD = (i / 10000) % 10;
-
-
             if (LastGamesMetricD != 0)
             {
                 MetricConfig lastGamesMetric = new MetricConfig

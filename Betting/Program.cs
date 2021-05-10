@@ -161,9 +161,9 @@ namespace Betting
                         SortedDictionary<double, KeyValuePair<char, int>> sortedAvg =
                         new SortedDictionary<double, KeyValuePair<char, int>>();
 
-                        int numMetrics = 4;
+                        int numMetrics = MetricFactory.differentMetricCount;
                         int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
-                        Parallel.For(1, maxI, (i, state) =>
+                        Parallel.For(1, maxI, (i) =>
                         {
                             List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
 
@@ -245,9 +245,9 @@ namespace Betting
                     SortedDictionary<double, RunOutput> successRuns =
                         new SortedDictionary<double, RunOutput>();
 
-                    int numMetrics = 5;
+                    int numMetrics = MetricFactory.differentMetricCount;
                     int maxI = Convert.ToInt32(Math.Pow(10, numMetrics));
-                    Parallel.For(1, maxI, (i, state) =>
+                    Parallel.For(1, maxI, (i) =>
                     {
                         List<MetricConfig> metricConfigs = MetricFactory.GetMetricList(i);
 

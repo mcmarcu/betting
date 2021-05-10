@@ -17,6 +17,12 @@ namespace Betting.DataModel
         public int awayTeamPoints;
     }
 
+    public class RateForm
+    {
+        public double homeTeam;
+        public double awayTeam;
+    }
+
     public class GamesPlayed
     {
         public int homeTeamGamesPlayed;
@@ -42,6 +48,7 @@ namespace Betting.DataModel
         public Dictionary<string, double> odds = new Dictionary<string, double>();
         public Dictionary<string, double> fairOdds = new Dictionary<string, double>();
         public Points points = new Points();
+        public RateForm rateForm = new RateForm();
         public GamesPlayed gamesPlayed = new GamesPlayed();
         public Coeficient coeficient = new Coeficient();
         public string result;
@@ -94,8 +101,8 @@ namespace Betting.DataModel
             int weight = configManager.GetCoeficientWeight();
             if (configManager.GetUseExpanded() && weight != 0)
             {
-                coeficient.homeTeam = (double)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
-                coeficient.awayTeam = (double)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);
+                coeficient.homeTeam = rateForm.homeTeam / weight;//(double)points.homeTeamPoints / (weight * gamesPlayed.homeTeamGamesPlayed);
+                coeficient.awayTeam = rateForm.awayTeam / weight;//(double)points.awayTeamPoints / (weight * gamesPlayed.awayTeamGamesPlayed);
             }
             else
             {

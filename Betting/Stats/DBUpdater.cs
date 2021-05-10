@@ -357,6 +357,7 @@ namespace Betting.Stats
 
         public void AddPointsForYear(int year)
         {
+            Dictionary<string, int> rateForm = new Dictionary<string, int>();
             Dictionary<string, int> currentPoints = new Dictionary<string, int>();
             Dictionary<string, int> currentPlayed = new Dictionary<string, int>();
             string leagueName = configManager_.GetLeagueName();
@@ -371,7 +372,7 @@ namespace Betting.Stats
             using TextFieldParser parser = new TextFieldParser(inputFilePath);
             using FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write);
             using StreamWriter outputFile = new StreamWriter(fileStream);
-            string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL";
+            string outputLine = parser.ReadLine() + ',' + "HPTS" + ',' + "APTS" + ',' + "HPL" + ',' + "APL" + ',' + "HRATEFORM" + ',' + "ARATEFORM";
             outputFile.WriteLine(outputLine);
 
             List<Fixture> fixtures = fixtureRetriever_.GetAllFixtures(year);
@@ -380,18 +381,22 @@ namespace Betting.Stats
             while (!parser.EndOfData)
             {
                 Fixture fixture = fixtures[index];
-
+                int homeRateForm = rateForm.ContainsKey(fixture.homeTeamName) ? rateForm[fixture.homeTeamName] : rateForm[fixture.homeTeamName] = 1000;
+                int awayRateForm = rateForm.ContainsKey(fixture.awayTeamName) ? rateForm[fixture.awayTeamName] : rateForm[fixture.awayTeamName] = 1000;
                 int homePointCnt = currentPoints.ContainsKey(fixture.homeTeamName) ? currentPoints[fixture.homeTeamName] : 0;
                 int awayPointCnt = currentPoints.ContainsKey(fixture.awayTeamName) ? currentPoints[fixture.awayTeamName] : 0;
                 int homePlayCnt = currentPlayed.ContainsKey(fixture.homeTeamName) ? currentPlayed[fixture.homeTeamName] : 0;
                 int awayPlayCnt = currentPlayed.ContainsKey(fixture.awayTeamName) ? currentPlayed[fixture.awayTeamName] : 0;
 
-                outputLine = parser.ReadLine() + ',' + homePointCnt.ToString() + ',' + awayPointCnt.ToString() + ',' + homePlayCnt + ',' + awayPlayCnt;
+                outputLine = parser.ReadLine() + ',' + homePointCnt + ',' + awayPointCnt + ',' + homePlayCnt + ',' + awayPlayCnt + ',' + homeRateForm + ',' + awayRateForm;
                 outputFile.WriteLine(outputLine);
 
                 if (fixture.result == "1")
                 {
                     AddToDict(ref currentPoints, fixture.homeTeamName, 3);
+                    int awayKitty = Convert.ToInt32(5d * awayRateForm / 100d);//5%
+                    AddToDict(ref rateForm, fixture.homeTeamName, awayKitty);
+                    AddToDict(ref rateForm, fixture.awayTeamName, -awayKitty);
 
                 }
                 else if (fixture.result == "X")
@@ -402,6 +407,9 @@ namespace Betting.Stats
                 else
                 {
                     AddToDict(ref currentPoints, fixture.awayTeamName, 3);
+                    int homeKitty = Convert.ToInt32(7d * homeRateForm / 100d);//7%
+                    AddToDict(ref rateForm, fixture.homeTeamName, -homeKitty);
+                    AddToDict(ref rateForm, fixture.awayTeamName, homeKitty);
                 }
 
                 AddToDict(ref currentPlayed, fixture.homeTeamName, 1);

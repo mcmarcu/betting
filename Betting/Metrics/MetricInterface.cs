@@ -31,9 +31,22 @@ namespace Betting.Metrics
 
             if ((startIdx + 1) < depth)//+1 as startIdx is 0-indexed
             {
-                throw new ArgumentException("Not enough fixtures to satisfy metric depth");
+                //comment out for update
+                //throw new ArgumentException("Not enough fixtures to satisfy metric depth");
             }
             return startIdx;
+        }
+
+        public double GetCoeficient(Fixture fixture, int teamId)
+        {
+            if (teamId == fixture.homeTeamId)
+            {
+                return fixture.coeficient.awayTeam;
+            }
+            else
+            {
+                return fixture.coeficient.homeTeam;
+            }
         }
 
         public MetricConfig config;
